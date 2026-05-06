@@ -2,6 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Annuaire YOUPI - Fiches entreprises</title>
   <style>
     :root {
@@ -15,71 +16,64 @@
       --text-muted: #6b7280;
       --danger: #dc2626;
       --success: #16a34a;
+      --nav-bg: #ffffff;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         sans-serif;
-      background: radial-gradient(circle at top left, #eef2ff, #f9fafb);
+      background: var(--bg);
       color: var(--text-main);
     }
 
     .app-shell {
       max-width: 1100px;
       margin: 0 auto;
-      padding: 24px 16px 48px;
+      padding: 16px 12px 72px; /* place pour la nav bottom */
     }
 
     header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 24px;
-      gap: 16px;
-    }
-
-    .brand {
-      display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 12px;
+      margin-bottom: 16px;
     }
 
     .brand-title {
-      font-size: 1.6rem;
+      font-size: 1.3rem;
       font-weight: 700;
       letter-spacing: 0.03em;
     }
 
     .brand-subtitle {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
     }
 
     .mode-switch {
-      display: flex;
+      align-self: flex-start;
+      display: inline-flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       background: var(--card-bg);
       padding: 6px 10px;
       border-radius: 999px;
       border: 1px solid var(--border);
-      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
     }
 
     .mode-label {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
     }
 
     .mode-pill {
-      padding: 4px 10px;
+      padding: 3px 10px;
       border-radius: 999px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
       background: var(--primary-light);
       color: var(--primary-dark);
@@ -88,8 +82,8 @@
     .btn-switch {
       border: none;
       border-radius: 999px;
-      padding: 6px 12px;
-      font-size: 0.8rem;
+      padding: 6px 10px;
+      font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
       background: var(--primary);
@@ -107,35 +101,44 @@
     }
 
     main {
-      display: grid;
-      grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
-      gap: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
-    @media (max-width: 900px) {
-      main {
-        grid-template-columns: 1fr;
+    @media (min-width: 768px) {
+      .app-shell { padding: 24px 16px 80px; }
+      header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
       }
+      main { flex-direction: row; }
     }
 
     .card {
       background: var(--card-bg);
       border-radius: 16px;
-      padding: 18px 20px 20px;
+      padding: 14px 14px 16px;
       border: 1px solid rgba(148, 163, 184, 0.25);
-      box-shadow: 0 15px 40px rgba(15, 23, 42, 0.08);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+      flex: 1;
+    }
+
+    @media (min-width: 768px) {
+      .card { padding: 18px 20px 20px; }
     }
 
     .card-header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 16px;
-      gap: 10px;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      gap: 8px;
     }
 
     .card-title {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 600;
     }
 
@@ -144,11 +147,9 @@
       color: var(--text-muted);
     }
 
-    /* Formulaire */
-
     form label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 500;
       margin-bottom: 4px;
       color: var(--text-muted);
@@ -156,20 +157,23 @@
 
     .form-row {
       display: flex;
-      gap: 12px;
-      margin-bottom: 12px;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
     }
 
-    .form-field {
-      flex: 1;
+    @media (min-width: 640px) {
+      .form-row { flex-direction: row; }
     }
+
+    .form-field { flex: 1; }
 
     input[type="text"],
     input[type="email"],
     input[type="url"],
     select {
       width: 100%;
-      padding: 8px 10px;
+      padding: 9px 10px;
       border-radius: 10px;
       border: 1px solid var(--border);
       font-size: 0.9rem;
@@ -177,6 +181,8 @@
       transition: border-color 0.15s ease, box-shadow 0.15s ease,
         background-color 0.15s ease;
       background-color: #f9fafb;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
     input:focus,
@@ -188,37 +194,36 @@
 
     .btn-primary {
       border: none;
-      padding: 9px 16px;
+      padding: 10px 16px;
       border-radius: 999px;
       font-size: 0.9rem;
       font-weight: 600;
       cursor: pointer;
       color: white;
       background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
+      width: 100%;
     }
 
-    .btn-primary:active {
-      transform: translateY(1px);
-      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.4);
+    @media (min-width: 480px) {
+      .btn-primary { width: auto; }
     }
 
     .helper-text {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--text-muted);
       margin-top: 6px;
     }
-
-    /* Liste des fiches */
 
     .list-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       gap: 10px;
     }
 
@@ -241,55 +246,67 @@
     }
 
     .empty-state {
-      padding: 16px;
+      padding: 14px;
       border-radius: 12px;
       border: 1px dashed var(--border);
       background: #f9fafb;
-      font-size: 0.9rem;
+      font-size: 0.86rem;
       color: var(--text-muted);
     }
 
     .fiche {
       border-radius: 12px;
-      padding: 12px 14px;
-      background: linear-gradient(to right, #ffffff, #f9fafb);
+      padding: 10px 12px;
+      background: #ffffff;
       border: 1px solid rgba(148, 163, 184, 0.35);
       margin-bottom: 10px;
       display: flex;
-      gap: 10px;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .fiche-left {
-      flex: 1;
+    @media (min-width: 640px) {
+      .fiche {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: stretch;
+      }
     }
+
+    .fiche-left { flex: 1; }
 
     .fiche-right {
-      text-align: right;
-      min-width: 140px;
+      text-align: left;
       font-size: 0.8rem;
       color: var(--text-muted);
     }
 
+    @media (min-width: 640px) {
+      .fiche-right {
+        text-align: right;
+        min-width: 140px;
+      }
+    }
+
     .fiche-title {
       font-weight: 700;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
+      font-size: 0.98rem;
     }
 
     .fiche-meta {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--text-muted);
-      margin-bottom: 6px;
+      margin-bottom: 4px;
     }
 
-    .fiche-contact {
-      font-size: 0.85rem;
-    }
+    .fiche-contact { font-size: 0.82rem; }
 
     .badge-cat {
       display: inline-block;
       padding: 2px 8px;
       border-radius: 999px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       background: rgba(79, 70, 229, 0.08);
       color: var(--primary-dark);
       margin-left: 6px;
@@ -299,8 +316,8 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.8rem;
-      padding: 4px 8px;
+      font-size: 0.78rem;
+      padding: 3px 8px;
       border-radius: 999px;
       background: #ecfdf3;
       color: var(--success);
@@ -314,139 +331,283 @@
     }
 
     .alert {
-      font-size: 0.8rem;
-      margin-top: 8px;
+      font-size: 0.78rem;
+      margin-top: 6px;
       color: var(--danger);
       display: none;
     }
+
+    a {
+      color: var(--primary-dark);
+      text-decoration: none;
+      word-break: break-all;
+    }
+
+    a:hover { text-decoration: underline; }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--nav-bg);
+      border-top: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: 0 -6px 18px rgba(15, 23, 42, 0.12);
+      padding: 6px 10px;
+      z-index: 20;
+    }
+
+    .bottom-nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-around;
+      gap: 6px;
+    }
+
+    .nav-item {
+      flex: 1;
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      padding: 4px 6px;
+      border-radius: 999px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+    }
+
+    .nav-item span.icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1.5px solid var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+    }
+
+    .nav-item-active {
+      color: var(--primary-dark);
+      background: var(--primary-light);
+    }
+
+    .nav-item-active span.icon {
+      border-color: var(--primary-dark);
+      background: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    @media (min-width: 768px) {
+      .bottom-nav {
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 8px;
+        width: auto;
+        border-radius: 999px;
+        padding: 4px 10px;
+      }
+      .bottom-nav-inner {
+        max-width: 420px;
+      }
+      .nav-item {
+        flex: none;
+        padding: 6px 10px;
+      }
+    }
+
+    /* Sections pour onglets */
+    .tab-section { display: none; }
+    .tab-section-active { display: block; }
   </style>
 </head>
 <body>
   <div class="app-shell">
     <header>
-      <div class="brand">
+      <div>
         <div class="brand-title">Annuaire YOUPI · Fiches entreprises</div>
         <div class="brand-subtitle">
           Démo front reliée à Make.com & Google Sheets (ou données de démo).
         </div>
       </div>
       <div class="mode-switch">
-        <div class="mode-label">Source de données</div>
+        <div class="mode-label">Source</div>
         <div class="mode-pill" id="mode-pill">DEMO</div>
         <button id="btn-switch-mode" type="button" class="btn-switch">
           <span class="dot"></span>
-          <span id="switch-text">Passer en mode API</span>
+          <span id="switch-text">Mode API</span>
         </button>
       </div>
     </header>
 
-    <main>
-      <!-- Colonne gauche : formulaire -->
+    <!-- Section FICHES -->
+    <div id="tab-fiches" class="tab-section tab-section-active">
+      <main>
+        <section class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Créer une fiche</div>
+              <div class="card-subtitle">
+                Le formulaire envoie les données vers Make + Google Sheets.
+              </div>
+            </div>
+          </div>
+
+          <form id="form-fiche" action="https://hook.eu1.make.com/TON_WEBHOOK" method="POST">
+            <input type="hidden" name="app_id" value="annuaire_youpi_fiche_entreprise" />
+
+            <div class="form-row">
+              <div class="form-field">
+                <label>Nom de l'entreprise</label>
+                <input type="text" name="entreprise_nom" required />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label>Ville</label>
+                <input type="text" name="entreprise_ville" required />
+              </div>
+              <div class="form-field">
+                <label>Catégorie</label>
+                <select name="categorie" required>
+                  <option value="">-- Choisir --</option>
+                  <option value="Restauration">Restauration</option>
+                  <option value="Services">Services</option>
+                  <option value="Commerce">Commerce</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label>Téléphone</label>
+                <input type="text" name="telephone" />
+              </div>
+              <div class="form-field">
+                <label>Email</label>
+                <input type="email" name="email" />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-field">
+                <label>Site web</label>
+                <input type="url" name="site_web" />
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary">
+              <span>Enregistrer la fiche</span>
+            </button>
+
+            <div class="helper-text">
+              En mode DEMO, les fiches sont locales. En mode API, elles sont aussi envoyées vers Make + Google Sheets.
+            </div>
+            <div class="alert" id="error-message"></div>
+          </form>
+        </section>
+
+        <section class="card">
+          <div class="card-header list-header">
+            <div>
+              <div class="card-title">Liste des fiches</div>
+              <div class="card-subtitle">
+                Générée à partir de la source de données active.
+              </div>
+            </div>
+            <div class="tag">
+              <span class="tag-dot"></span>
+              <span id="tag-source">Source : DEMO_DATA</span>
+            </div>
+          </div>
+          <div id="liste-fiches"></div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Section PARAMÈTRES -->
+    <div id="tab-parametres" class="tab-section">
       <section class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">Créer une fiche entreprise</div>
+            <div class="card-title">Paramètres (démo)</div>
             <div class="card-subtitle">
-              Les données sont envoyées vers Make.com pour être stockées dans
-              Google Sheets.
+              Exemple de zone de configuration Annuaire YOUPI.
             </div>
           </div>
         </div>
-
-        <form id="form-fiche" action="https://hook.eu1.make.com/TON_WEBHOOK" method="POST">
-          <input
-            type="hidden"
-            name="app_id"
-            value="annuaire_youpi_fiche_entreprise"
-          />
-
-          <div class="form-row">
-            <div class="form-field">
-              <label>Nom de l'entreprise</label>
-              <input type="text" name="entreprise_nom" required />
-            </div>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0;">
+          Cette section pourra être reliée à une autre Google Sheet (APP_CONFIG) ou à un scénario Make dédié pour gérer les paramètres d'affichage, couleurs, filtres par défaut, etc.
+        </p>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Couleur principale</label>
+            <input type="text" value="#4f46e5" />
           </div>
-
-          <div class="form-row">
-            <div class="form-field">
-              <label>Ville</label>
-              <input type="text" name="entreprise_ville" required />
-            </div>
-            <div class="form-field">
-              <label>Catégorie</label>
-              <select name="categorie" required>
-                <option value="">-- Choisir --</option>
-                <option value="Restauration">Restauration</option>
-                <option value="Services">Services</option>
-                <option value="Commerce">Commerce</option>
-                <option value="Autre">Autre</option>
-              </select>
-            </div>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Nombre max de fiches affichées</label>
+            <input type="text" value="20" />
           </div>
-
-          <div class="form-row">
-            <div class="form-field">
-              <label>Téléphone</label>
-              <input type="text" name="telephone" />
-            </div>
-            <div class="form-field">
-              <label>Email</label>
-              <input type="email" name="email" />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-field">
-              <label>Site web</label>
-              <input type="url" name="site_web" />
-            </div>
-          </div>
-
-          <button type="submit" class="btn-primary">
-            <span>Enregistrer la fiche</span>
-          </button>
-
-          <div class="helper-text">
-            En mode DEMO, les fiches sont ajoutées uniquement en mémoire.
-            En mode API, elles sont envoyées vers Make + Google Sheets.
-          </div>
-          <div class="alert" id="error-message"></div>
-        </form>
+        </div>
       </section>
+    </div>
 
-      <!-- Colonne droite : liste -->
+    <!-- Section STATS -->
+    <div id="tab-stats" class="tab-section">
       <section class="card">
-        <div class="card-header list-header">
+        <div class="card-header">
           <div>
-            <div class="card-title">Liste des fiches</div>
+            <div class="card-title">Statistiques (démo)</div>
             <div class="card-subtitle">
-              Vue front générée à partir de la source de données active.
+              Place réservée pour tes futurs dashboards YOUPI.
             </div>
           </div>
-          <div class="tag">
-            <span class="tag-dot"></span>
-            <span id="tag-source">Source : DEMO_DATA</span>
-          </div>
         </div>
-        <div id="liste-fiches"></div>
+        <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0;">
+          Tu pourras afficher ici des statistiques calculées par Make à partir des données de Google Sheets (nombre de fiches par catégorie, par ville, évolution mensuelle, etc.).
+        </p>
+        <div class="empty-state">
+          Exemple : 124 fiches actives · 38 en Martinique · 55 dans la catégorie Services.
+        </div>
       </section>
-    </main>
+    </div>
   </div>
 
+  <!-- Bottom nav -->
+  <nav class="bottom-nav">
+    <div class="bottom-nav-inner">
+      <div class="nav-item nav-item-active" data-tab="fiches">
+        <span class="icon">F</span>
+        <span>Fiches</span>
+      </div>
+      <div class="nav-item" data-tab="parametres">
+        <span class="icon">P</span>
+        <span>Paramètres</span>
+      </div>
+      <div class="nav-item" data-tab="stats">
+        <span class="icon">S</span>
+        <span>Stats</span>
+      </div>
+    </div>
+  </nav>
+
   <script>
-    // ============================================
-    // 🔧 CONFIGURATION
-    // ============================================
     const CONFIG = {
       DATA_SOURCE: "demo", // "demo" ou "api"
-      API_URL: "https://hook.eu1.make.com/o9aps52picsz9wu6ojehwt5i32nekj9e", // webhook listing (GET/POST JSON)
-      FORM_WEBHOOK_URL: "https://hook.eu1.make.com/urmc5gjdxmkjndo9m6aew4uaxan2lhl0", // webhook création fiche
+      API_URL: "https://hook.eu1.make.com/TON_WEBHOOK_LISTING",
+      FORM_WEBHOOK_URL: "https://hook.eu1.make.com/TON_WEBHOOK",
       APP_ID: "annuaire_youpi_fiche_entreprise"
     };
 
-    // ============================================
-    // 📦 DONNÉES DE DÉMO
-    // ============================================
     let DEMO_DATA = [
       {
         app_id: "annuaire_youpi_fiche_entreprise",
@@ -470,9 +631,6 @@
       }
     ];
 
-    // ============================================
-    // 🔌 CHARGEMENT DES DONNÉES
-    // ============================================
     async function loadData() {
       if (CONFIG.DATA_SOURCE === "demo") {
         return DEMO_DATA;
@@ -485,26 +643,19 @@
           });
           if (!response.ok) {
             console.error("Erreur API listing", await response.text());
-            showError(
-              "Impossible de charger les données depuis l'API (voir console)."
-            );
+            showError("Impossible de charger les données API.");
             return [];
           }
           const data = await response.json();
           return Array.isArray(data) ? data : [];
         } catch (e) {
           console.error("Erreur réseau API listing", e);
-          showError(
-            "Erreur réseau lors de l'appel API (vérifie ton webhook Make)."
-          );
+          showError("Erreur réseau lors de l'appel API.");
           return [];
         }
       }
     }
 
-    // ============================================
-    // 🧩 RENDU DES FICHES
-    // ============================================
     function renderFiches(fiches) {
       const container = document.getElementById("liste-fiches");
       container.innerHTML = "";
@@ -512,7 +663,7 @@
         const empty = document.createElement("div");
         empty.className = "empty-state";
         empty.textContent =
-          "Aucune fiche pour le moment. Crée une fiche à gauche pour voir le rendu ici.";
+          "Aucune fiche pour le moment. Crée une fiche pour voir le résultat ici.";
         container.appendChild(empty);
         return;
       }
@@ -549,8 +700,8 @@
               <span class="status-dot"></span>
               <span>Active</span>
             </div>
-            <div style="margin-top: 6px;">
-              <div style="font-size:0.75rem; color:#9ca3af;">Créée le</div>
+            <div style="margin-top: 4px;">
+              <div style="font-size:0.72rem; color:#9ca3af;">Créée le</div>
               <div>${fiche.date_creation || ""}</div>
             </div>
           </div>
@@ -559,9 +710,6 @@
       });
     }
 
-    // ============================================
-    // 📨 ENVOI DU FORMULAIRE → MAKE (ET DEMO)
-    // ============================================
     function showError(msg) {
       const el = document.getElementById("error-message");
       el.textContent = msg;
@@ -584,11 +732,9 @@
       plainFormData.app_id = CONFIG.APP_ID;
       plainFormData.date_creation = new Date().toISOString().slice(0, 10);
 
-      // Toujours pushe en local pour voir la fiche immédiatement
       DEMO_DATA = [plainFormData, ...DEMO_DATA];
 
       if (CONFIG.DATA_SOURCE === "api") {
-        // En mode API : on envoie aussi à Make
         try {
           const response = await fetch(CONFIG.FORM_WEBHOOK_URL, {
             method: "POST",
@@ -600,13 +746,11 @@
           });
           if (!response.ok) {
             console.error("Erreur envoi Make", await response.text());
-            showError(
-              "Erreur lors de l'envoi à Make.com (voir console pour le détail)."
-            );
+            showError("Erreur lors de l'envoi à Make.com.");
           }
         } catch (e) {
           console.error("Erreur réseau Make", e);
-          showError("Erreur réseau lors de l'appel au webhook Make.");
+          showError("Erreur réseau vers le webhook Make.");
         }
       }
 
@@ -619,9 +763,6 @@
       .getElementById("form-fiche")
       .addEventListener("submit", handleFormSubmit);
 
-    // ============================================
-    // 🔀 SWITCH DEMO / API
-    // ============================================
     const btnSwitch = document.getElementById("btn-switch-mode");
     const pill = document.getElementById("mode-pill");
     const switchText = document.getElementById("switch-text");
@@ -631,11 +772,11 @@
       if (CONFIG.DATA_SOURCE === "demo") {
         pill.textContent = "DEMO";
         tagSource.textContent = "Source : DEMO_DATA";
-        switchText.textContent = "Passer en mode API";
+        switchText.textContent = "Mode API";
       } else {
         pill.textContent = "API";
         tagSource.textContent = "Source : API (Make + Sheets)";
-        switchText.textContent = "Passer en mode DEMO";
+        switchText.textContent = "Mode DEMO";
       }
     }
 
@@ -646,9 +787,37 @@
       renderFiches(data);
     });
 
-    // ============================================
-    // 🚀 INIT
-    // ============================================
+    // Gestion des onglets bottom nav
+    const tabs = {
+      fiches: document.getElementById("tab-fiches"),
+      parametres: document.getElementById("tab-parametres"),
+      stats: document.getElementById("tab-stats")
+    };
+
+    const navItems = document.querySelectorAll(".nav-item");
+
+    function setActiveTab(tabName) {
+      Object.keys(tabs).forEach((key) => {
+        tabs[key].classList.toggle(
+          "tab-section-active",
+          key === tabName
+        );
+      });
+      navItems.forEach((item) => {
+        item.classList.toggle(
+          "nav-item-active",
+          item.getAttribute("data-tab") === tabName
+        );
+      });
+    }
+
+    navItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        const tab = item.getAttribute("data-tab");
+        setActiveTab(tab);
+      });
+    });
+
     (async function init() {
       updateModeUI();
       const data = await loadData();
