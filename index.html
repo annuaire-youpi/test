@@ -3,826 +3,2590 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Annuaire YOUPI - Fiches entreprises</title>
+  <title>Annuaire YOUPI - Suivi Coaching Clients</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #4f46e5;
-      --primary-light: #eef2ff;
-      --primary-dark: #3730a3;
-      --bg: #f3f4f6;
-      --card-bg: #ffffff;
-      --border: #e5e7eb;
-      --text-main: #111827;
-      --text-muted: #6b7280;
-      --danger: #dc2626;
-      --success: #16a34a;
-      --nav-bg: #ffffff;
+    :root,
+    [data-theme="light"] {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+
+      --color-bg: #f7f6f2;
+      --color-surface: #ffffff;
+      --color-surface-2: #fbfbf9;
+      --color-surface-offset: #f0ece6;
+      --color-border: #d9d5cf;
+      --color-divider: #e7e2db;
+
+      --color-text: #25221b;
+      --color-text-muted: #6f6c66;
+      --color-text-faint: #9b9892;
+      --color-text-inverse: #ffffff;
+
+      --color-primary: #01696f;
+      --color-primary-hover: #0c555a;
+      --color-primary-active: #0e4044;
+      --color-primary-soft: #dbeeee;
+
+      --color-success: #437a22;
+      --color-success-soft: #e4f0dc;
+      --color-warning: #b06f00;
+      --color-warning-soft: #f7ead1;
+      --color-error: #a12c7b;
+      --color-error-soft: #f7e3ee;
+      --color-blue: #006494;
+      --color-blue-soft: #dcebf4;
+
+      --shadow-sm: 0 1px 2px rgba(31, 28, 24, 0.06);
+      --shadow-md: 0 6px 18px rgba(31, 28, 24, 0.08);
+      --shadow-lg: 0 16px 34px rgba(31, 28, 24, 0.12);
+
+      --radius-sm: 0.5rem;
+      --radius-md: 0.75rem;
+      --radius-lg: 1rem;
+      --radius-xl: 1.25rem;
+      --radius-full: 9999px;
+
+      --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+      --content-width: 1180px;
+
+      --font-body: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-display: "Inter", system-ui, sans-serif;
     }
 
-    * { box-sizing: border-box; }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        --color-bg: #171614;
+        --color-surface: #1d1c1a;
+        --color-surface-2: #23211f;
+        --color-surface-offset: #2a2724;
+        --color-border: #36332f;
+        --color-divider: #2e2b27;
+
+        --color-text: #ebe7df;
+        --color-text-muted: #b7b1a9;
+        --color-text-faint: #8a847d;
+        --color-text-inverse: #161513;
+
+        --color-primary: #58a5aa;
+        --color-primary-hover: #6ab4b8;
+        --color-primary-active: #3b868c;
+        --color-primary-soft: rgba(88, 165, 170, 0.16);
+
+        --color-success: #7eb45d;
+        --color-success-soft: rgba(126, 180, 93, 0.14);
+        --color-warning: #f1b84f;
+        --color-warning-soft: rgba(241, 184, 79, 0.14);
+        --color-error: #de74af;
+        --color-error-soft: rgba(222, 116, 175, 0.14);
+        --color-blue: #72b5da;
+        --color-blue-soft: rgba(114, 181, 218, 0.14);
+
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.18);
+        --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.28);
+        --shadow-lg: 0 18px 38px rgba(0, 0, 0, 0.35);
+      }
+    }
+
+    [data-theme="dark"] {
+      --color-bg: #171614;
+      --color-surface: #1d1c1a;
+      --color-surface-2: #23211f;
+      --color-surface-offset: #2a2724;
+      --color-border: #36332f;
+      --color-divider: #2e2b27;
+
+      --color-text: #ebe7df;
+      --color-text-muted: #b7b1a9;
+      --color-text-faint: #8a847d;
+      --color-text-inverse: #161513;
+
+      --color-primary: #58a5aa;
+      --color-primary-hover: #6ab4b8;
+      --color-primary-active: #3b868c;
+      --color-primary-soft: rgba(88, 165, 170, 0.16);
+
+      --color-success: #7eb45d;
+      --color-success-soft: rgba(126, 180, 93, 0.14);
+      --color-warning: #f1b84f;
+      --color-warning-soft: rgba(241, 184, 79, 0.14);
+      --color-error: #de74af;
+      --color-error-soft: rgba(222, 116, 175, 0.14);
+      --color-blue: #72b5da;
+      --color-blue-soft: rgba(114, 181, 218, 0.14);
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.18);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.28);
+      --shadow-lg: 0 18px 38px rgba(0, 0, 0, 0.35);
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      scroll-behavior: smooth;
+    }
 
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background: var(--bg);
-      color: var(--text-main);
+      min-height: 100dvh;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      line-height: 1.5;
+      color: var(--color-text);
+      background:
+        radial-gradient(circle at top right, rgba(1, 105, 111, 0.08), transparent 28%),
+        var(--color-bg);
+    }
+
+    img,
+    svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 3px;
+      border-radius: var(--radius-sm);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
     }
 
     .app-shell {
-      max-width: 1100px;
+      max-width: var(--content-width);
       margin: 0 auto;
-      padding: 16px 12px 72px; /* place pour la nav bottom */
+      padding: var(--space-4) var(--space-4) calc(6.5rem + env(safe-area-inset-bottom));
+      display: grid;
+      gap: var(--space-4);
     }
 
-    header {
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: grid;
+      gap: var(--space-3);
+      padding-top: max(var(--space-2), env(safe-area-inset-top));
+      background: linear-gradient(to bottom, var(--color-bg) 75%, rgba(0,0,0,0));
+      backdrop-filter: blur(8px);
+    }
+
+    .topbar-card,
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .topbar-card {
+      padding: var(--space-4);
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .brand-row {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 16px;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-3);
     }
 
-    .brand-title {
-      font-size: 1.3rem;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: var(--color-text-inverse);
+      background: linear-gradient(135deg, var(--color-primary), var(--color-blue));
+      box-shadow: var(--shadow-md);
+      flex-shrink: 0;
+    }
+
+    .brand-mark svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .eyebrow {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-1);
+    }
+
+    .app-title {
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+      line-height: 1.1;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .app-subtitle {
+      margin: var(--space-1) 0 0;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-shrink: 0;
+    }
+
+    .icon-btn,
+    .pill-btn,
+    .nav-btn {
+      min-height: 44px;
+      border-radius: var(--radius-full);
+      transition: background var(--transition), color var(--transition), border-color var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+
+    .icon-btn {
+      min-width: 44px;
+      padding: 0;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-2);
+    }
+
+    .icon-btn:hover,
+    .pill-btn:hover,
+    .nav-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .icon-btn:active,
+    .pill-btn:active,
+    .nav-btn:active,
+    .btn:active {
+      transform: scale(0.985);
+    }
+
+    .icon-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .toolbar-grid {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .source-panel {
+      display: grid;
+      gap: var(--space-3);
+      padding: var(--space-3);
+      border: 1px solid var(--color-divider);
+      background: var(--color-surface-2);
+      border-radius: var(--radius-lg);
+    }
+
+    .source-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .source-label {
+      font-size: var(--text-sm);
+      font-weight: 600;
+    }
+
+    .source-note {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .switch {
+      position: relative;
+      width: 64px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background: var(--color-surface-offset);
+      border: 1px solid var(--color-border);
+      padding: 4px;
+    }
+
+    .switch::after {
+      content: "";
+      position: absolute;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--color-text-inverse);
+      top: 4px;
+      left: 4px;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition), background var(--transition);
+    }
+
+    .switch[data-mode="api"] {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+    }
+
+    .switch[data-mode="api"]::after {
+      transform: translateX(28px);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-3);
+    }
+
+    .kpi {
+      padding: var(--space-4);
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface-2);
+    }
+
+    .kpi-label {
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-2);
+    }
+
+    .kpi-value {
+      font-size: var(--text-lg);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: var(--space-1);
+    }
+
+    .kpi-detail {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.75rem;
+      border-radius: var(--radius-full);
+      font-size: var(--text-xs);
       font-weight: 700;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
     }
 
-    .brand-subtitle {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .mode-switch {
-      align-self: flex-start;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--card-bg);
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
-    }
-
-    .mode-label {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .mode-pill {
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      background: var(--primary-light);
-      color: var(--primary-dark);
-    }
-
-    .btn-switch {
-      border: none;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      background: var(--primary);
-      color: white;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .btn-switch span.dot {
+    .status-badge::before {
+      content: "";
       width: 8px;
       height: 8px;
-      border-radius: 999px;
-      background: #22c55e;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: 0.85;
+    }
+
+    .status-actif,
+    .status-confirmee {
+      background: var(--color-success-soft);
+      color: var(--color-success);
+    }
+
+    .status-en_attente,
+    .status-planifiee {
+      background: var(--color-warning-soft);
+      color: var(--color-warning);
+    }
+
+    .status-inactif,
+    .status-annulee {
+      background: var(--color-error-soft);
+      color: var(--color-error);
+    }
+
+    .status-terminee {
+      background: var(--color-blue-soft);
+      color: var(--color-blue);
     }
 
     main {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+      display: grid;
+      gap: var(--space-4);
     }
 
-    @media (min-width: 768px) {
-      .app-shell { padding: 24px 16px 80px; }
-      header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-      }
-      main { flex-direction: row; }
+    .tab-panel {
+      display: none;
+      gap: var(--space-4);
+      align-content: start;
+    }
+
+    .tab-panel.active {
+      display: grid;
     }
 
     .card {
-      background: var(--card-bg);
-      border-radius: 16px;
-      padding: 14px 14px 16px;
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-      flex: 1;
-    }
-
-    @media (min-width: 768px) {
-      .card { padding: 18px 20px 20px; }
+      padding: var(--space-4);
+      overflow: hidden;
     }
 
     .card-header {
       display: flex;
-      justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 12px;
-      gap: 8px;
+      justify-content: space-between;
+      gap: var(--space-3);
+      margin-bottom: var(--space-4);
+      flex-wrap: wrap;
     }
 
     .card-title {
-      font-size: 1.05rem;
-      font-weight: 600;
+      margin: 0;
+      font-size: var(--text-lg);
+      font-weight: 800;
+      line-height: 1.2;
     }
 
     .card-subtitle {
-      font-size: 0.8rem;
-      color: var(--text-muted);
+      margin: var(--space-1) 0 0;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
     }
 
-    form label {
-      display: block;
-      font-size: 0.8rem;
-      font-weight: 500;
-      margin-bottom: 4px;
-      color: var(--text-muted);
-    }
-
-    .form-row {
+    .btn-row {
       display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 10px;
+      gap: var(--space-2);
+      flex-wrap: wrap;
     }
 
-    @media (min-width: 640px) {
-      .form-row { flex-direction: row; }
-    }
-
-    .form-field { flex: 1; }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="url"],
-    select {
-      width: 100%;
-      padding: 9px 10px;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      font-size: 0.9rem;
-      outline: none;
-      transition: border-color 0.15s ease, box-shadow 0.15s ease,
-        background-color 0.15s ease;
-      background-color: #f9fafb;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.35);
-      background-color: white;
-    }
-
-    .btn-primary {
-      border: none;
-      padding: 10px 16px;
-      border-radius: 999px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      color: white;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+    .btn,
+    .pill-btn,
+    .nav-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 0.5rem;
+      padding: 0.8rem 1rem;
+      font-size: var(--text-sm);
+      font-weight: 700;
+      border-radius: var(--radius-full);
+      min-height: 44px;
+      border: 1px solid transparent;
+    }
+
+    .btn {
       width: 100%;
     }
 
-    @media (min-width: 480px) {
-      .btn-primary { width: auto; }
+    .btn-primary {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-primary:hover {
+      background: var(--color-primary-hover);
+    }
+
+    .btn-secondary,
+    .pill-btn {
+      background: var(--color-surface-2);
+      border-color: var(--color-border);
+      color: var(--color-text);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--color-border);
+      color: var(--color-text);
+    }
+
+    .btn-danger {
+      background: var(--color-error);
+      color: var(--color-text-inverse);
+    }
+
+    .btn-inline {
+      width: auto;
+    }
+
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .field {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .field label,
+    .fieldset-title {
+      font-size: var(--text-sm);
+      font-weight: 700;
+    }
+
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      min-height: 48px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-2);
+      padding: 0.875rem 0.95rem;
+      color: var(--color-text);
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+    }
+
+    .field textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .field input::placeholder,
+    .field textarea::placeholder {
+      color: var(--color-text-faint);
+    }
+
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 4px rgba(1, 105, 111, 0.12);
+      outline: none;
+      background: var(--color-surface);
     }
 
     .helper-text {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 6px;
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
     }
 
-    .list-header {
+    .message-box {
+      display: none;
+      padding: var(--space-3);
+      border-radius: var(--radius-lg);
+      font-size: var(--text-sm);
+      font-weight: 600;
+    }
+
+    .message-box.show {
+      display: block;
+    }
+
+    .message-success {
+      background: var(--color-success-soft);
+      color: var(--color-success);
+      border: 1px solid color-mix(in srgb, var(--color-success) 26%, transparent);
+    }
+
+    .message-error {
+      background: var(--color-error-soft);
+      color: var(--color-error);
+      border: 1px solid color-mix(in srgb, var(--color-error) 26%, transparent);
+    }
+
+    .search-wrap {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .search-input {
+      width: 100%;
+      min-height: 48px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-2);
+      padding: 0.875rem 1rem;
+    }
+
+    .list-stack {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .client-item,
+    .session-item {
+      border: 1px solid var(--color-divider);
+      background: var(--color-surface-2);
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      display: grid;
+      gap: var(--space-3);
+      transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+    }
+
+    .client-item.active {
+      border-color: var(--color-primary);
+      background: color-mix(in srgb, var(--color-primary) 7%, var(--color-surface));
+      box-shadow: var(--shadow-sm);
+    }
+
+    .client-item-head,
+    .session-item-head {
       display: flex;
+      align-items: flex-start;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-      gap: 10px;
+      gap: var(--space-3);
+      flex-wrap: wrap;
     }
 
-    .tag {
+    .client-name,
+    .session-title {
+      margin: 0;
+      font-size: var(--text-base);
+      font-weight: 800;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      color: var(--color-text-muted);
+      font-size: var(--text-xs);
+    }
+
+    .meta-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.75rem;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: var(--primary-light);
-      color: var(--primary-dark);
+      gap: 0.35rem;
+      padding: 0.45rem 0.65rem;
+      border-radius: var(--radius-full);
+      background: var(--color-surface);
+      border: 1px solid var(--color-divider);
     }
 
-    .tag-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--primary-dark);
+    .quick-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .detail-header {
+      display: grid;
+      gap: var(--space-4);
+    }
+
+    .detail-banner {
+      padding: var(--space-4);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--color-primary) 14%, var(--color-surface)), var(--color-surface));
+      border: 1px solid color-mix(in srgb, var(--color-primary) 22%, var(--color-border));
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .detail-main {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+
+    .detail-name {
+      margin: 0;
+      font-size: var(--text-lg);
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .info-grid {
+      display: grid;
+      gap: var(--space-3);
+      grid-template-columns: repeat(1, minmax(0, 1fr));
+    }
+
+    .info-box {
+      padding: var(--space-3);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-divider);
+      background: var(--color-surface-2);
+      min-height: 100%;
+    }
+
+    .info-label {
+      font-size: var(--text-xs);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-2);
+    }
+
+    .info-value {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      word-break: break-word;
+    }
+
+    .timeline {
+      display: grid;
+      gap: var(--space-3);
+    }
+
+    .timeline-item {
+      position: relative;
+      display: grid;
+      gap: var(--space-2);
+      padding: var(--space-4);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--color-divider);
+      background: var(--color-surface-2);
+      overflow: hidden;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--color-primary);
+      opacity: 0.8;
+    }
+
+    .timeline-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      padding-left: var(--space-2);
+    }
+
+    .timeline-title {
+      font-size: var(--text-sm);
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .timeline-text {
+      margin: 0;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+      padding-left: var(--space-2);
     }
 
     .empty-state {
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px dashed var(--border);
-      background: #f9fafb;
-      font-size: 0.86rem;
-      color: var(--text-muted);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      gap: var(--space-3);
+      padding: var(--space-8) var(--space-4);
+      border: 1px dashed var(--color-border);
+      border-radius: var(--radius-xl);
+      background: var(--color-surface-2);
+      color: var(--color-text-muted);
     }
 
-    .fiche {
-      border-radius: 12px;
-      padding: 10px 12px;
-      background: #ffffff;
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .empty-state svg {
+      width: 40px;
+      height: 40px;
+      color: var(--color-text-faint);
     }
 
-    @media (min-width: 640px) {
-      .fiche {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: stretch;
-      }
+    .empty-state strong {
+      color: var(--color-text);
+      font-size: var(--text-base);
     }
 
-    .fiche-left { flex: 1; }
-
-    .fiche-right {
-      text-align: left;
-      font-size: 0.8rem;
-      color: var(--text-muted);
+    .split-layout {
+      display: grid;
+      gap: var(--space-4);
     }
 
-    @media (min-width: 640px) {
-      .fiche-right {
-        text-align: right;
-        min-width: 140px;
-      }
-    }
-
-    .fiche-title {
-      font-weight: 700;
-      margin-bottom: 3px;
-      font-size: 0.98rem;
-    }
-
-    .fiche-meta {
-      font-size: 0.82rem;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-
-    .fiche-contact { font-size: 0.82rem; }
-
-    .badge-cat {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 999px;
-      font-size: 0.72rem;
-      background: rgba(79, 70, 229, 0.08);
-      color: var(--primary-dark);
-      margin-left: 6px;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.78rem;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: #ecfdf3;
-      color: var(--success);
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 999px;
-      background: var(--success);
-    }
-
-    .alert {
-      font-size: 0.78rem;
-      margin-top: 6px;
-      color: var(--danger);
-      display: none;
-    }
-
-    a {
-      color: var(--primary-dark);
-      text-decoration: none;
-      word-break: break-all;
-    }
-
-    a:hover { text-decoration: underline; }
-
-    /* Bottom navigation */
     .bottom-nav {
       position: fixed;
       left: 0;
       right: 0;
       bottom: 0;
-      background: var(--nav-bg);
-      border-top: 1px solid rgba(148, 163, 184, 0.4);
-      box-shadow: 0 -6px 18px rgba(15, 23, 42, 0.12);
-      padding: 6px 10px;
-      z-index: 20;
+      z-index: 30;
+      padding: 0 var(--space-4) calc(var(--space-3) + env(safe-area-inset-bottom));
+      pointer-events: none;
     }
 
     .bottom-nav-inner {
-      max-width: 1100px;
+      max-width: calc(var(--content-width) - 2rem);
       margin: 0 auto;
-      display: flex;
-      justify-content: space-around;
-      gap: 6px;
+      background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(14px);
+      border-radius: var(--radius-xl);
+      padding: 0.45rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.35rem;
+      pointer-events: auto;
     }
 
-    .nav-item {
-      flex: 1;
-      text-align: center;
-      font-size: 0.72rem;
-      color: var(--text-muted);
-      padding: 4px 6px;
-      border-radius: 999px;
-      display: flex;
+    .nav-btn {
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      cursor: pointer;
+      gap: 0.3rem;
+      min-height: 60px;
+      border-radius: 0.9rem;
+      color: var(--color-text-muted);
+      padding: 0.55rem 0.35rem;
     }
 
-    .nav-item span.icon {
-      width: 18px;
-      height: 18px;
-      border-radius: 999px;
-      border: 1.5px solid var(--text-muted);
+    .nav-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .nav-btn.active {
+      background: var(--color-primary);
+      color: var(--color-text-inverse);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .section-tools {
       display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+
+    .mini-stat-grid {
+      display: grid;
+      gap: var(--space-3);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .mini-stat {
+      padding: var(--space-3);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-divider);
+    }
+
+    .mini-stat .value {
+      font-size: var(--text-base);
+      font-weight: 800;
+      margin-bottom: var(--space-1);
+    }
+
+    .mini-stat .label {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--color-divider);
+      margin: var(--space-2) 0;
+    }
+
+    .table-like {
+      display: grid;
+      gap: var(--space-2);
+    }
+
+    .table-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-2);
       align-items: center;
-      justify-content: center;
-      font-size: 0.65rem;
+      padding: var(--space-3);
+      border: 1px solid var(--color-divider);
+      border-radius: var(--radius-lg);
+      background: var(--color-surface-2);
     }
 
-    .nav-item-active {
-      color: var(--primary-dark);
-      background: var(--primary-light);
+    .table-row .left {
+      min-width: 0;
     }
 
-    .nav-item-active span.icon {
-      border-color: var(--primary-dark);
-      background: var(--primary-dark);
-      color: #ffffff;
+    .table-row .name {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      margin: 0 0 var(--space-1);
+    }
+
+    .table-row .sub {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+
+    .loading {
+      opacity: 0.65;
+      pointer-events: none;
+      filter: grayscale(0.1);
     }
 
     @media (min-width: 768px) {
-      .bottom-nav {
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 8px;
+      .app-shell {
+        padding: var(--space-6) var(--space-6) calc(var(--space-8) + 5rem);
+      }
+
+      .toolbar-grid {
+        grid-template-columns: 1.1fr 1fr;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .grid-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .split-layout {
+        grid-template-columns: minmax(320px, 0.95fr) minmax(0, 1.35fr);
+        align-items: start;
+      }
+
+      .info-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .mini-stat-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .btn {
         width: auto;
-        border-radius: 999px;
-        padding: 4px 10px;
       }
-      .bottom-nav-inner {
-        max-width: 420px;
-      }
-      .nav-item {
-        flex: none;
-        padding: 6px 10px;
+
+      .bottom-nav {
+        padding-inline: var(--space-6);
       }
     }
 
-    /* Sections pour onglets */
-    .tab-section { display: none; }
-    .tab-section-active { display: block; }
+    @media (min-width: 1024px) {
+      .app-shell {
+        padding-bottom: var(--space-8);
+      }
+
+      .bottom-nav {
+        position: sticky;
+        top: calc(100dvh - 96px);
+        bottom: auto;
+        padding: 0;
+        margin-top: -5.5rem;
+        justify-self: center;
+        width: 100%;
+      }
+
+      .bottom-nav-inner {
+        max-width: 620px;
+      }
+
+      .info-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .detail-grid {
+        grid-template-columns: 1.15fr 0.85fr;
+        align-items: start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 </head>
 <body>
-  <div class="app-shell">
-    <header>
-      <div>
-        <div class="brand-title">Annuaire YOUPI · Fiches entreprises</div>
-        <div class="brand-subtitle">
-          Démo front reliée à Make.com & Google Sheets (ou données de démo).
+  <a href="#main-content" class="sr-only">Aller au contenu</a>
+
+  <div class="app-shell" id="app-shell">
+    <header class="topbar">
+      <div class="topbar-card">
+        <div class="brand-row">
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 3.5c2.8 0 5 2.2 5 5v1.1c0 .8.3 1.5.8 2.1l1 1.1c.8.9.2 2.3-.9 2.3H6.1c-1.1 0-1.7-1.4-.9-2.3l1-1.1c.5-.6.8-1.3.8-2.1V8.5c0-2.8 2.2-5 5-5Z"></path>
+                <path d="M9.5 18a2.5 2.5 0 0 0 5 0"></path>
+              </svg>
+            </div>
+            <div class="brand-copy">
+              <div class="eyebrow">Annuaire YOUPI • Coaching</div>
+              <h1 class="app-title">Suivi professionnel des clients</h1>
+              <p class="app-subtitle">Fiche complète, historique des séances, planification et pilotage quotidien.</p>
+            </div>
+          </div>
+
+          <div class="top-actions">
+            <button class="icon-btn" id="theme-toggle" data-theme-toggle aria-label="Basculer le thème">
+              <span id="theme-toggle-icon" aria-hidden="true"></span>
+            </button>
+          </div>
         </div>
-      </div>
-      <div class="mode-switch">
-        <div class="mode-label">Source</div>
-        <div class="mode-pill" id="mode-pill">DEMO</div>
-        <button id="btn-switch-mode" type="button" class="btn-switch">
-          <span class="dot"></span>
-          <span id="switch-text">Mode API</span>
-        </button>
+
+        <div class="toolbar-grid">
+          <div class="source-panel">
+            <div class="source-head">
+              <div>
+                <div class="source-label">Source des données</div>
+                <div class="source-note" id="source-label">Source : DEMO_DATA</div>
+              </div>
+              <button class="switch" id="data-source-switch" data-mode="demo" aria-label="Basculer entre mode demo et mode api" aria-pressed="false"></button>
+            </div>
+            <div class="helper-text">
+              Mode DEMO : données locales immédiates. Mode API : lecture et envoi via webhooks Make.com.
+            </div>
+          </div>
+
+          <div class="kpi-grid" id="header-kpis">
+            <div class="kpi">
+              <div class="kpi-label">Clients actifs</div>
+              <div class="kpi-value" id="kpi-clients">0</div>
+              <div class="kpi-detail" id="kpi-clients-detail">Aucun client chargé</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-label">Séances ce mois</div>
+              <div class="kpi-value" id="kpi-sessions-month">0</div>
+              <div class="kpi-detail">Suivi mensuel</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-label">À venir</div>
+              <div class="kpi-value" id="kpi-upcoming">0</div>
+              <div class="kpi-detail">Séances planifiées</div>
+            </div>
+            <div class="kpi">
+              <div class="kpi-label">CA encaissé</div>
+              <div class="kpi-value" id="kpi-revenue">0 €</div>
+              <div class="kpi-detail">Basé sur les séances terminées</div>
+            </div>
+          </div>
+        </div>
       </div>
     </header>
 
-    <!-- Section FICHES -->
-    <div id="tab-fiches" class="tab-section tab-section-active">
-      <main>
-        <section class="card">
+    <main id="main-content">
+      <section id="tab-dashboard" class="tab-panel active" aria-labelledby="nav-dashboard">
+        <div class="card">
           <div class="card-header">
             <div>
-              <div class="card-title">Créer une fiche</div>
-              <div class="card-subtitle">
-                Le formulaire envoie les données vers Make + Google Sheets.
-              </div>
+              <h2 class="card-title">Vue d’ensemble</h2>
+              <p class="card-subtitle">Un tableau rapide pour préparer vos séances et repérer les clients à relancer.</p>
             </div>
+            <div class="status-badge status-actif" id="dashboard-sync-state">Application prête</div>
           </div>
 
-          <form id="form-fiche" action="https://hook.eu1.make.com/TON_WEBHOOK" method="POST">
-            <input type="hidden" name="app_id" value="annuaire_youpi_fiche_entreprise" />
-
-            <div class="form-row">
-              <div class="form-field">
-                <label>Nom de l'entreprise</label>
-                <input type="text" name="entreprise_nom" required />
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-field">
-                <label>Ville</label>
-                <input type="text" name="entreprise_ville" required />
-              </div>
-              <div class="form-field">
-                <label>Catégorie</label>
-                <select name="categorie" required>
-                  <option value="">-- Choisir --</option>
-                  <option value="Restauration">Restauration</option>
-                  <option value="Services">Services</option>
-                  <option value="Commerce">Commerce</option>
-                  <option value="Autre">Autre</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-field">
-                <label>Téléphone</label>
-                <input type="text" name="telephone" />
-              </div>
-              <div class="form-field">
-                <label>Email</label>
-                <input type="email" name="email" />
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="form-field">
-                <label>Site web</label>
-                <input type="url" name="site_web" />
-              </div>
-            </div>
-
-            <button type="submit" class="btn-primary">
-              <span>Enregistrer la fiche</span>
-            </button>
-
-            <div class="helper-text">
-              En mode DEMO, les fiches sont locales. En mode API, elles sont aussi envoyées vers Make + Google Sheets.
-            </div>
-            <div class="alert" id="error-message"></div>
-          </form>
-        </section>
-
-        <section class="card">
-          <div class="card-header list-header">
-            <div>
-              <div class="card-title">Liste des fiches</div>
-              <div class="card-subtitle">
-                Générée à partir de la source de données active.
-              </div>
-            </div>
-            <div class="tag">
-              <span class="tag-dot"></span>
-              <span id="tag-source">Source : DEMO_DATA</span>
-            </div>
-          </div>
-          <div id="liste-fiches"></div>
-        </section>
-      </main>
-    </div>
-
-    <!-- Section PARAMÈTRES -->
-    <div id="tab-parametres" class="tab-section">
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Paramètres (démo)</div>
-            <div class="card-subtitle">
-              Exemple de zone de configuration Annuaire YOUPI.
-            </div>
-          </div>
+          <div class="mini-stat-grid" id="dashboard-stats-grid"></div>
         </div>
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0;">
-          Cette section pourra être reliée à une autre Google Sheet (APP_CONFIG) ou à un scénario Make dédié pour gérer les paramètres d'affichage, couleurs, filtres par défaut, etc.
-        </p>
-        <div class="form-row">
-          <div class="form-field">
-            <label>Couleur principale</label>
-            <input type="text" value="#4f46e5" />
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Prochaines séances</h2>
+                <p class="card-subtitle">Les rendez-vous à gérer en priorité.</p>
+              </div>
+            </div>
+            <div id="upcoming-sessions-list" class="table-like"></div>
           </div>
-        </div>
-        <div class="form-row">
-          <div class="form-field">
-            <label>Nombre max de fiches affichées</label>
-            <input type="text" value="20" />
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Clients à suivre</h2>
+                <p class="card-subtitle">Relances recommandées selon la dernière séance.</p>
+              </div>
+            </div>
+            <div id="followup-list" class="table-like"></div>
           </div>
         </div>
       </section>
-    </div>
 
-    <!-- Section STATS -->
-    <div id="tab-stats" class="tab-section">
-      <section class="card">
-        <div class="card-header">
-          <div>
-            <div class="card-title">Statistiques (démo)</div>
-            <div class="card-subtitle">
-              Place réservée pour tes futurs dashboards YOUPI.
+      <section id="tab-clients" class="tab-panel" aria-labelledby="nav-clients">
+        <div class="split-layout">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Clients</h2>
+                <p class="card-subtitle">Sélectionnez un client pour afficher sa fiche complète et son historique.</p>
+              </div>
+              <div class="btn-row">
+                <button class="pill-btn" id="btn-go-new-client" type="button">Nouveau client</button>
+              </div>
+            </div>
+
+            <div class="search-wrap">
+              <input class="search-input" type="search" id="client-search" placeholder="Rechercher par nom, téléphone, email, objectif..." autocomplete="off" />
+              <div class="helper-text" id="client-count-label">0 client</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="list-stack" id="client-list"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Fiche client</h2>
+                <p class="card-subtitle">Quand un client arrive en séance, vous avez ici toutes les informations utiles.</p>
+              </div>
+            </div>
+
+            <div id="client-detail"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-sessions" class="tab-panel" aria-labelledby="nav-sessions">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Planifier une séance</h2>
+                <p class="card-subtitle">Créez une nouvelle séance et rattachez-la immédiatement au bon client.</p>
+              </div>
+            </div>
+
+            <div id="session-form-message" class="message-box" role="status" aria-live="polite"></div>
+
+            <form id="form-session" novalidate>
+              <div class="grid-2">
+                <div class="field">
+                  <label for="session_client_id">Client</label>
+                  <select id="session_client_id" name="client_id" required></select>
+                </div>
+
+                <div class="field">
+                  <label for="session_date">Date</label>
+                  <input id="session_date" name="session_date" type="date" required />
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="session_time">Heure</label>
+                  <input id="session_time" name="session_time" type="time" required />
+                </div>
+
+                <div class="field">
+                  <label for="session_type">Type de séance</label>
+                  <select id="session_type" name="session_type" required>
+                    <option value="coaching_individuel">Coaching individuel</option>
+                    <option value="suivi_strategique">Suivi stratégique</option>
+                    <option value="bilan">Bilan</option>
+                    <option value="appel_decouverte">Appel découverte</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="session_duration_minutes">Durée (minutes)</label>
+                  <input id="session_duration_minutes" name="session_duration_minutes" type="number" min="15" step="15" placeholder="60" required />
+                </div>
+
+                <div class="field">
+                  <label for="session_price_eur">Montant (€)</label>
+                  <input id="session_price_eur" name="session_price_eur" type="number" min="0" step="0.01" placeholder="90" required />
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="session_status">Statut</label>
+                  <select id="session_status" name="session_status" required>
+                    <option value="planifiee">Planifiée</option>
+                    <option value="terminee">Terminée</option>
+                    <option value="annulee">Annulée</option>
+                  </select>
+                </div>
+
+                <div class="field">
+                  <label for="session_location">Lieu / canal</label>
+                  <input id="session_location" name="session_location" type="text" placeholder="Visio, téléphone, présentiel..." />
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="session_objectives">Objectif de la séance</label>
+                <textarea id="session_objectives" name="session_objectives" placeholder="Objectif principal de la séance..."></textarea>
+              </div>
+
+              <div class="field">
+                <label for="session_notes">Compte-rendu / notes</label>
+                <textarea id="session_notes" name="session_notes" placeholder="Résumé, points clés, décisions, exercices, prochaines actions..."></textarea>
+              </div>
+
+              <div class="field">
+                <label for="session_next_action">Prochaine action</label>
+                <input id="session_next_action" name="session_next_action" type="text" placeholder="Exemple : envoyer feuille de route avant vendredi" />
+              </div>
+
+              <div class="btn-row">
+                <button class="btn btn-primary" type="submit">Enregistrer la séance</button>
+                <button class="btn btn-secondary" type="reset">Réinitialiser</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Historique global des séances</h2>
+                <p class="card-subtitle">Toutes les séances récentes, triées de la plus récente à la plus ancienne.</p>
+              </div>
+            </div>
+
+            <div class="search-wrap">
+              <input class="search-input" type="search" id="session-search" placeholder="Filtrer par client, type, statut ou note..." autocomplete="off" />
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="list-stack" id="session-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tab-new-client" class="tab-panel" aria-labelledby="nav-new-client">
+        <div class="grid-2">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Créer ou mettre à jour un client</h2>
+                <p class="card-subtitle">Une fiche complète pour accueillir le client en séance avec toutes les informations essentielles.</p>
+              </div>
+            </div>
+
+            <div id="client-form-message" class="message-box" role="status" aria-live="polite"></div>
+
+            <form id="form-client" novalidate>
+              <input type="hidden" name="client_id" id="client_id" />
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="client_nom">Nom du client</label>
+                  <input id="client_nom" name="client_nom" type="text" placeholder="Prénom Nom" required />
+                </div>
+
+                <div class="field">
+                  <label for="client_statut">Statut</label>
+                  <select id="client_statut" name="client_statut" required>
+                    <option value="actif">Actif</option>
+                    <option value="en_attente">En attente</option>
+                    <option value="inactif">Inactif</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="telephone">Téléphone</label>
+                  <input id="telephone" name="telephone" type="tel" placeholder="0696 00 00 00" />
+                </div>
+
+                <div class="field">
+                  <label for="email">Email</label>
+                  <input id="email" name="email" type="email" placeholder="client@email.com" />
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="ville">Ville</label>
+                  <input id="ville" name="ville" type="text" placeholder="Fort-de-France" />
+                </div>
+
+                <div class="field">
+                  <label for="source_acquisition">Source d'acquisition</label>
+                  <input id="source_acquisition" name="source_acquisition" type="text" placeholder="Instagram, recommandation, site web..." />
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="programme">Programme / offre</label>
+                  <input id="programme" name="programme" type="text" placeholder="Pack 6 séances, coaching premium..." />
+                </div>
+
+                <div class="field">
+                  <label for="niveau_priorite">Niveau de priorité</label>
+                  <select id="niveau_priorite" name="niveau_priorite">
+                    <option value="normale">Normale</option>
+                    <option value="haute">Haute</option>
+                    <option value="critique">Critique</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="objectif_principal">Objectif principal</label>
+                <textarea id="objectif_principal" name="objectif_principal" placeholder="Transformation attendue, objectif business ou personnel..."></textarea>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="freins_identifies">Freins identifiés</label>
+                  <textarea id="freins_identifies" name="freins_identifies" placeholder="Blocages, difficultés, objections, contraintes..."></textarea>
+                </div>
+
+                <div class="field">
+                  <label for="notes_generales">Notes générales</label>
+                  <textarea id="notes_generales" name="notes_generales" placeholder="Contexte, personnalité, besoins, éléments sensibles..."></textarea>
+                </div>
+              </div>
+
+              <div class="grid-2">
+                <div class="field">
+                  <label for="prochaine_relance">Prochaine relance</label>
+                  <input id="prochaine_relance" name="prochaine_relance" type="date" />
+                </div>
+
+                <div class="field">
+                  <label for="date_premier_contact">Date du premier contact</label>
+                  <input id="date_premier_contact" name="date_premier_contact" type="date" />
+                </div>
+              </div>
+
+              <div class="btn-row">
+                <button class="btn btn-primary" type="submit">Enregistrer la fiche client</button>
+                <button class="btn btn-secondary" id="btn-reset-client" type="reset">Vider le formulaire</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <h2 class="card-title">Bonnes pratiques d’usage</h2>
+                <p class="card-subtitle">Une fiche claire vous permet de démarrer chaque séance avec un contexte complet.</p>
+              </div>
+            </div>
+
+            <div class="list-stack">
+              <div class="info-box">
+                <div class="info-label">Avant la séance</div>
+                <div class="info-value">Ouvrez la fiche client, vérifiez l’objectif principal, relisez les notes de la dernière séance et la prochaine action prévue.</div>
+              </div>
+
+              <div class="info-box">
+                <div class="info-label">Pendant la séance</div>
+                <div class="info-value">Ajoutez le compte-rendu, les décisions prises, les blocages apparus et la prochaine action à engager par le client ou par vous.</div>
+              </div>
+
+              <div class="info-box">
+                <div class="info-label">Après la séance</div>
+                <div class="info-value">Passez le statut à terminé, planifiez le prochain rendez-vous et gardez un historique chronologique pour suivre l’évolution du client.</div>
+              </div>
+
+              <div class="info-box">
+                <div class="info-label">Connexion Make</div>
+                <div class="info-value">Remplacez simplement les URLs de webhook dans CONFIG pour lire les données et envoyer vos formulaires vers Make.com et Google Sheets.</div>
+              </div>
             </div>
           </div>
         </div>
-        <p style="font-size:0.85rem; color:var(--text-muted); margin-top:0;">
-          Tu pourras afficher ici des statistiques calculées par Make à partir des données de Google Sheets (nombre de fiches par catégorie, par ville, évolution mensuelle, etc.).
-        </p>
-        <div class="empty-state">
-          Exemple : 124 fiches actives · 38 en Martinique · 55 dans la catégorie Services.
-        </div>
       </section>
-    </div>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Navigation principale">
+      <div class="bottom-nav-inner">
+        <button class="nav-btn active" id="nav-dashboard" data-tab="dashboard" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 13h8V3H3v10Z"></path>
+            <path d="M13 21h8v-6h-8v6Z"></path>
+            <path d="M13 3h8v8h-8V3Z"></path>
+            <path d="M3 21h8v-6H3v6Z"></path>
+          </svg>
+          <span class="nav-label">Accueil</span>
+        </button>
+
+        <button class="nav-btn" id="nav-clients" data-tab="clients" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+          <span class="nav-label">Clients</span>
+        </button>
+
+        <button class="nav-btn" id="nav-sessions" data-tab="sessions" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M8 2v4"></path>
+            <path d="M16 2v4"></path>
+            <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+            <path d="M3 10h18"></path>
+            <path d="M8 14h.01"></path>
+            <path d="M12 14h.01"></path>
+            <path d="M16 14h.01"></path>
+            <path d="M8 18h.01"></path>
+            <path d="M12 18h.01"></path>
+          </svg>
+          <span class="nav-label">Séances</span>
+        </button>
+
+        <button class="nav-btn" id="nav-new-client" data-tab="new-client" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 5v14"></path>
+            <path d="M5 12h14"></path>
+          </svg>
+          <span class="nav-label">Nouveau</span>
+        </button>
+      </div>
+    </nav>
   </div>
-
-  <!-- Bottom nav -->
-  <nav class="bottom-nav">
-    <div class="bottom-nav-inner">
-      <div class="nav-item nav-item-active" data-tab="fiches">
-        <span class="icon">F</span>
-        <span>Fiches</span>
-      </div>
-      <div class="nav-item" data-tab="parametres">
-        <span class="icon">P</span>
-        <span>Paramètres</span>
-      </div>
-      <div class="nav-item" data-tab="stats">
-        <span class="icon">S</span>
-        <span>Stats</span>
-      </div>
-    </div>
-  </nav>
 
   <script>
     const CONFIG = {
-      DATA_SOURCE: "demo", // "demo" ou "api"
-      API_URL: "https://hook.eu1.make.com/o9aps52picsz9wu6ojehwt5i32nekj9e",
-      FORM_WEBHOOK_URL: "https://hook.eu1.make.com/urmc5gjdxmkjndo9m6aew4uaxan2lhl0",
-      APP_ID: "annuaire_youpi_fiche_entreprise"
+      DATA_SOURCE: "demo",
+      API_URLS: {
+        clients: "https://hook.eu1.make.com/WEBHOOK_LISTING_CLIENTS",
+        sessions: "https://hook.eu1.make.com/WEBHOOK_LISTING_SESSIONS"
+      },
+      FORM_URLS: {
+        clients: "https://hook.eu1.make.com/WEBHOOK_FORM_CLIENTS",
+        sessions: "https://hook.eu1.make.com/WEBHOOK_FORM_SESSIONS"
+      },
+      APP_IDS: {
+        clients: "annuaire_youpi_coaching_clients",
+        sessions: "annuaire_youpi_coaching_sessions"
+      }
     };
 
-    let DEMO_DATA = [
-      {
-        app_id: "annuaire_youpi_fiche_entreprise",
-        entreprise_nom: "Restaurant Ti-Punch",
-        entreprise_ville: "Fort-de-France",
-        categorie: "Restauration",
-        telephone: "0596 00 00 00",
-        email: "contact@tipunch.mq",
-        site_web: "https://tipunch.mq",
-        date_creation: "2026-05-01"
-      },
-      {
-        app_id: "annuaire_youpi_fiche_entreprise",
-        entreprise_nom: "Garage Auto Plus",
-        entreprise_ville: "Le Lamentin",
-        categorie: "Services",
-        telephone: "0596 11 22 33",
-        email: "garage@autoplus.mq",
-        site_web: "",
-        date_creation: "2026-05-03"
-      }
-    ];
+    const DEMO_DATA = {
+      clients: [
+        {
+          app_id: "annuaire_youpi_coaching_clients",
+          client_id: "CL-1001",
+          client_nom: "Sarah Matis",
+          client_statut: "actif",
+          telephone: "0696 10 20 30",
+          email: "sarah.matis@example.com",
+          ville: "Fort-de-France",
+          source_acquisition: "Instagram",
+          programme: "Coaching visibilité premium",
+          niveau_priorite: "haute",
+          objectif_principal: "Structurer son offre et signer ses premiers clients haut de gamme.",
+          freins_identifies: "Manque de clarté sur le positionnement, difficulté à vendre en direct.",
+          notes_generales: "Très engagée, exécute rapidement. Préfère les échanges cadrés et les plans d'action concrets.",
+          prochaine_relance: "2026-05-08",
+          date_premier_contact: "2026-03-12",
+          date_creation: "2026-03-12"
+        },
+        {
+          app_id: "annuaire_youpi_coaching_clients",
+          client_id: "CL-1002",
+          client_nom: "Kévin Rosette",
+          client_statut: "en_attente",
+          telephone: "0696 11 22 33",
+          email: "kevin.rosette@example.com",
+          ville: "Le Lamentin",
+          source_acquisition: "Recommandation",
+          programme: "Pack 6 séances business",
+          niveau_priorite: "normale",
+          objectif_principal: "Automatiser son suivi prospects et clarifier son tunnel de conversion.",
+          freins_identifies: "Dispersion, peu de suivi après les appels découverte.",
+          notes_generales: "A besoin de méthodes simples. Bon potentiel, mais application irrégulière.",
+          prochaine_relance: "2026-05-10",
+          date_premier_contact: "2026-04-02",
+          date_creation: "2026-04-02"
+        },
+        {
+          app_id: "annuaire_youpi_coaching_clients",
+          client_id: "CL-1003",
+          client_nom: "Anaïs Duval",
+          client_statut: "actif",
+          telephone: "0696 44 55 66",
+          email: "anais.duval@example.com",
+          ville: "Schoelcher",
+          source_acquisition: "Site web",
+          programme: "Suivi stratégique mensuel",
+          niveau_priorite: "critique",
+          objectif_principal: "Reprendre le pilotage commercial après une baisse d'activité.",
+          freins_identifies: "Stress, manque de visibilité sur les indicateurs, difficulté à prioriser.",
+          notes_generales: "Besoin de réassurance et de pilotage précis. Très réceptive aux tableaux de bord.",
+          prochaine_relance: "2026-05-07",
+          date_premier_contact: "2026-02-18",
+          date_creation: "2026-02-18"
+        }
+      ],
+      sessions: [
+        {
+          app_id: "annuaire_youpi_coaching_sessions",
+          session_id: "SE-5001",
+          client_id: "CL-1001",
+          session_date: "2026-05-07",
+          session_time: "09:00",
+          session_type: "coaching_individuel",
+          session_duration_minutes: "60",
+          session_price_eur: "120",
+          session_status: "planifiee",
+          session_location: "Visio Zoom",
+          session_objectives: "Clarifier le message de vente de l'offre principale.",
+          session_notes: "Préparer 3 propositions de promesse avant la séance.",
+          session_next_action: "Envoyer ses 3 promesses de vente la veille.",
+          date_creation: "2026-05-05"
+        },
+        {
+          app_id: "annuaire_youpi_coaching_sessions",
+          session_id: "SE-5002",
+          client_id: "CL-1001",
+          session_date: "2026-04-28",
+          session_time: "09:30",
+          session_type: "coaching_individuel",
+          session_duration_minutes: "75",
+          session_price_eur: "120",
+          session_status: "terminee",
+          session_location: "Visio Zoom",
+          session_objectives: "Positionnement et offre.",
+          session_notes: "Le client a validé une niche claire. Travail sur l'offre signature lancé.",
+          session_next_action: "Rédiger page d'offre courte.",
+          date_creation: "2026-04-28"
+        },
+        {
+          app_id: "annuaire_youpi_coaching_sessions",
+          session_id: "SE-5003",
+          client_id: "CL-1002",
+          session_date: "2026-05-10",
+          session_time: "14:00",
+          session_type: "suivi_strategique",
+          session_duration_minutes: "60",
+          session_price_eur: "90",
+          session_status: "planifiee",
+          session_location: "Téléphone",
+          session_objectives: "Mettre en place un pipeline de suivi prospects.",
+          session_notes: "Session à préparer avec capture d'écran du process actuel.",
+          session_next_action: "Partager son process actuel avant la séance.",
+          date_creation: "2026-05-04"
+        },
+        {
+          app_id: "annuaire_youpi_coaching_sessions",
+          session_id: "SE-5004",
+          client_id: "CL-1003",
+          session_date: "2026-05-06",
+          session_time: "16:30",
+          session_type: "bilan",
+          session_duration_minutes: "90",
+          session_price_eur: "150",
+          session_status: "planifiee",
+          session_location: "Présentiel",
+          session_objectives: "Faire un point complet sur les indicateurs et relancer la dynamique commerciale.",
+          session_notes: "Prévoir tableau de bord et 3 priorités opérationnelles.",
+          session_next_action: "Envoyer tableau de bord consolidé.",
+          date_creation: "2026-05-01"
+        },
+        {
+          app_id: "annuaire_youpi_coaching_sessions",
+          session_id: "SE-5005",
+          client_id: "CL-1003",
+          session_date: "2026-04-21",
+          session_time: "16:00",
+          session_type: "suivi_strategique",
+          session_duration_minutes: "60",
+          session_price_eur: "150",
+          session_status: "terminee",
+          session_location: "Visio Meet",
+          session_objectives: "Priorisation commerciale.",
+          session_notes: "Mise en place d'un tableau hebdomadaire et d'un point de suivi chaque lundi.",
+          session_next_action: "Mesurer 3 KPI chaque semaine.",
+          date_creation: "2026-04-21"
+        }
+      ]
+    };
 
-    async function loadData() {
+    const state = {
+      clients: [],
+      sessions: [],
+      activeTab: "dashboard",
+      selectedClientId: null,
+      clientSearch: "",
+      sessionSearch: ""
+    };
+
+    const els = {
+      appShell: document.getElementById("app-shell"),
+      sourceSwitch: document.getElementById("data-source-switch"),
+      sourceLabel: document.getElementById("source-label"),
+      navButtons: [...document.querySelectorAll(".nav-btn")],
+      panels: [...document.querySelectorAll(".tab-panel")],
+      clientList: document.getElementById("client-list"),
+      clientDetail: document.getElementById("client-detail"),
+      clientSearch: document.getElementById("client-search"),
+      sessionSearch: document.getElementById("session-search"),
+      sessionList: document.getElementById("session-list"),
+      dashboardStatsGrid: document.getElementById("dashboard-stats-grid"),
+      upcomingSessionsList: document.getElementById("upcoming-sessions-list"),
+      followupList: document.getElementById("followup-list"),
+      clientCountLabel: document.getElementById("client-count-label"),
+      kpiClients: document.getElementById("kpi-clients"),
+      kpiClientsDetail: document.getElementById("kpi-clients-detail"),
+      kpiSessionsMonth: document.getElementById("kpi-sessions-month"),
+      kpiUpcoming: document.getElementById("kpi-upcoming"),
+      kpiRevenue: document.getElementById("kpi-revenue"),
+      dashboardSyncState: document.getElementById("dashboard-sync-state"),
+      formClient: document.getElementById("form-client"),
+      formSession: document.getElementById("form-session"),
+      clientFormMessage: document.getElementById("client-form-message"),
+      sessionFormMessage: document.getElementById("session-form-message"),
+      sessionClientSelect: document.getElementById("session_client_id"),
+      btnGoNewClient: document.getElementById("btn-go-new-client"),
+      btnResetClient: document.getElementById("btn-reset-client"),
+      themeToggle: document.getElementById("theme-toggle"),
+      themeToggleIcon: document.getElementById("theme-toggle-icon")
+    };
+
+    function uuid(prefix = "ID") {
+      return `${prefix}-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    }
+
+    function todayISO() {
+      return new Date().toISOString().slice(0, 10);
+    }
+
+    function nowDateTimeValue(offsetDays = 0) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      return d;
+    }
+
+    function formatDate(value) {
+      if (!value) return "—";
+      const d = new Date(value + "T00:00:00");
+      if (Number.isNaN(d.getTime())) return value;
+      return new Intl.DateTimeFormat("fr-FR", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      }).format(d);
+    }
+
+    function formatDateTime(dateStr, timeStr) {
+      if (!dateStr) return "—";
+      const datePart = formatDate(dateStr);
+      return timeStr ? `${datePart} à ${timeStr}` : datePart;
+    }
+
+    function formatCurrency(value) {
+      const num = Number(value || 0);
+      return new Intl.NumberFormat("fr-FR", {
+        style: "currency",
+        currency: "EUR",
+        maximumFractionDigits: 0
+      }).format(num);
+    }
+
+    function formatSessionType(value) {
+      const map = {
+        coaching_individuel: "Coaching individuel",
+        suivi_strategique: "Suivi stratégique",
+        bilan: "Bilan",
+        appel_decouverte: "Appel découverte"
+      };
+      return map[value] || value || "Séance";
+    }
+
+    function statusClass(value) {
+      return `status-${String(value || "").toLowerCase().replace(/\s+/g, "_")}`;
+    }
+
+    function escapeHtml(str = "") {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function sortSessionsDesc(sessions) {
+      return [...sessions].sort((a, b) => {
+        const aKey = `${a.session_date || ""} ${a.session_time || ""}`;
+        const bKey = `${b.session_date || ""} ${b.session_time || ""}`;
+        return bKey.localeCompare(aKey);
+      });
+    }
+
+    function sortSessionsAsc(sessions) {
+      return [...sessions].sort((a, b) => {
+        const aKey = `${a.session_date || ""} ${a.session_time || ""}`;
+        const bKey = `${b.session_date || ""} ${b.session_time || ""}`;
+        return aKey.localeCompare(bKey);
+      });
+    }
+
+    function getClientById(clientId) {
+      return state.clients.find(client => client.client_id === clientId) || null;
+    }
+
+    function getSessionsByClient(clientId) {
+      return sortSessionsDesc(state.sessions.filter(session => session.client_id === clientId));
+    }
+
+    function getLastCompletedSession(clientId) {
+      return sortSessionsDesc(
+        state.sessions.filter(session => session.client_id === clientId && session.session_status === "terminee")
+      )[0] || null;
+    }
+
+    function getUpcomingSessions() {
+      const now = new Date();
+      const nowKey = `${todayISO()} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+      return sortSessionsAsc(
+        state.sessions.filter(session => session.session_status === "planifiee")
+      ).filter(session => `${session.session_date || ""} ${session.session_time || "00:00"}` >= nowKey);
+    }
+
+    function setLoading(isLoading) {
+      els.appShell.classList.toggle("loading", isLoading);
+      els.dashboardSyncState.textContent = isLoading ? "Chargement..." : (CONFIG.DATA_SOURCE === "demo" ? "Mode DEMO actif" : "Mode API actif");
+      els.dashboardSyncState.className = `status-badge ${isLoading ? "status-planifiee" : "status-actif"}`;
+    }
+
+    async function postJson(url, payload) {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+      return response;
+    }
+
+    async function loadClients() {
       if (CONFIG.DATA_SOURCE === "demo") {
-        return DEMO_DATA;
-      } else {
-        try {
-          const response = await fetch(CONFIG.API_URL, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ app_id: CONFIG.APP_ID })
-          });
-          if (!response.ok) {
-            console.error("Erreur API listing", await response.text());
-            showError("Impossible de charger les données API.");
-            return [];
-          }
-          const data = await response.json();
-          return Array.isArray(data) ? data : [];
-        } catch (e) {
-          console.error("Erreur réseau API listing", e);
-          showError("Erreur réseau lors de l'appel API.");
+        return DEMO_DATA.clients.map(item => ({ ...item }));
+      }
+
+      try {
+        const response = await fetch(CONFIG.API_URLS.clients, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ app_id: CONFIG.APP_IDS.clients })
+        });
+
+        if (!response.ok) {
+          console.error("Erreur API clients", await response.text());
           return [];
         }
+
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error("Erreur réseau clients", error);
+        return [];
       }
     }
 
-    function renderFiches(fiches) {
-      const container = document.getElementById("liste-fiches");
-      container.innerHTML = "";
-      if (!fiches || fiches.length === 0) {
-        const empty = document.createElement("div");
-        empty.className = "empty-state";
-        empty.textContent =
-          "Aucune fiche pour le moment. Crée une fiche pour voir le résultat ici.";
-        container.appendChild(empty);
-        return;
+    async function loadSessions() {
+      if (CONFIG.DATA_SOURCE === "demo") {
+        return DEMO_DATA.sessions.map(item => ({ ...item }));
       }
-      fiches.forEach((fiche) => {
-        const div = document.createElement("div");
-        div.className = "fiche";
-        div.innerHTML = `
-          <div class="fiche-left">
-            <div class="fiche-title">
-              ${fiche.entreprise_nom || ""}
-              ${
-                fiche.categorie
-                  ? `<span class="badge-cat">${fiche.categorie}</span>`
-                  : ""
-              }
-            </div>
-            <div class="fiche-meta">
-              ${fiche.entreprise_ville || ""}${
-          fiche.categorie ? " · " + fiche.categorie : ""
+
+      try {
+        const response = await fetch(CONFIG.API_URLS.sessions, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ app_id: CONFIG.APP_IDS.sessions })
+        });
+
+        if (!response.ok) {
+          console.error("Erreur API sessions", await response.text());
+          return [];
         }
-            </div>
-            <div class="fiche-contact">
-              <div>Tél : ${fiche.telephone || "n/c"}</div>
-              <div>Email : ${fiche.email || "n/c"}</div>
-              <div>Site : ${
-                fiche.site_web
-                  ? `<a href="${fiche.site_web}" target="_blank">${fiche.site_web}</a>`
-                  : "n/c"
-              }</div>
-            </div>
-          </div>
-          <div class="fiche-right">
-            <div class="status">
-              <span class="status-dot"></span>
-              <span>Active</span>
-            </div>
-            <div style="margin-top: 4px;">
-              <div style="font-size:0.72rem; color:#9ca3af;">Créée le</div>
-              <div>${fiche.date_creation || ""}</div>
-            </div>
+
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error("Erreur réseau sessions", error);
+        return [];
+      }
+    }
+
+    async function loadStats() {
+      const clients = await loadClients();
+      const sessions = await loadSessions();
+      return { clients, sessions };
+    }
+
+    function getComputedStats() {
+      const clients = state.clients;
+      const sessions = state.sessions;
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+
+      const activeClients = clients.filter(client => client.client_statut === "actif").length;
+      const sessionsThisMonth = sessions.filter(session => {
+        if (!session.session_date) return false;
+        const d = new Date(session.session_date + "T00:00:00");
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      }).length;
+
+      const upcoming = getUpcomingSessions().length;
+      const revenue = sessions
+        .filter(session => session.session_status === "terminee")
+        .reduce((sum, session) => sum + Number(session.session_price_eur || 0), 0);
+
+      const completed = sessions.filter(session => session.session_status === "terminee").length;
+      const cancelled = sessions.filter(session => session.session_status === "annulee").length;
+      const waitingClients = clients.filter(client => client.client_statut === "en_attente").length;
+      const averageBasket = completed ? revenue / completed : 0;
+
+      return {
+        activeClients,
+        sessionsThisMonth,
+        upcoming,
+        revenue,
+        completed,
+        cancelled,
+        waitingClients,
+        averageBasket
+      };
+    }
+
+    function updateSourceUI() {
+      const isDemo = CONFIG.DATA_SOURCE === "demo";
+      els.sourceSwitch.dataset.mode = isDemo ? "demo" : "api";
+      els.sourceSwitch.setAttribute("aria-pressed", String(!isDemo));
+      els.sourceLabel.textContent = isDemo ? "Source : DEMO_DATA" : "Source : API (Make + Sheets)";
+      els.dashboardSyncState.textContent = isDemo ? "Mode DEMO actif" : "Mode API actif";
+      els.dashboardSyncState.className = "status-badge status-actif";
+    }
+
+    function setActiveTab(name) {
+      state.activeTab = name;
+      els.panels.forEach(panel => {
+        panel.classList.toggle("active", panel.id === `tab-${name}`);
+      });
+      els.navButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === name);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function fillSessionClientSelect() {
+      const options = state.clients
+        .map(client => `<option value="${escapeHtml(client.client_id)}">${escapeHtml(client.client_nom)}</option>`)
+        .join("");
+
+      els.sessionClientSelect.innerHTML = options || `<option value="">Aucun client disponible</option>`;
+    }
+
+    function renderHeaderStats() {
+      const stats = getComputedStats();
+      els.kpiClients.textContent = stats.activeClients;
+      els.kpiClientsDetail.textContent = `${state.clients.length} client(s) au total`;
+      els.kpiSessionsMonth.textContent = stats.sessionsThisMonth;
+      els.kpiUpcoming.textContent = stats.upcoming;
+      els.kpiRevenue.textContent = formatCurrency(stats.revenue);
+
+      const cards = [
+        {
+          label: "Séances terminées",
+          value: stats.completed,
+          tone: "var(--color-success)"
+        },
+        {
+          label: "Séances annulées",
+          value: stats.cancelled,
+          tone: "var(--color-error)"
+        },
+        {
+          label: "Clients en attente",
+          value: stats.waitingClients,
+          tone: "var(--color-warning)"
+        },
+        {
+          label: "Panier moyen",
+          value: formatCurrency(stats.averageBasket),
+          tone: "var(--color-blue)"
+        }
+      ];
+
+      els.dashboardStatsGrid.innerHTML = cards.map(card => `
+        <div class="mini-stat">
+          <div class="value" style="color:${card.tone}">${escapeHtml(String(card.value))}</div>
+          <div class="label">${escapeHtml(card.label)}</div>
+        </div>
+      `).join("");
+    }
+
+    function renderUpcomingSessions() {
+      const sessions = getUpcomingSessions().slice(0, 6);
+
+      if (!sessions.length) {
+        els.upcomingSessionsList.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+              <path d="M16 2v4M8 2v4M3 10h18"></path>
+            </svg>
+            <strong>Aucune séance planifiée</strong>
+            <div>Ajoutez une séance pour voir les prochains rendez-vous ici.</div>
           </div>
         `;
-        container.appendChild(div);
+        return;
+      }
+
+      els.upcomingSessionsList.innerHTML = sessions.map(session => {
+        const client = getClientById(session.client_id);
+        return `
+          <div class="table-row">
+            <div class="left">
+              <p class="name">${escapeHtml(client?.client_nom || "Client inconnu")}</p>
+              <div class="sub">${escapeHtml(formatSessionType(session.session_type))} • ${escapeHtml(formatDateTime(session.session_date, session.session_time))}</div>
+            </div>
+            <button class="pill-btn btn-inline" type="button" data-open-client="${escapeHtml(session.client_id)}">Ouvrir</button>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderFollowupList() {
+      const items = state.clients
+        .map(client => {
+          const lastSession = getLastCompletedSession(client.client_id);
+          const nextFollowup = client.prochaine_relance || "";
+          return { client, lastSession, nextFollowup };
+        })
+        .sort((a, b) => (a.nextFollowup || "9999-12-31").localeCompare(b.nextFollowup || "9999-12-31"))
+        .slice(0, 6);
+
+      if (!items.length) {
+        els.followupList.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 4h16v16H4z"></path>
+              <path d="M8 12h8M8 8h8M8 16h5"></path>
+            </svg>
+            <strong>Aucun client à suivre</strong>
+            <div>Les relances prévues apparaîtront dans cette zone.</div>
+          </div>
+        `;
+        return;
+      }
+
+      els.followupList.innerHTML = items.map(({ client, lastSession, nextFollowup }) => `
+        <div class="table-row">
+          <div class="left">
+            <p class="name">${escapeHtml(client.client_nom)}</p>
+            <div class="sub">
+              Relance : ${escapeHtml(nextFollowup ? formatDate(nextFollowup) : "non définie")}
+              ${lastSession ? ` • Dernière séance : ${escapeHtml(formatDate(lastSession.session_date))}` : ""}
+            </div>
+          </div>
+          <button class="pill-btn btn-inline" type="button" data-open-client="${escapeHtml(client.client_id)}">Voir fiche</button>
+        </div>
+      `).join("");
+    }
+
+    function getFilteredClients() {
+      const query = state.clientSearch.trim().toLowerCase();
+      const list = [...state.clients].sort((a, b) => (a.client_nom || "").localeCompare(b.client_nom || ""));
+      if (!query) return list;
+
+      return list.filter(client => {
+        const text = [
+          client.client_nom,
+          client.telephone,
+          client.email,
+          client.objectif_principal,
+          client.programme,
+          client.ville,
+          client.notes_generales
+        ].join(" ").toLowerCase();
+        return text.includes(query);
       });
     }
 
-    function showError(msg) {
-      const el = document.getElementById("error-message");
-      el.textContent = msg;
-      el.style.display = "block";
+    function renderClientList() {
+      const clients = getFilteredClients();
+      els.clientCountLabel.textContent = `${clients.length} client(s) affiché(s)`;
+
+      if (!clients.length) {
+        els.clientList.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m21 21-4.3-4.3"></path>
+            </svg>
+            <strong>Aucun client trouvé</strong>
+            <div>Essayez un autre mot-clé ou créez une nouvelle fiche client.</div>
+          </div>
+        `;
+        return;
+      }
+
+      els.clientList.innerHTML = clients.map(client => {
+        const sessions = getSessionsByClient(client.client_id);
+        const lastSession = sessions[0];
+        const active = client.client_id === state.selectedClientId;
+        return `
+          <button class="client-item ${active ? "active" : ""}" type="button" data-client-select="${escapeHtml(client.client_id)}">
+            <div class="client-item-head">
+              <div>
+                <h3 class="client-name">${escapeHtml(client.client_nom || "Client sans nom")}</h3>
+                <div class="meta-row">
+                  <span class="meta-pill">${escapeHtml(client.ville || "Ville non renseignée")}</span>
+                  <span class="meta-pill">${escapeHtml(client.programme || "Programme non renseigné")}</span>
+                </div>
+              </div>
+              <span class="status-badge ${statusClass(client.client_statut)}">${escapeHtml(client.client_statut || "statut")}</span>
+            </div>
+
+            <div class="meta-row">
+              <span>${escapeHtml(client.telephone || "Téléphone absent")}</span>
+              <span>${escapeHtml(client.email || "Email absent")}</span>
+            </div>
+
+            <div class="meta-row">
+              <span>${sessions.length} séance(s)</span>
+              <span>${lastSession ? `Dernière : ${escapeHtml(formatDate(lastSession.session_date))}` : "Aucune séance"}</span>
+            </div>
+          </button>
+        `;
+      }).join("");
     }
 
-    function clearError() {
-      const el = document.getElementById("error-message");
+    function renderClientDetail() {
+      const client = getClientById(state.selectedClientId);
+
+      if (!client) {
+        els.clientDetail.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Z"></path>
+              <path d="M3 21a9 9 0 0 1 18 0"></path>
+            </svg>
+            <strong>Sélectionnez un client</strong>
+            <div>Sa fiche détaillée et l’historique des séances s’afficheront ici.</div>
+          </div>
+        `;
+        return;
+      }
+
+      const sessions = getSessionsByClient(client.client_id);
+      const upcoming = sessions.filter(s => s.session_status === "planifiee")[0] || null;
+      const lastCompleted = sortSessionsDesc(sessions.filter(s => s.session_status === "terminee"))[0] || null;
+
+      els.clientDetail.innerHTML = `
+        <div class="detail-header">
+          <div class="detail-banner">
+            <div class="detail-main">
+              <div>
+                <h3 class="detail-name">${escapeHtml(client.client_nom)}</h3>
+                <div class="meta-row">
+                  <span class="meta-pill">${escapeHtml(client.ville || "Ville non renseignée")}</span>
+                  <span class="meta-pill">${escapeHtml(client.programme || "Programme non renseigné")}</span>
+                  <span class="meta-pill">Priorité : ${escapeHtml(client.niveau_priorite || "normale")}</span>
+                </div>
+              </div>
+              <span class="status-badge ${statusClass(client.client_statut)}">${escapeHtml(client.client_statut)}</span>
+            </div>
+
+            <div class="quick-actions">
+              <button class="pill-btn btn-inline" type="button" data-edit-client="${escapeHtml(client.client_id)}">Modifier la fiche</button>
+              <button class="pill-btn btn-inline" type="button" data-plan-session="${escapeHtml(client.client_id)}">Programmer une séance</button>
+            </div>
+          </div>
+
+          <div class="detail-grid">
+            <div class="info-grid">
+              <div class="info-box">
+                <div class="info-label">Téléphone</div>
+                <div class="info-value">${escapeHtml(client.telephone || "Non renseigné")}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-label">Email</div>
+                <div class="info-value">${escapeHtml(client.email || "Non renseigné")}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-label">Source d'acquisition</div>
+                <div class="info-value">${escapeHtml(client.source_acquisition || "Non renseignée")}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-label">Objectif principal</div>
+                <div class="info-value">${escapeHtml(client.objectif_principal || "Non renseigné")}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-label">Freins identifiés</div>
+                <div class="info-value">${escapeHtml(client.freins_identifies || "Non renseignés")}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-label">Notes générales</div>
+                <div class="info-value">${escapeHtml(client.notes_generales || "Aucune note")}</div>
+              </div>
+            </div>
+
+            <div class="list-stack">
+              <div class="info-box">
+                <div class="info-label">Prochaine relance</div>
+                <div class="info-value">${escapeHtml(client.prochaine_relance ? formatDate(client.prochaine_relance) : "Non planifiée")}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-label">Dernière séance terminée</div>
+                <div class="info-value">${escapeHtml(lastCompleted ? formatDateTime(lastCompleted.session_date, lastCompleted.session_time) : "Aucune séance terminée")}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-label">Prochaine séance</div>
+                <div class="info-value">${escapeHtml(upcoming ? formatDateTime(upcoming.session_date, upcoming.session_time) : "Aucune séance planifiée")}</div>
+              </div>
+              <div class="info-box">
+                <div class="info-label">Création de la fiche</div>
+                <div class="info-value">${escapeHtml(client.date_creation ? formatDate(client.date_creation) : "Non renseignée")}</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card" style="padding:0;border:none;box-shadow:none;background:transparent;">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title">Historique des séances</h3>
+                <p class="card-subtitle">${sessions.length} séance(s) enregistrée(s) pour ce client.</p>
+              </div>
+            </div>
+
+            ${
+              sessions.length
+              ? `<div class="timeline">
+                  ${sessions.map(session => `
+                    <article class="timeline-item">
+                      <div class="timeline-top">
+                        <div>
+                          <h4 class="timeline-title">${escapeHtml(formatSessionType(session.session_type))}</h4>
+                          <div class="meta-row">
+                            <span>${escapeHtml(formatDateTime(session.session_date, session.session_time))}</span>
+                            <span>${escapeHtml(session.session_duration_minutes || "0")} min</span>
+                            <span>${escapeHtml(formatCurrency(session.session_price_eur || 0))}</span>
+                          </div>
+                        </div>
+                        <span class="status-badge ${statusClass(session.session_status)}">${escapeHtml(session.session_status || "statut")}</span>
+                      </div>
+                      <p class="timeline-text"><strong>Objectif :</strong> ${escapeHtml(session.session_objectives || "Non renseigné")}</p>
+                      <p class="timeline-text"><strong>Notes :</strong> ${escapeHtml(session.session_notes || "Aucune note")}</p>
+                      <p class="timeline-text"><strong>Prochaine action :</strong> ${escapeHtml(session.session_next_action || "Non définie")}</p>
+                      <p class="timeline-text"><strong>Lieu :</strong> ${escapeHtml(session.session_location || "Non renseigné")}</p>
+                    </article>
+                  `).join("")}
+                </div>`
+              : `<div class="empty-state">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M8 2v4M16 2v4"></path>
+                    <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+                    <path d="M3 10h18"></path>
+                  </svg>
+                  <strong>Aucune séance enregistrée</strong>
+                  <div>Planifiez une première séance pour démarrer l’historique de ce client.</div>
+                </div>`
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function getFilteredSessions() {
+      const query = state.sessionSearch.trim().toLowerCase();
+      const sessions = sortSessionsDesc(state.sessions);
+
+      if (!query) return sessions;
+
+      return sessions.filter(session => {
+        const client = getClientById(session.client_id);
+        const text = [
+          client?.client_nom || "",
+          session.session_type,
+          session.session_status,
+          session.session_notes,
+          session.session_objectives,
+          session.session_next_action,
+          session.session_location
+        ].join(" ").toLowerCase();
+
+        return text.includes(query);
+      });
+    }
+
+    function renderSessionList() {
+      const sessions = getFilteredSessions();
+
+      if (!sessions.length) {
+        els.sessionList.innerHTML = `
+          <div class="empty-state">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15V6a2 2 0 0 0-2-2h-4l-2-2H5a2 2 0 0 0-2 2v15a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-1"></path>
+            </svg>
+            <strong>Aucune séance trouvée</strong>
+            <div>Ajoutez une séance ou modifiez votre filtre.</div>
+          </div>
+        `;
+        return;
+      }
+
+      els.sessionList.innerHTML = sessions.map(session => {
+        const client = getClientById(session.client_id);
+        return `
+          <article class="session-item">
+            <div class="session-item-head">
+              <div>
+                <h3 class="session-title">${escapeHtml(client?.client_nom || "Client inconnu")}</h3>
+                <div class="meta-row">
+                  <span class="meta-pill">${escapeHtml(formatSessionType(session.session_type))}</span>
+                  <span class="meta-pill">${escapeHtml(formatDateTime(session.session_date, session.session_time))}</span>
+                  <span class="meta-pill">${escapeHtml(session.session_duration_minutes || "0")} min</span>
+                  <span class="meta-pill">${escapeHtml(formatCurrency(session.session_price_eur || 0))}</span>
+                </div>
+              </div>
+              <span class="status-badge ${statusClass(session.session_status)}">${escapeHtml(session.session_status)}</span>
+            </div>
+
+            <div class="helper-text"><strong>Objectif :</strong> ${escapeHtml(session.session_objectives || "Non renseigné")}</div>
+            <div class="helper-text"><strong>Notes :</strong> ${escapeHtml(session.session_notes || "Aucune note")}</div>
+
+            <div class="quick-actions">
+              <button class="pill-btn btn-inline" type="button" data-open-client="${escapeHtml(session.client_id)}">Voir la fiche client</button>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderDashboard() {
+      renderHeaderStats();
+      renderUpcomingSessions();
+      renderFollowupList();
+    }
+
+    function renderAll() {
+      fillSessionClientSelect();
+      renderDashboard();
+      renderClientList();
+      renderClientDetail();
+      renderSessionList();
+    }
+
+    function showMessage(el, type, text) {
+      el.className = `message-box show ${type === "error" ? "message-error" : "message-success"}`;
+      el.textContent = text;
+    }
+
+    function clearMessage(el) {
+      el.className = "message-box";
       el.textContent = "";
-      el.style.display = "none";
     }
 
-    async function handleFormSubmit(event) {
+    function resetClientForm() {
+      els.formClient.reset();
+      document.getElementById("client_id").value = "";
+      clearMessage(els.clientFormMessage);
+    }
+
+    function fillClientForm(clientId) {
+      const client = getClientById(clientId);
+      if (!client) return;
+
+      const form = els.formClient;
+      Object.entries(client).forEach(([key, value]) => {
+        const input = form.elements.namedItem(key);
+        if (input) input.value = value ?? "";
+      });
+
+      setActiveTab("new-client");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      showMessage(els.clientFormMessage, "success", "Mode édition activé pour cette fiche client.");
+    }
+
+    function prefillSessionForm(clientId) {
+      if (clientId) els.sessionClientSelect.value = clientId;
+      setActiveTab("sessions");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    async function refreshData() {
+      setLoading(true);
+      updateSourceUI();
+
+      const { clients, sessions } = await loadStats();
+      state.clients = clients;
+      state.sessions = sessions;
+
+      if (!state.selectedClientId || !getClientById(state.selectedClientId)) {
+        state.selectedClientId = state.clients[0]?.client_id || null;
+      }
+
+      renderAll();
+      setLoading(false);
+    }
+
+    async function handleClientSubmit(event) {
       event.preventDefault();
-      clearError();
+      clearMessage(els.clientFormMessage);
+
       const form = event.currentTarget;
-
       const formData = new FormData(form);
-      const plainFormData = Object.fromEntries(formData.entries());
-      plainFormData.app_id = CONFIG.APP_ID;
-      plainFormData.date_creation = new Date().toISOString().slice(0, 10);
+      const payload = Object.fromEntries(formData.entries());
 
-      DEMO_DATA = [plainFormData, ...DEMO_DATA];
+      payload.client_id = payload.client_id || uuid("CL");
+      payload.app_id = CONFIG.APP_IDS.clients;
+      payload.date_creation = payload.date_creation || todayISO();
 
-      if (CONFIG.DATA_SOURCE === "api") {
-        try {
-          const response = await fetch(CONFIG.FORM_WEBHOOK_URL, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Accept: "application/json"
-            },
-            body: JSON.stringify(plainFormData)
-          });
-          if (!response.ok) {
-            console.error("Erreur envoi Make", await response.text());
-            showError("Erreur lors de l'envoi à Make.com.");
+      if (!payload.client_nom?.trim()) {
+        showMessage(els.clientFormMessage, "error", "Le nom du client est obligatoire.");
+        return;
+      }
+
+      try {
+        if (CONFIG.DATA_SOURCE === "demo") {
+          const existingIndex = DEMO_DATA.clients.findIndex(client => client.client_id === payload.client_id);
+          if (existingIndex >= 0) {
+            DEMO_DATA.clients[existingIndex] = { ...DEMO_DATA.clients[existingIndex], ...payload };
+          } else {
+            DEMO_DATA.clients.unshift(payload);
           }
-        } catch (e) {
-          console.error("Erreur réseau Make", e);
-          showError("Erreur réseau vers le webhook Make.");
         }
-      }
 
-      form.reset();
-      const data = await loadData();
-      renderFiches(data);
-    }
+        const response = await postJson(CONFIG.FORM_URLS.clients, payload);
+        if (!response.ok && CONFIG.DATA_SOURCE !== "demo") {
+          throw new Error("Erreur lors de l'envoi du formulaire client.");
+        }
 
-    document
-      .getElementById("form-fiche")
-      .addEventListener("submit", handleFormSubmit);
-
-    const btnSwitch = document.getElementById("btn-switch-mode");
-    const pill = document.getElementById("mode-pill");
-    const switchText = document.getElementById("switch-text");
-    const tagSource = document.getElementById("tag-source");
-
-    function updateModeUI() {
-      if (CONFIG.DATA_SOURCE === "demo") {
-        pill.textContent = "DEMO";
-        tagSource.textContent = "Source : DEMO_DATA";
-        switchText.textContent = "Mode API";
-      } else {
-        pill.textContent = "API";
-        tagSource.textContent = "Source : API (Make + Sheets)";
-        switchText.textContent = "Mode DEMO";
+        resetClientForm();
+        state.selectedClientId = payload.client_id;
+        await refreshData();
+        setActiveTab("clients");
+        showMessage(els.clientFormMessage, "success", "Fiche client enregistrée avec succès.");
+      } catch (error) {
+        console.error(error);
+        showMessage(els.clientFormMessage, "error", "Impossible d'enregistrer la fiche client.");
       }
     }
 
-    btnSwitch.addEventListener("click", async () => {
-      CONFIG.DATA_SOURCE = CONFIG.DATA_SOURCE === "demo" ? "api" : "demo";
-      updateModeUI();
-      const data = await loadData();
-      renderFiches(data);
-    });
+    async function handleSessionSubmit(event) {
+      event.preventDefault();
+      clearMessage(els.sessionFormMessage);
 
-    // Gestion des onglets bottom nav
-    const tabs = {
-      fiches: document.getElementById("tab-fiches"),
-      parametres: document.getElementById("tab-parametres"),
-      stats: document.getElementById("tab-stats")
-    };
+      const form = event.currentTarget;
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
 
-    const navItems = document.querySelectorAll(".nav-item");
+      payload.session_id = payload.session_id || uuid("SE");
+      payload.app_id = CONFIG.APP_IDS.sessions;
+      payload.date_creation = todayISO();
 
-    function setActiveTab(tabName) {
-      Object.keys(tabs).forEach((key) => {
-        tabs[key].classList.toggle(
-          "tab-section-active",
-          key === tabName
-        );
+      if (!payload.client_id || !payload.session_date || !payload.session_time) {
+        showMessage(els.sessionFormMessage, "error", "Merci de compléter le client, la date et l'heure.");
+        return;
+      }
+
+      try {
+        if (CONFIG.DATA_SOURCE === "demo") {
+          DEMO_DATA.sessions.unshift(payload);
+        }
+
+        const response = await postJson(CONFIG.FORM_URLS.sessions, payload);
+        if (!response.ok && CONFIG.DATA_SOURCE !== "demo") {
+          throw new Error("Erreur lors de l'envoi du formulaire séance.");
+        }
+
+        form.reset();
+        fillSessionClientSelect();
+        await refreshData();
+        state.selectedClientId = payload.client_id;
+        setActiveTab("clients");
+        showMessage(els.sessionFormMessage, "success", "Séance enregistrée avec succès.");
+      } catch (error) {
+        console.error(error);
+        showMessage(els.sessionFormMessage, "error", "Impossible d'enregistrer la séance.");
+      }
+    }
+
+    function attachEvents() {
+      els.navButtons.forEach(btn => {
+        btn.addEventListener("click", () => setActiveTab(btn.dataset.tab));
       });
-      navItems.forEach((item) => {
-        item.classList.toggle(
-          "nav-item-active",
-          item.getAttribute("data-tab") === tabName
-        );
+
+      els.sourceSwitch.addEventListener("click", async () => {
+        CONFIG.DATA_SOURCE = CONFIG.DATA_SOURCE === "demo" ? "api" : "demo";
+        updateSourceUI();
+        await refreshData();
+      });
+
+      els.clientSearch.addEventListener("input", (event) => {
+        state.clientSearch = event.target.value;
+        renderClientList();
+      });
+
+      els.sessionSearch.addEventListener("input", (event) => {
+        state.sessionSearch = event.target.value;
+        renderSessionList();
+      });
+
+      els.formClient.addEventListener("submit", handleClientSubmit);
+      els.formSession.addEventListener("submit", handleSessionSubmit);
+
+      els.btnGoNewClient.addEventListener("click", () => {
+        resetClientForm();
+        setActiveTab("new-client");
+      });
+
+      els.btnResetClient.addEventListener("click", () => {
+        setTimeout(resetClientForm, 0);
+      });
+
+      document.addEventListener("click", (event) => {
+        const openClientBtn = event.target.closest("[data-open-client]");
+        if (openClientBtn) {
+          const clientId = openClientBtn.getAttribute("data-open-client");
+          state.selectedClientId = clientId;
+          setActiveTab("clients");
+          renderClientList();
+          renderClientDetail();
+          return;
+        }
+
+        const selectClientBtn = event.target.closest("[data-client-select]");
+        if (selectClientBtn) {
+          state.selectedClientId = selectClientBtn.getAttribute("data-client-select");
+          renderClientList();
+          renderClientDetail();
+          return;
+        }
+
+        const editClientBtn = event.target.closest("[data-edit-client]");
+        if (editClientBtn) {
+          fillClientForm(editClientBtn.getAttribute("data-edit-client"));
+          return;
+        }
+
+        const planSessionBtn = event.target.closest("[data-plan-session]");
+        if (planSessionBtn) {
+          prefillSessionForm(planSessionBtn.getAttribute("data-plan-session"));
+        }
       });
     }
 
-    navItems.forEach((item) => {
-      item.addEventListener("click", () => {
-        const tab = item.getAttribute("data-tab");
-        setActiveTab(tab);
-      });
-    });
+    function initTheme() {
+      let currentTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      document.documentElement.setAttribute("data-theme", currentTheme);
 
-    (async function init() {
-      updateModeUI();
-      const data = await loadData();
-      renderFiches(data);
-    })();
+      function renderThemeIcon() {
+        els.themeToggleIcon.innerHTML = currentTheme === "dark"
+          ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2.5M12 19.5V22M4.93 4.93l1.77 1.77M17.3 17.3l1.77 1.77M2 12h2.5M19.5 12H22M4.93 19.07l1.77-1.77M17.3 6.7l1.77-1.77"></path></svg>`
+          : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3c0 0 0 0 0 0A7 7 0 0 0 21 12.79Z"></path></svg>`;
+
+        els.themeToggle.setAttribute("aria-label", currentTheme === "dark" ? "Passer au thème clair" : "Passer au thème sombre");
+      }
+
+      renderThemeIcon();
+
+      els.themeToggle.addEventListener("click", () => {
+        currentTheme = currentTheme === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", currentTheme);
+        renderThemeIcon();
+      });
+    }
+
+    function seedDefaultFormValues() {
+      const today = todayISO();
+      const dateInput = document.getElementById("session_date");
+      const timeInput = document.getElementById("session_time");
+      const firstContactInput = document.getElementById("date_premier_contact");
+
+      if (dateInput && !dateInput.value) dateInput.value = today;
+      if (timeInput && !timeInput.value) timeInput.value = "09:00";
+      if (firstContactInput && !firstContactInput.value) firstContactInput.value = today;
+    }
+
+    async function init() {
+      initTheme();
+      attachEvents();
+      updateSourceUI();
+      seedDefaultFormValues();
+      await refreshData();
+    }
+
+    init();
   </script>
 </body>
 </html>
