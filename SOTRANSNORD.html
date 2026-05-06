@@ -1,0 +1,2569 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SOTRANSNORD — Gestion Transport BTP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   SOTRANSNORD — CSS GLOBAL
+   ============================================================ */
+:root {
+  --navy:     #0D1B2A;
+  --navy2:    #1A2E45;
+  --navy3:    #253D58;
+  --orange:   #F4821F;
+  --orange2:  #E06910;
+  --cream:    #F8F5F0;
+  --white:    #FFFFFF;
+  --gray100:  #F3F4F6;
+  --gray200:  #E5E7EB;
+  --gray300:  #D1D5DB;
+  --gray500:  #6B7280;
+  --gray700:  #374151;
+  --green:    #16A34A;
+  --green-bg: #DCFCE7;
+  --red:      #DC2626;
+  --red-bg:   #FEE2E2;
+  --yellow:   #D97706;
+  --yellow-bg:#FEF3C7;
+  --blue:     #2563EB;
+  --blue-bg:  #DBEAFE;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+  --shadow:    0 4px 12px rgba(0,0,0,.10);
+  --shadow-lg: 0 10px 30px rgba(0,0,0,.15);
+  --radius:    12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --transition: .18s cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: var(--font-body);
+  background: var(--cream);
+  color: var(--navy);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ============= SCROLLBAR ============= */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray300); border-radius: 99px; }
+
+/* ============= UTILITY ============= */
+.hidden { display: none !important; }
+.flex   { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: 8px; }
+.gap-3 { gap: 12px; }
+.gap-4 { gap: 16px; }
+.mt-2 { margin-top: 8px; }
+.mt-3 { margin-top: 12px; }
+.mt-4 { margin-top: 16px; }
+.mt-6 { margin-top: 24px; }
+.text-sm { font-size: .875rem; }
+.text-xs { font-size: .75rem; }
+.font-600 { font-weight: 600; }
+.w-full { width: 100%; }
+.text-center { text-align: center; }
+.text-green { color: var(--green); }
+.text-red   { color: var(--red); }
+.text-orange { color: var(--orange); }
+.text-gray   { color: var(--gray500); }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 99px;
+  font-size: .75rem; font-weight: 600; letter-spacing: .03em;
+}
+.badge-green  { background: var(--green-bg);  color: var(--green); }
+.badge-red    { background: var(--red-bg);    color: var(--red); }
+.badge-yellow { background: var(--yellow-bg); color: var(--yellow); }
+.badge-blue   { background: var(--blue-bg);   color: var(--blue); }
+.badge-gray   { background: var(--gray200);   color: var(--gray700); }
+.badge-orange { background: #FFF0E0;          color: var(--orange); }
+
+/* ============= BUTTONS ============= */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 22px; border-radius: var(--radius); border: none; cursor: pointer;
+  font-family: var(--font-body); font-size: .95rem; font-weight: 600;
+  transition: var(--transition); white-space: nowrap; user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.btn:active { transform: scale(.97); }
+.btn-primary   { background: var(--orange);  color: #fff; }
+.btn-primary:hover { background: var(--orange2); }
+.btn-navy      { background: var(--navy);    color: #fff; }
+.btn-navy:hover{ background: var(--navy2); }
+.btn-outline   { background: transparent; border: 2px solid var(--gray300); color: var(--gray700); }
+.btn-outline:hover { border-color: var(--navy); color: var(--navy); }
+.btn-ghost     { background: transparent; color: var(--gray700); padding: 8px 14px; }
+.btn-ghost:hover { background: var(--gray100); }
+.btn-danger    { background: var(--red-bg); color: var(--red); }
+.btn-danger:hover { background: var(--red); color: #fff; }
+.btn-success   { background: var(--green-bg); color: var(--green); }
+.btn-success:hover { background: var(--green); color: #fff; }
+.btn-sm { padding: 8px 14px; font-size: .82rem; border-radius: 8px; }
+.btn-lg { padding: 16px 28px; font-size: 1.05rem; }
+.btn-icon { padding: 10px; border-radius: 10px; }
+.btn-block { width: 100%; }
+
+/* ============= FORMS ============= */
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-label { font-size: .83rem; font-weight: 600; color: var(--gray700); letter-spacing: .04em; text-transform: uppercase; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 12px 14px; border: 2px solid var(--gray200);
+  border-radius: var(--radius); font-family: var(--font-body); font-size: .95rem;
+  color: var(--navy); background: var(--white); transition: var(--transition); outline: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--orange); box-shadow: 0 0 0 3px rgba(244,130,31,.12);
+}
+.form-textarea { resize: vertical; min-height: 90px; }
+.form-select { cursor: pointer; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+@media(max-width:600px) {
+  .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; }
+}
+
+/* ============= CARDS ============= */
+.card {
+  background: var(--white); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm); border: 1px solid var(--gray200);
+  overflow: hidden;
+}
+.card-header {
+  padding: 18px 20px 14px; border-bottom: 1px solid var(--gray100);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--navy); }
+.card-body  { padding: 18px 20px; }
+.stat-card {
+  background: var(--white); border-radius: var(--radius-lg);
+  padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--gray200);
+}
+.stat-card .stat-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center; font-size: 1.3rem; margin-bottom: 14px;
+}
+.stat-card .stat-value { font-family: var(--font-display); font-size: 1.7rem; font-weight: 800; color: var(--navy); line-height: 1; }
+.stat-card .stat-label { font-size: .8rem; color: var(--gray500); margin-top: 4px; font-weight: 500; }
+
+/* ============= TABLE ============= */
+.table-wrapper { overflow-x: auto; border-radius: var(--radius); }
+table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+thead tr { background: var(--navy); }
+thead th { padding: 12px 14px; text-align: left; color: rgba(255,255,255,.85); font-size: .78rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; }
+tbody tr { border-bottom: 1px solid var(--gray100); transition: var(--transition); }
+tbody tr:hover { background: var(--gray100); }
+tbody tr:last-child { border-bottom: none; }
+td { padding: 12px 14px; color: var(--navy); vertical-align: middle; }
+.table-actions { display: flex; gap: 6px; }
+
+/* ============= MODAL ============= */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(13,27,42,.6); backdrop-filter: blur(4px);
+  z-index: 1000; display: flex; align-items: flex-end; justify-content: center;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+.modal {
+  background: var(--white); border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  width: 100%; max-width: 580px; max-height: 92vh;
+  overflow-y: auto; padding: 28px 24px 32px;
+  transform: translateY(40px); transition: transform .25s cubic-bezier(.4,0,.2,1);
+}
+.modal-overlay.active .modal { transform: translateY(0); }
+.modal-handle { width: 40px; height: 4px; background: var(--gray300); border-radius: 99px; margin: 0 auto 22px; }
+.modal-title { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: var(--navy); }
+@media(min-width:640px) {
+  .modal-overlay { align-items: center; }
+  .modal { border-radius: var(--radius-xl); transform: scale(.95) translateY(10px); }
+  .modal-overlay.active .modal { transform: scale(1) translateY(0); }
+  .modal-handle { display: none; }
+}
+
+/* ============= TOAST ============= */
+#toast-container {
+  position: fixed; top: 18px; right: 18px; z-index: 9999;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.toast {
+  background: var(--navy); color: #fff; padding: 13px 18px;
+  border-radius: var(--radius); box-shadow: var(--shadow-lg);
+  font-size: .88rem; font-weight: 500; min-width: 220px;
+  animation: toastIn .25s ease forwards;
+  display: flex; align-items: center; gap: 10px;
+}
+.toast.success { background: var(--green); }
+.toast.error   { background: var(--red); }
+.toast.warning { background: var(--yellow); }
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* ============================================================
+   SCREEN: SPLASH / LOGIN
+   ============================================================ */
+#screen-splash {
+  position: fixed; inset: 0; z-index: 500;
+  background: var(--navy);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 0;
+}
+.splash-logo {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  animation: fadeUp .5s ease forwards;
+}
+.splash-logo .logo-mark {
+  width: 72px; height: 72px; background: var(--orange); border-radius: 20px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; color: #fff; font-family: var(--font-display); font-weight: 800;
+  box-shadow: 0 8px 32px rgba(244,130,31,.4);
+}
+.splash-logo .logo-name {
+  font-family: var(--font-display); font-size: 2rem; font-weight: 800;
+  color: #fff; letter-spacing: .08em;
+}
+.splash-logo .logo-sub {
+  font-size: .82rem; color: rgba(255,255,255,.5); letter-spacing: .14em; text-transform: uppercase;
+}
+.splash-cards {
+  display: flex; gap: 16px; margin-top: 52px;
+  animation: fadeUp .5s .15s ease both;
+}
+.role-card {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  background: var(--navy2); border: 2px solid var(--navy3);
+  border-radius: var(--radius-xl); padding: 28px 32px; cursor: pointer;
+  transition: var(--transition); min-width: 140px;
+  -webkit-tap-highlight-color: transparent;
+}
+.role-card:hover, .role-card:active {
+  border-color: var(--orange); background: rgba(244,130,31,.08);
+  transform: translateY(-3px); box-shadow: var(--shadow-lg);
+}
+.role-card .role-icon { font-size: 2.2rem; }
+.role-card .role-label {
+  font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #fff;
+}
+.role-card .role-hint { font-size: .76rem; color: rgba(255,255,255,.4); }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============= MODE SWITCH ============= */
+.mode-switch-wrap {
+  position: fixed; top: 16px; right: 16px; z-index: 600;
+  display: flex; align-items: center; gap: 8px;
+}
+.mode-label { font-size: .75rem; font-weight: 600; letter-spacing: .05em; }
+.mode-label.demo { color: var(--yellow); }
+.mode-label.real { color: var(--green); }
+.mode-toggle {
+  width: 48px; height: 26px; background: var(--gray300); border-radius: 99px;
+  cursor: pointer; position: relative; transition: var(--transition); border: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.mode-toggle.real { background: var(--green); }
+.mode-toggle::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; background: #fff; border-radius: 50%;
+  transition: var(--transition); box-shadow: var(--shadow-sm);
+}
+.mode-toggle.real::after { left: 25px; }
+
+/* ============================================================
+   SCREEN: PIN LOGIN
+   ============================================================ */
+#screen-pin {
+  position: fixed; inset: 0; z-index: 400;
+  background: var(--navy);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.pin-back {
+  position: absolute; top: 20px; left: 20px;
+  background: var(--navy2); border: none; color: rgba(255,255,255,.7);
+  width: 40px; height: 40px; border-radius: 12px; cursor: pointer; font-size: 1.2rem;
+  display: flex; align-items: center; justify-content: center;
+  transition: var(--transition);
+}
+.pin-back:hover { background: var(--navy3); color: #fff; }
+.pin-header { text-align: center; margin-bottom: 36px; }
+.pin-role-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(244,130,31,.15); border: 1px solid rgba(244,130,31,.3);
+  padding: 6px 14px; border-radius: 99px;
+  font-size: .8rem; font-weight: 600; color: var(--orange); letter-spacing: .05em;
+  margin-bottom: 14px;
+}
+.pin-title { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; color: #fff; }
+.pin-subtitle { font-size: .85rem; color: rgba(255,255,255,.45); margin-top: 6px; }
+.pin-dots { display: flex; gap: 14px; margin-bottom: 36px; }
+.pin-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2.5px solid rgba(255,255,255,.25); transition: var(--transition);
+}
+.pin-dot.filled { background: var(--orange); border-color: var(--orange); box-shadow: 0 0 10px rgba(244,130,31,.5); }
+.pin-dot.error  { background: var(--red); border-color: var(--red); animation: shake .4s; }
+.pin-keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 280px; }
+.pin-key {
+  aspect-ratio: 1; border: 2px solid var(--navy3); background: var(--navy2);
+  color: #fff; font-family: var(--font-display); font-size: 1.4rem; font-weight: 700;
+  border-radius: 16px; cursor: pointer; transition: var(--transition);
+  display: flex; align-items: center; justify-content: center;
+  -webkit-tap-highlight-color: transparent; user-select: none;
+}
+.pin-key:hover  { background: var(--navy3); border-color: var(--orange); }
+.pin-key:active { transform: scale(.92); background: var(--orange); border-color: var(--orange); }
+.pin-key.del    { font-size: 1.1rem; }
+.pin-key.empty  { border-color: transparent; background: transparent; cursor: default; }
+.pin-error { color: var(--red); font-size: .85rem; font-weight: 600; text-align: center; margin-bottom: 16px; min-height: 20px; }
+.pin-attempts { color: rgba(255,255,255,.4); font-size: .78rem; text-align: center; margin-top: 14px; }
+@keyframes shake {
+  0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)}
+}
+
+/* ============= CHAUFFEUR SELECT ============= */
+#screen-select-driver {
+  position: fixed; inset: 0; z-index: 400;
+  background: var(--navy);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 28px 20px; gap: 16px; overflow-y: auto;
+}
+.driver-select-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: #fff; text-align: center; }
+.driver-select-subtitle { color: rgba(255,255,255,.45); font-size: .85rem; text-align: center; }
+.driver-list { display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 340px; margin-top: 10px; }
+.driver-item {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--navy2); border: 2px solid var(--navy3);
+  border-radius: var(--radius-lg); padding: 16px 18px; cursor: pointer;
+  transition: var(--transition); -webkit-tap-highlight-color: transparent;
+}
+.driver-item:hover, .driver-item:active { border-color: var(--orange); background: rgba(244,130,31,.08); }
+.driver-avatar {
+  width: 44px; height: 44px; border-radius: 12px; background: var(--orange);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 1rem; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.driver-name { font-weight: 600; color: #fff; font-size: .97rem; }
+.driver-meta { font-size: .78rem; color: rgba(255,255,255,.4); margin-top: 2px; }
+
+/* ============================================================
+   APP LAYOUT
+   ============================================================ */
+#app { display: none; height: 100%; flex-direction: column; }
+#app.active { display: flex; }
+
+/* ---- TOP BAR ---- */
+.topbar {
+  height: 60px; background: var(--navy); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 16px; position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,.2);
+}
+.topbar-logo {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--font-display); font-size: 1.05rem; font-weight: 800; color: #fff; letter-spacing: .06em;
+}
+.topbar-logo .t-mark {
+  width: 34px; height: 34px; background: var(--orange); border-radius: 9px;
+  display: flex; align-items: center; justify-content: center; font-size: .85rem; font-weight: 800; color: #fff;
+}
+.topbar-right { display: flex; align-items: center; gap: 10px; }
+.topbar-user {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--navy2); border-radius: 20px; padding: 5px 12px 5px 5px;
+}
+.topbar-avatar {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--orange);
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; font-weight: 800; color: #fff;
+}
+.topbar-name { font-size: .82rem; font-weight: 600; color: #fff; }
+.topbar-role { font-size: .7rem; color: rgba(255,255,255,.45); }
+.topbar-mode {
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+  border-radius: 99px; padding: 4px 10px; font-size: .72rem; font-weight: 700; letter-spacing: .05em;
+}
+.topbar-mode.demo { color: var(--yellow); border-color: rgba(217,119,6,.4); background: rgba(217,119,6,.1); }
+.topbar-mode.real { color: #4ADE80; border-color: rgba(74,222,128,.4); background: rgba(74,222,128,.1); }
+.topbar-logout { background: none; border: none; color: rgba(255,255,255,.5); cursor: pointer; font-size: 1.1rem; padding: 6px; border-radius: 8px; transition: var(--transition); }
+.topbar-logout:hover { color: #fff; background: rgba(255,255,255,.1); }
+
+/* ---- BOTTOM NAV (mobile) ---- */
+.bottom-nav {
+  display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+  background: var(--white); border-top: 1px solid var(--gray200);
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -4px 20px rgba(0,0,0,.08);
+}
+.nav-item {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  padding: 10px 4px 8px; cursor: pointer; transition: var(--transition);
+  border: none; background: none; -webkit-tap-highlight-color: transparent;
+}
+.nav-icon { font-size: 1.35rem; line-height: 1; }
+.nav-label { font-size: .65rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; margin-top: 3px; color: var(--gray500); }
+.nav-item.active .nav-label { color: var(--orange); }
+.nav-item.active .nav-icon { filter: drop-shadow(0 0 6px rgba(244,130,31,.5)); }
+
+/* ---- SIDE NAV (desktop) ---- */
+@media(min-width: 768px) {
+  .bottom-nav { display: none; }
+  #app { flex-direction: row; }
+  .sidenav {
+    width: 220px; flex-shrink: 0; background: var(--navy); height: 100vh;
+    position: sticky; top: 0; display: flex; flex-direction: column;
+    padding: 0 0 20px; overflow-y: auto;
+  }
+  .sidenav-logo {
+    padding: 20px 18px; display: flex; align-items: center; gap: 10px;
+    font-family: var(--font-display); font-size: 1rem; font-weight: 800; color: #fff; letter-spacing: .06em;
+    border-bottom: 1px solid var(--navy3); margin-bottom: 8px;
+  }
+  .sidenav-logo .t-mark {
+    width: 32px; height: 32px; background: var(--orange); border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: .85rem; color: #fff; font-weight: 800;
+  }
+  .sidenav-section { padding: 0 10px; margin-top: 6px; }
+  .sidenav-section-label {
+    font-size: .68rem; font-weight: 700; color: rgba(255,255,255,.3);
+    letter-spacing: .1em; text-transform: uppercase; padding: 8px 8px 4px;
+  }
+  .sidenav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px; border-radius: 10px; cursor: pointer;
+    font-size: .88rem; font-weight: 500; color: rgba(255,255,255,.6);
+    transition: var(--transition); border: none; background: none; width: 100%; text-align: left;
+  }
+  .sidenav-item:hover { background: var(--navy2); color: #fff; }
+  .sidenav-item.active { background: rgba(244,130,31,.15); color: var(--orange); font-weight: 600; }
+  .sidenav-item .nav-icon { font-size: 1rem; width: 20px; }
+  .sidenav-footer { margin-top: auto; padding: 12px 10px 0; border-top: 1px solid var(--navy3); }
+  .topbar { display: flex; }
+  .main-content { flex: 1; overflow-y: auto; }
+}
+@media(max-width: 767px) {
+  .sidenav { display: none; }
+  .topbar { display: flex; }
+  .main-content { flex: 1; overflow-y: auto; padding-bottom: 80px; }
+}
+
+/* ---- CONTENT PAGES ---- */
+.page { display: none; padding: 20px 16px; }
+.page.active { display: block; }
+@media(min-width: 768px) { .page { padding: 28px 32px; } }
+.page-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+}
+.page-title { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: var(--navy); }
+.page-subtitle { font-size: .85rem; color: var(--gray500); margin-top: 2px; }
+
+/* ---- STATS GRID ---- */
+.stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px; }
+@media(min-width: 640px) { .stats-grid { grid-template-columns: repeat(4, 1fr); } }
+
+/* ---- SECTION TABS ---- */
+.tabs { display: flex; gap: 4px; background: var(--gray100); border-radius: var(--radius); padding: 4px; margin-bottom: 20px; overflow-x: auto; }
+.tab-btn {
+  padding: 8px 16px; border-radius: 8px; border: none; background: none;
+  font-family: var(--font-body); font-size: .85rem; font-weight: 600;
+  color: var(--gray500); cursor: pointer; transition: var(--transition); white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+.tab-btn.active { background: var(--white); color: var(--navy); box-shadow: var(--shadow-sm); }
+
+/* ---- MARGIN TABLE ---- */
+.margin-table-wrapper { overflow-x: auto; }
+.margin-table { min-width: 900px; }
+.month-current td, .month-current th { background: rgba(244,130,31,.08) !important; }
+.month-header { padding: 10px 12px !important; font-size: .78rem !important; }
+.margin-total { font-weight: 700 !important; color: var(--navy) !important; }
+.margin-positive { color: var(--green); font-weight: 700; }
+.margin-negative { color: var(--red); font-weight: 700; }
+
+/* ---- SIGNATURE PAD ---- */
+.sig-pad-wrap { border: 2px dashed var(--gray300); border-radius: var(--radius); overflow: hidden; background: var(--gray100); }
+canvas#sigPad { display: block; width: 100%; touch-action: none; }
+.sig-controls { display: flex; gap: 8px; margin-top: 8px; }
+
+/* ---- DAY TRANSPORT ITEM ---- */
+.transport-item {
+  background: var(--white); border: 2px solid var(--gray200);
+  border-radius: var(--radius-lg); padding: 16px 18px; cursor: pointer;
+  transition: var(--transition); display: flex; align-items: center; gap: 14px;
+  -webkit-tap-highlight-color: transparent;
+}
+.transport-item:hover { border-color: var(--orange); box-shadow: var(--shadow); transform: translateY(-1px); }
+.transport-item.done { border-color: var(--green); background: var(--green-bg); opacity: .8; cursor: default; }
+.transport-num {
+  width: 42px; height: 42px; border-radius: 12px; background: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.transport-item.done .transport-num { background: var(--green); }
+.transport-info { flex: 1; }
+.transport-client { font-weight: 700; font-size: .97rem; color: var(--navy); }
+.transport-meta   { font-size: .8rem; color: var(--gray500); margin-top: 3px; }
+.transport-arrow  { color: var(--gray300); font-size: 1.2rem; }
+
+/* ---- PROGRESS BAR ---- */
+.progress-bar-wrap { background: var(--gray200); border-radius: 99px; height: 8px; overflow: hidden; }
+.progress-bar-fill { height: 100%; border-radius: 99px; background: var(--orange); transition: width .4s ease; }
+.progress-bar-fill.full { background: var(--green); }
+
+/* ---- FILE UPLOAD ---- */
+.upload-zone {
+  border: 2px dashed var(--gray300); border-radius: var(--radius); padding: 20px;
+  text-align: center; cursor: pointer; transition: var(--transition); background: var(--gray100);
+}
+.upload-zone:hover { border-color: var(--orange); background: rgba(244,130,31,.04); }
+.upload-zone p { font-size: .84rem; color: var(--gray500); margin-top: 6px; }
+.uploaded-files { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.file-chip {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--gray100); border: 1px solid var(--gray200);
+  border-radius: 8px; padding: 5px 10px; font-size: .8rem; color: var(--gray700);
+}
+.file-chip button { background: none; border: none; cursor: pointer; color: var(--gray500); font-size: .85rem; padding: 0; }
+.file-chip button:hover { color: var(--red); }
+
+/* ---- EMPTY STATE ---- */
+.empty-state { text-align: center; padding: 48px 20px; }
+.empty-icon { font-size: 3rem; margin-bottom: 14px; opacity: .5; }
+.empty-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; color: var(--navy); }
+.empty-text  { font-size: .85rem; color: var(--gray500); margin-top: 6px; }
+
+/* ---- LOADER ---- */
+.loader-overlay {
+  position: fixed; inset: 0; background: rgba(255,255,255,.85); backdrop-filter: blur(4px);
+  z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.loader-overlay.active { opacity: 1; pointer-events: all; }
+.spinner {
+  width: 44px; height: 44px; border: 4px solid var(--gray200);
+  border-top-color: var(--orange); border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ---- CONFIRMATION ---- */
+.confirm-overlay {
+  position: fixed; inset: 0; background: rgba(13,27,42,.6); backdrop-filter: blur(4px);
+  z-index: 2100; display: flex; align-items: center; justify-content: center; padding: 20px;
+  opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.confirm-overlay.active { opacity: 1; pointer-events: all; }
+.confirm-box {
+  background: var(--white); border-radius: var(--radius-xl); padding: 28px 24px;
+  width: 100%; max-width: 360px; text-align: center;
+  transform: scale(.92); transition: transform .2s;
+}
+.confirm-overlay.active .confirm-box { transform: scale(1); }
+.confirm-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.confirm-title { font-family: var(--font-display); font-size: 1.1rem; font-weight: 800; color: var(--navy); }
+.confirm-text  { font-size: .88rem; color: var(--gray500); margin-top: 8px; margin-bottom: 22px; }
+.confirm-actions { display: flex; gap: 10px; }
+
+/* ---- MONTH HIGHLIGHT ---- */
+.current-month-col { background: rgba(244,130,31,.06) !important; }
+.current-month-head { color: var(--orange) !important; background: rgba(244,130,31,.15) !important; }
+
+/* ---- MISC ---- */
+.divider { height: 1px; background: var(--gray200); margin: 16px 0; }
+.search-bar { position: relative; }
+.search-bar input { padding-left: 38px; }
+.search-bar::before { content: '🔍'; position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: .85rem; pointer-events: none; }
+
+.order-card {
+  background: var(--white); border-radius: var(--radius-lg); border: 1px solid var(--gray200);
+  padding: 16px 18px; box-shadow: var(--shadow-sm); margin-bottom: 12px;
+}
+.order-card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.order-title { font-weight: 700; font-size: 1rem; color: var(--navy); }
+.order-meta  { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.order-meta-item { display: flex; align-items: center; gap: 5px; font-size: .8rem; color: var(--gray500); }
+
+.facturation-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg, #16A34A, #15803D); color: #fff;
+  border: none; border-radius: var(--radius); padding: 10px 16px;
+  font-weight: 700; font-size: .85rem; cursor: pointer; transition: var(--transition);
+}
+.facturation-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(22,163,74,.3); }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     TOAST CONTAINER
+     ============================================================ -->
+<div id="toast-container"></div>
+
+<!-- ============================================================
+     LOADER
+     ============================================================ -->
+<div class="loader-overlay" id="loader">
+  <div class="spinner"></div>
+  <p style="font-size:.9rem;color:var(--gray500);font-weight:600;">Synchronisation...</p>
+</div>
+
+<!-- ============================================================
+     CONFIRM DIALOG
+     ============================================================ -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon" id="confirmIcon">⚠️</div>
+    <div class="confirm-title" id="confirmTitle">Confirmation</div>
+    <div class="confirm-text" id="confirmText">Êtes-vous sûr ?</div>
+    <div class="confirm-actions">
+      <button class="btn btn-outline btn-block" onclick="closeConfirm(false)">Annuler</button>
+      <button class="btn btn-danger btn-block" id="confirmOk" onclick="closeConfirm(true)">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MODE SWITCH (always visible after login)
+     ============================================================ -->
+<div class="mode-switch-wrap hidden" id="modeSwitchWrap">
+  <span class="mode-label demo" id="modeLabelDemo">DÉMO</span>
+  <button class="mode-toggle" id="modeToggle" onclick="toggleMode()" title="Basculer mode Démo / Réel"></button>
+  <span class="mode-label real" id="modeLabelReal">RÉEL</span>
+</div>
+
+<!-- ============================================================
+     SCREEN: SPLASH (role selection)
+     ============================================================ -->
+<div id="screen-splash">
+  <div class="splash-logo">
+    <div class="logo-mark">SN</div>
+    <div class="logo-name">SOTRANSNORD</div>
+    <div class="logo-sub">Transport BTP</div>
+  </div>
+  <div class="splash-cards">
+    <div class="role-card" onclick="selectRole('gerant')">
+      <div class="role-icon">👔</div>
+      <div class="role-label">Gérant</div>
+      <div class="role-hint">Administration</div>
+    </div>
+    <div class="role-card" onclick="selectRole('chauffeur')">
+      <div class="role-icon">🚛</div>
+      <div class="role-label">Chauffeur</div>
+      <div class="role-hint">Terrain</div>
+    </div>
+  </div>
+  <p style="color:rgba(255,255,255,.25);font-size:.75rem;margin-top:44px;letter-spacing:.08em;">v2.4.0 — 2025</p>
+</div>
+
+<!-- ============================================================
+     SCREEN: DRIVER SELECTION
+     ============================================================ -->
+<div id="screen-select-driver" class="hidden">
+  <button class="pin-back" onclick="showScreen('splash')">←</button>
+  <div class="driver-select-title">Choisir votre profil</div>
+  <div class="driver-select-subtitle">Sélectionnez votre nom dans la liste</div>
+  <div class="driver-list" id="driverList"></div>
+</div>
+
+<!-- ============================================================
+     SCREEN: PIN LOGIN
+     ============================================================ -->
+<div id="screen-pin" class="hidden">
+  <button class="pin-back" onclick="goBackFromPin()">←</button>
+  <div class="pin-header">
+    <div class="pin-role-badge" id="pinRoleBadge">👔 Gérant</div>
+    <div class="pin-title" id="pinTitle">Saisir votre code PIN</div>
+    <div class="pin-subtitle" id="pinSubtitle">Code à 6 chiffres</div>
+  </div>
+  <div class="pin-dots" id="pinDots">
+    <div class="pin-dot" id="d0"></div>
+    <div class="pin-dot" id="d1"></div>
+    <div class="pin-dot" id="d2"></div>
+    <div class="pin-dot" id="d3"></div>
+    <div class="pin-dot" id="d4"></div>
+    <div class="pin-dot" id="d5"></div>
+  </div>
+  <div class="pin-error" id="pinError"></div>
+  <div class="pin-keypad">
+    <button class="pin-key" onclick="pinKey('1')">1</button>
+    <button class="pin-key" onclick="pinKey('2')">2</button>
+    <button class="pin-key" onclick="pinKey('3')">3</button>
+    <button class="pin-key" onclick="pinKey('4')">4</button>
+    <button class="pin-key" onclick="pinKey('5')">5</button>
+    <button class="pin-key" onclick="pinKey('6')">6</button>
+    <button class="pin-key" onclick="pinKey('7')">7</button>
+    <button class="pin-key" onclick="pinKey('8')">8</button>
+    <button class="pin-key" onclick="pinKey('9')">9</button>
+    <button class="pin-key empty"></button>
+    <button class="pin-key" onclick="pinKey('0')">0</button>
+    <button class="pin-key del" onclick="pinDel()">⌫</button>
+  </div>
+  <div class="pin-attempts" id="pinAttempts"></div>
+</div>
+
+<!-- ============================================================
+     APP (post-login)
+     ============================================================ -->
+<div id="app">
+
+  <!-- SIDE NAV (desktop only) -->
+  <nav class="sidenav" id="sidenav">
+    <div class="sidenav-logo">
+      <div class="t-mark">SN</div> SOTRANSNORD
+    </div>
+    <!-- rendered by JS -->
+  </nav>
+
+  <!-- MAIN COLUMN -->
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="topbar-logo">
+        <div class="t-mark">SN</div>
+        <span class="d-none-sm">SOTRANSNORD</span>
+      </div>
+      <div class="topbar-right">
+        <span class="topbar-mode demo" id="topbarMode">DÉMO</span>
+        <div class="topbar-user">
+          <div class="topbar-avatar" id="topbarAvatar">G</div>
+          <div>
+            <div class="topbar-name" id="topbarName">Gérant</div>
+            <div class="topbar-role" id="topbarRole">Administrateur</div>
+          </div>
+        </div>
+        <button class="topbar-logout" onclick="logout()" title="Déconnexion">⏻</button>
+      </div>
+    </header>
+
+    <!-- PAGES CONTAINER -->
+    <main class="main-content">
+
+      <!-- =====================================================
+           PAGE: DASHBOARD GÉRANT
+           ===================================================== -->
+      <div class="page" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Tableau de bord</div>
+            <div class="page-subtitle" id="dashDate">Chargement...</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="navigate('commandes')">+ Nouvelle commande</button>
+        </div>
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#EEF2FF;">📦</div>
+            <div class="stat-value" id="stat-commandes">0</div>
+            <div class="stat-label">Commandes actives</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#FFF7ED;">🚛</div>
+            <div class="stat-value" id="stat-transports">0</div>
+            <div class="stat-label">Transports du jour</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#F0FDF4;">💰</div>
+            <div class="stat-value" id="stat-ca">0€</div>
+            <div class="stat-label">CA ce mois</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#FEF2F2;">🔧</div>
+            <div class="stat-value" id="stat-frais">0€</div>
+            <div class="stat-label">Frais ce mois</div>
+          </div>
+        </div>
+        <!-- Recent orders -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Commandes récentes</span>
+            <button class="btn btn-ghost btn-sm" onclick="navigate('commandes')">Voir tout →</button>
+          </div>
+          <div class="card-body" id="recentOrders">
+            <div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Aucune commande</div><div class="empty-text">Créez votre première commande</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           PAGE: COMMANDES
+           ===================================================== -->
+      <div class="page" id="page-commandes">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Commandes</div>
+            <div class="page-subtitle">Gestion et suivi des commandes</div>
+          </div>
+          <button class="btn btn-primary" onclick="openOrderModal()">+ Nouvelle commande</button>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="filterOrders('all',this)">Toutes</button>
+          <button class="tab-btn" onclick="filterOrders('en_cours',this)">En cours</button>
+          <button class="tab-btn" onclick="filterOrders('termine',this)">Terminées</button>
+          <button class="tab-btn" onclick="filterOrders('a_facturer',this)">À facturer</button>
+        </div>
+        <div id="ordersList"></div>
+      </div>
+
+      <!-- =====================================================
+           PAGE: CHAUFFEURS
+           ===================================================== -->
+      <div class="page" id="page-chauffeurs">
+        <div class="page-header">
+          <div><div class="page-title">Chauffeurs</div><div class="page-subtitle">Gestion des conducteurs</div></div>
+          <button class="btn btn-primary" onclick="openDriverModal()">+ Ajouter</button>
+        </div>
+        <div class="search-bar mt-2" style="margin-bottom:16px;">
+          <input type="text" class="form-input" placeholder="Rechercher un chauffeur..." oninput="renderDriversTable(this.value)">
+        </div>
+        <div class="card"><div class="table-wrapper"><table id="driversTable">
+          <thead><tr><th>Nom</th><th>Téléphone</th><th>Permis</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody id="driversTableBody"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- =====================================================
+           PAGE: CAMIONS
+           ===================================================== -->
+      <div class="page" id="page-camions">
+        <div class="page-header">
+          <div><div class="page-title">Camions</div><div class="page-subtitle">Flotte de véhicules</div></div>
+          <button class="btn btn-primary" onclick="openTruckModal()">+ Ajouter</button>
+        </div>
+        <div class="card"><div class="table-wrapper"><table>
+          <thead><tr><th>Immatriculation</th><th>Type</th><th>Km</th><th>CT</th><th>Statut</th><th>Actions</th></tr></thead>
+          <tbody id="trucksTableBody"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- =====================================================
+           PAGE: CLIENTS
+           ===================================================== -->
+      <div class="page" id="page-clients">
+        <div class="page-header">
+          <div><div class="page-title">Clients</div><div class="page-subtitle">Carnet d'adresses clients</div></div>
+          <button class="btn btn-primary" onclick="openClientModal()">+ Ajouter</button>
+        </div>
+        <div class="card"><div class="table-wrapper"><table>
+          <thead><tr><th>Entreprise</th><th>Gérant</th><th>Téléphone</th><th>Email</th><th>Actions</th></tr></thead>
+          <tbody id="clientsTableBody"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- =====================================================
+           PAGE: MATÉRIAUX & TARIFS
+           ===================================================== -->
+      <div class="page" id="page-materiaux">
+        <div class="page-header">
+          <div><div class="page-title">Matériaux & Tarifs</div></div>
+        </div>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="showMatTab('mat',this)">Matériaux</button>
+          <button class="tab-btn" onclick="showMatTab('tarifs',this)">Tarifs</button>
+          <button class="tab-btn" onclick="showMatTab('frais',this)">Frais véhicules</button>
+        </div>
+        <!-- Matériaux -->
+        <div id="mat-tab-mat">
+          <div class="page-header" style="margin-bottom:12px;">
+            <span class="font-600">Liste des matériaux</span>
+            <button class="btn btn-primary btn-sm" onclick="openMaterialModal()">+ Ajouter</button>
+          </div>
+          <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Matériau</th><th>Unité</th><th>Actions</th></tr></thead>
+            <tbody id="materialsTableBody"></tbody>
+          </table></div></div>
+        </div>
+        <!-- Tarifs -->
+        <div id="mat-tab-tarifs" class="hidden">
+          <div class="page-header" style="margin-bottom:12px;">
+            <span class="font-600">Tarification</span>
+            <button class="btn btn-primary btn-sm" onclick="openTariffModal()">+ Ajouter</button>
+          </div>
+          <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Type</th><th>Désignation</th><th>Prix unitaire</th><th>Actions</th></tr></thead>
+            <tbody id="tariffsTableBody"></tbody>
+          </table></div></div>
+        </div>
+        <!-- Frais véhicules -->
+        <div id="mat-tab-frais" class="hidden">
+          <div class="page-header" style="margin-bottom:12px;">
+            <span class="font-600">Saisir des frais</span>
+            <button class="btn btn-primary btn-sm" onclick="openExpenseModal()">+ Ajouter</button>
+          </div>
+          <div class="card"><div class="table-wrapper"><table>
+            <thead><tr><th>Date</th><th>Camion</th><th>Type</th><th>Montant</th><th>Actions</th></tr></thead>
+            <tbody id="expensesTableBody"></tbody>
+          </table></div></div>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           PAGE: RAPPORTS
+           ===================================================== -->
+      <div class="page" id="page-rapports">
+        <div class="page-header">
+          <div><div class="page-title">Rapports</div><div class="page-subtitle">Analyse de la flotte</div></div>
+        </div>
+        <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);">
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#FFF7ED;">⛽</div>
+            <div class="stat-value" id="rpt-conso">— L</div>
+            <div class="stat-label">Conso. moy. / camion</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon" style="background:#FEF2F2;">🔧</div>
+            <div class="stat-value" id="rpt-frais">— €</div>
+            <div class="stat-label">Frais total flotte (mois)</div>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <div class="card-header"><span class="card-title">Frais par camion ce mois</span></div>
+          <div class="card-body"><div class="table-wrapper"><table>
+            <thead><tr><th>Camion</th><th>Carburant</th><th>Vidange</th><th>Réparations</th><th>Pneus</th><th>Assurance</th><th>Total</th></tr></thead>
+            <tbody id="truckExpenseReport"></tbody>
+          </table></div></div>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           PAGE: MARGE
+           ===================================================== -->
+      <div class="page" id="page-marge">
+        <div class="page-header">
+          <div><div class="page-title">Calcul de marge</div><div class="page-subtitle">Tableau mensuel 12 mois</div></div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="margin-table-wrapper">
+              <table class="margin-table" id="marginTable">
+                <thead><tr id="marginHead"></tr></thead>
+                <tbody id="marginBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           PAGE: AUDIT
+           ===================================================== -->
+      <div class="page" id="page-audit">
+        <div class="page-header">
+          <div><div class="page-title">Historique & Audit</div><div class="page-subtitle">Traçabilité des actions</div></div>
+          <button class="btn btn-outline btn-sm" onclick="clearAudit()">Vider</button>
+        </div>
+        <div class="card"><div class="table-wrapper"><table>
+          <thead><tr><th>Date/Heure</th><th>Utilisateur</th><th>Action</th><th>Détails</th></tr></thead>
+          <tbody id="auditTableBody"></tbody>
+        </table></div></div>
+      </div>
+
+      <!-- =====================================================
+           PAGE: DASHBOARD CHAUFFEUR — Transports du jour
+           ===================================================== -->
+      <div class="page" id="page-driver-day">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Transports du jour</div>
+            <div class="page-subtitle" id="driverDayDate">—</div>
+          </div>
+        </div>
+        <!-- Progress -->
+        <div class="card" style="margin-bottom:16px;">
+          <div class="card-body" style="padding:14px 18px;">
+            <div class="flex justify-between items-center" style="margin-bottom:8px;">
+              <span class="font-600" style="font-size:.88rem;">Avancement</span>
+              <span id="driverProgress" class="text-sm text-gray">0 / 0</span>
+            </div>
+            <div class="progress-bar-wrap"><div class="progress-bar-fill" id="driverProgressBar" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div id="driverTransportList" style="display:flex;flex-direction:column;gap:10px;"></div>
+      </div>
+
+      <!-- =====================================================
+           PAGE: FICHE FIN DE JOURNÉE
+           ===================================================== -->
+      <div class="page" id="page-driver-fiche">
+        <div class="page-header">
+          <div><div class="page-title">Fiche de fin de journée</div></div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Kilométrage camion</label>
+                <input type="number" class="form-input" id="fiche-km" placeholder="Ex: 154280">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Carburant — Quantité (L)</label>
+                <input type="number" class="form-input" id="fiche-conso" placeholder="Ex: 65">
+              </div>
+            </div>
+            <div class="form-group mt-3">
+              <label class="form-label">Carburant — Prix total (€)</label>
+              <input type="number" class="form-input" id="fiche-fuel-price" placeholder="Ex: 110.50">
+            </div>
+            <div class="form-group mt-3">
+              <label class="form-label">Observations</label>
+              <textarea class="form-textarea" id="fiche-notes" placeholder="Incidents, remarques..."></textarea>
+            </div>
+            <button class="btn btn-primary btn-block btn-lg mt-4" onclick="submitFiche()">📤 Envoyer ma fiche</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- =====================================================
+           PAGE: PROFIL CHAUFFEUR
+           ===================================================== -->
+      <div class="page" id="page-driver-profile">
+        <div class="page-header">
+          <div><div class="page-title">Mon profil</div></div>
+        </div>
+        <div class="card">
+          <div class="card-body" id="driverProfileContent">—</div>
+        </div>
+      </div>
+
+    </main><!-- /main-content -->
+
+    <!-- BOTTOM NAV (mobile) -->
+    <nav class="bottom-nav" id="bottomNav"></nav>
+
+  </div><!-- /main-column -->
+</div><!-- /app -->
+
+<!-- ============================================================
+     MODALS
+     ============================================================ -->
+
+<!-- ORDER MODAL -->
+<div class="modal-overlay" id="orderModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="orderModalTitle">Nouvelle commande</div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Client *</label>
+        <select class="form-select" id="om-client"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date du chantier *</label>
+        <input type="date" class="form-input" id="om-date">
+      </div>
+    </div>
+    <div class="form-group mt-3">
+      <label class="form-label">Adresse de livraison *</label>
+      <input type="text" class="form-input" id="om-address" placeholder="Rue, ville...">
+    </div>
+    <div class="form-grid-2 mt-3">
+      <div class="form-group">
+        <label class="form-label">Camion *</label>
+        <select class="form-select" id="om-truck"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Chauffeur *</label>
+        <select class="form-select" id="om-driver"></select>
+      </div>
+    </div>
+    <div class="form-grid-2 mt-3">
+      <div class="form-group">
+        <label class="form-label">Type de transport *</label>
+        <select class="form-select" id="om-type" onchange="toggleOrderType()">
+          <option value="materiaux">Matériaux (à la tonne)</option>
+          <option value="journee">Journée (tarif jour)</option>
+        </select>
+      </div>
+      <div class="form-group" id="om-mat-group">
+        <label class="form-label">Matériau</label>
+        <select class="form-select" id="om-material"></select>
+      </div>
+    </div>
+    <div class="form-group mt-3">
+      <label class="form-label">Nb. transports estimés *</label>
+      <input type="number" class="form-input" id="om-nb" placeholder="Ex: 5" min="1">
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button class="btn btn-outline btn-block" onclick="closeModal('orderModal')">Annuler</button>
+      <button class="btn btn-primary btn-block" onclick="saveOrder()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- DRIVER MODAL -->
+<div class="modal-overlay" id="driverModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="driverModalTitle">Nouveau chauffeur</div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Nom complet *</label>
+        <input type="text" class="form-input" id="dm-name" placeholder="Prénom Nom">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date de naissance</label>
+        <input type="date" class="form-input" id="dm-birth">
+      </div>
+    </div>
+    <div class="form-grid-2 mt-3">
+      <div class="form-group">
+        <label class="form-label">Téléphone</label>
+        <input type="tel" class="form-input" id="dm-phone" placeholder="06 00 00 00 00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="dm-email" placeholder="email@...">
+      </div>
+    </div>
+    <div class="form-grid-2 mt-3">
+      <div class="form-group">
+        <label class="form-label">Type de permis</label>
+        <select class="form-select" id="dm-licence">
+          <option value="C">Permis C</option>
+          <option value="CE">Permis CE</option>
+          <option value="C1">Permis C1</option>
+          <option value="C1E">Permis C1E</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Code PIN (6 chiffres) *</label>
+        <input type="password" class="form-input" id="dm-pin" placeholder="••••••" maxlength="6" pattern="\d{6}">
+      </div>
+    </div>
+    <div class="form-group mt-3">
+      <label class="form-label">Documents</label>
+      <div class="upload-zone" onclick="document.getElementById('dm-files').click()">
+        <div style="font-size:1.8rem;">📁</div>
+        <p>Cliquer pour uploader (permis, carte identité...)</p>
+      </div>
+      <input type="file" id="dm-files" multiple style="display:none" onchange="handleFiles(this,'dm-uploaded')">
+      <div class="uploaded-files" id="dm-uploaded"></div>
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button class="btn btn-outline btn-block" onclick="closeModal('driverModal')">Annuler</button>
+      <button class="btn btn-primary btn-block" onclick="saveDriver()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRUCK MODAL -->
+<div class="modal-overlay" id="truckModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="truckModalTitle">Nouveau camion</div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Immatriculation *</label>
+        <input type="text" class="form-input" id="tm-plate" placeholder="AB-123-CD">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Type de véhicule</label>
+        <select class="form-select" id="tm-type">
+          <option>Benne 8x4</option>
+          <option>Benne 6x4</option>
+          <option>Semi-remorque</option>
+          <option>Ampliroll</option>
+          <option>Autre</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-grid-2 mt-3">
+      <div class="form-group">
+        <label class="form-label">Kilométrage actuel</label>
+        <input type="number" class="form-input" id="tm-km" placeholder="Ex: 150000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date contrôle technique</label>
+        <input type="date" class="form-input" id="tm-ct">
+      </div>
+    </div>
+    <div class="form-group mt-3">
+      <label class="form-label">Documents</label>
+      <div class="upload-zone" onclick="document.getElementById('tm-files').click()">
+        <div style="font-size:1.8rem;">📁</div>
+        <p>Carte grise, assurance, CT...</p>
+      </div>
+      <input type="file" id="tm-files" multiple style="display:none" onchange="handleFiles(this,'tm-uploaded')">
+      <div class="uploaded-files" id="tm-uploaded"></div>
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button class="btn btn-outline btn-block" onclick="closeModal('truckModal')">Annuler</button>
+      <button class="btn btn-primary btn-block" onclick="saveTruck()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- CLIENT MODAL -->
+<div class="modal-overlay" id="clientModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="clientModalTitle">Nouveau client</div>
+    <div class="form-group">
+      <label class="form-label">Nom de l'entreprise *</label>
+      <input type="text" class="form-input" id="cm-company" placeholder="SARL Dupont BTP">
+    </div>
+    <div class="form-grid-2 mt-3">
+      <div class="form-group">
+        <label class="form-label">Nom du gérant</label>
+        <input type="text" class="form-input" id="cm-manager" placeholder="M. Dupont">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Téléphone</label>
+        <input type="tel" class="form-input" id="cm-phone" placeholder="06 00 00 00 00">
+      </div>
+    </div>
+    <div class="form-group mt-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-input" id="cm-email" placeholder="contact@...">
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button class="btn btn-outline btn-block" onclick="closeModal('clientModal')">Annuler</button>
+      <button class="btn btn-primary btn-block" onclick="saveClient()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- MATERIAL MODAL -->
+<div class="modal-overlay" id="materialModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Matériau</div>
+    <div class="form-group">
+      <label class="form-label">Nom du matériau *</label>
+      <input type="text" class="form-input" id="mm-name" placeholder="Ex: Sable 0/4">
+    </div>
+    <div class="form-group mt-3">
+      <label class="form-label">Unité</label>
+      <select class="form-select" id="mm-unit">
+        <option value="tonne">Tonne</option>
+        <option value="m3">m³</option>
+        <option value="jour">Jour</option>
+        <option value="forfait">Forfait</option>
+      </select>
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button class="btn btn-outline btn-block" onclick="closeModal('materialModal')">Annuler</button>
+      <button class="btn btn-primary btn-block" onclick="saveMaterial()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TARIFF MODAL -->
+<div class="modal-overlay" id="tariffModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Tarif</div>
+    <div class="form-group">
+      <label class="form-label">Type *</label>
+      <select class="form-select" id="trf-type">
+        <option value="materiaux">Matériaux (€/tonne)</option>
+        <option value="journee">Journée (€/jour)</option>
+      </select>
+    </div>
+    <div class="form-group mt-3">
+      <label class="form-label">Désignation *</label>
+      <input type="text" class="form-input" id="trf-name" placeholder="Ex: Sable 0/4 — tarif A">
+    </div>
+    <div class="form-group mt-3">
+      <label class="form-label">Prix unitaire (€) *</label>
+      <input type="number" class="form-input" id="trf-price" placeholder="Ex: 18.50" step="0.01">
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button class="btn btn-outline btn-block" onclick="closeModal('tariffModal')">Annuler</button>
+      <button class="btn btn-primary btn-block" onclick="saveTariff()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPENSE MODAL -->
+<div class="modal-overlay" id="expenseModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Frais véhicule</div>
+    <div class="form-grid-2">
+      <div class="form-group">
+        <label class="form-label">Camion *</label>
+        <select class="form-select" id="exp-truck"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date *</label>
+        <input type="date" class="form-input" id="exp-date">
+      </div>
+    </div>
+    <div class="form-grid-2 mt-3">
+      <div class="form-group">
+        <label class="form-label">Type de frais *</label>
+        <select class="form-select" id="exp-type">
+          <option value="carburant">Carburant</option>
+          <option value="vidange">Vidange</option>
+          <option value="reparation">Réparation</option>
+          <option value="assurance">Assurance</option>
+          <option value="pneus">Pneus</option>
+          <option value="autre">Autre</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Montant (€) *</label>
+        <input type="number" class="form-input" id="exp-amount" placeholder="Ex: 180.00" step="0.01">
+      </div>
+    </div>
+    <div class="form-group mt-3">
+      <label class="form-label">Description</label>
+      <input type="text" class="form-input" id="exp-desc" placeholder="Détails...">
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button class="btn btn-outline btn-block" onclick="closeModal('expenseModal')">Annuler</button>
+      <button class="btn btn-primary btn-block" onclick="saveExpense()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSPORT COMPLETION MODAL -->
+<div class="modal-overlay" id="transportModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="transportModalTitle">Transport #1</div>
+    <div class="card" style="background:var(--gray100);border:none;box-shadow:none;margin-bottom:16px;">
+      <div class="card-body" style="padding:12px 14px;" id="transportModalInfo"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Tonnage réceptionné (T) *</label>
+      <input type="number" class="form-input" id="tm-tonnage" placeholder="Ex: 18.5" step="0.1">
+    </div>
+    <div class="form-grid-2 mt-3">
+      <div class="form-group">
+        <label class="form-label">Nom du réceptionnaire *</label>
+        <input type="text" class="form-input" id="tm-receiver-name" placeholder="Prénom Nom">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fonction</label>
+        <input type="text" class="form-input" id="tm-receiver-func" placeholder="Chef de chantier...">
+      </div>
+    </div>
+    <div class="form-group mt-3">
+      <label class="form-label">Signature électronique *</label>
+      <div class="sig-pad-wrap">
+        <canvas id="sigPad" height="140"></canvas>
+      </div>
+      <div class="sig-controls">
+        <button class="btn btn-ghost btn-sm" onclick="clearSig()">🗑️ Effacer</button>
+        <span class="text-xs text-gray" style="align-self:center;">Signez avec le doigt ou la souris</span>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-4">
+      <button class="btn btn-outline btn-block" onclick="closeModal('transportModal')">Annuler</button>
+      <button class="btn btn-success btn-block btn-lg" onclick="confirmTransport()">✅ Valider le transport</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+/* =================================================================
+   STATE & CONFIG
+   ================================================================= */
+const GERANT_PIN = '123456';
+const CURRENT_YEAR = new Date().getFullYear();
+const CURRENT_MONTH = new Date().getMonth(); // 0-indexed
+const MONTHS = ['Janv.','Fév.','Mars','Avril','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'];
+
+let state = {
+  mode: 'demo',       // 'demo' | 'real'
+  role: null,         // 'gerant' | 'chauffeur'
+  currentUser: null,  // { id, name, role, pin }
+  currentPage: null,
+  pendingRole: null,
+  pendingDriver: null,
+  pinValue: '',
+  pinAttempts: 0,
+  pinLocked: false,
+  confirmCallback: null,
+  editingId: null,
+  currentTransport: null,
+  currentOrder: null,
+  filterOrders: 'all',
+};
+
+/* =================================================================
+   DEMO DATA
+   ================================================================= */
+let db = {
+  drivers: [
+    { id:1, name:'Thomas Leroy',    birth:'1985-03-14', phone:'06 12 34 56 78', email:'t.leroy@mail.fr',    licence:'CE', pin:'111111', status:'actif', docs:[] },
+    { id:2, name:'Kevin Martin',    birth:'1990-07-22', phone:'06 98 76 54 32', email:'k.martin@mail.fr',   licence:'C',  pin:'222222', status:'actif', docs:[] },
+    { id:3, name:'Sébastien Dubois',birth:'1978-11-05', phone:'06 55 44 33 22', email:'s.dubois@mail.fr',   licence:'CE', pin:'333333', status:'actif', docs:[] },
+  ],
+  trucks: [
+    { id:1, plate:'AB-123-CD', type:'Benne 8x4',   km:152430, ct:'2025-09-15', status:'actif', docs:[] },
+    { id:2, plate:'EF-456-GH', type:'Benne 6x4',   km:98200,  ct:'2025-12-01', status:'actif', docs:[] },
+    { id:3, plate:'IJ-789-KL', type:'Ampliroll',   km:203100, ct:'2024-11-30', status:'ct_expire', docs:[] },
+  ],
+  clients: [
+    { id:1, company:'SARL Dupont BTP',       manager:'Jean Dupont',   phone:'03 20 11 22 33', email:'contact@dupont-btp.fr' },
+    { id:2, company:'Entreprise Moreau',     manager:'Pierre Moreau', phone:'03 21 44 55 66', email:'p.moreau@moreau-tp.fr' },
+    { id:3, company:'Constructions Bernard', manager:'Marc Bernard',  phone:'06 70 80 90 10', email:'m.bernard@bernard-constr.fr' },
+  ],
+  materials: [
+    { id:1, name:'Sable 0/4',   unit:'tonne' },
+    { id:2, name:'Gravier 4/6', unit:'tonne' },
+    { id:3, name:'Remblais',    unit:'tonne' },
+    { id:4, name:'Grave 0/20',  unit:'tonne' },
+    { id:5, name:'Tout-venant', unit:'tonne' },
+    { id:6, name:'Enrobé',      unit:'tonne' },
+  ],
+  tariffs: [
+    { id:1, type:'materiaux', name:'Sable 0/4 — Standard',  price:18.50 },
+    { id:2, type:'materiaux', name:'Gravier 4/6 — Standard',price:22.00 },
+    { id:3, type:'journee',   name:'Journée chauffeur + camion', price:950.00 },
+    { id:4, type:'materiaux', name:'Remblais — Standard',   price:12.00 },
+  ],
+  expenses: [
+    { id:1, truckId:1, date:'2025-05-02', type:'carburant', amount:210.00, desc:'Plein complet' },
+    { id:2, truckId:2, date:'2025-05-03', type:'carburant', amount:185.50, desc:'Plein complet' },
+    { id:3, truckId:1, date:'2025-05-01', type:'vidange',   amount:180.00, desc:'Vidange + filtre' },
+    { id:4, truckId:3, date:'2025-04-28', type:'reparation',amount:620.00, desc:'Remplacement pompe à eau' },
+    { id:5, truckId:1, date:'2025-05-04', type:'carburant', amount:195.00, desc:'Plein complet' },
+  ],
+  orders: [
+    {
+      id:1, clientId:1, address:'ZAC du Moulin, Villeneuve d\'Ascq', date:'2025-05-06',
+      truckId:1, driverId:1, type:'materiaux', materialId:1, nbEstimated:4, nbDone:2,
+      status:'en_cours', transports:[
+        { id:1, done:true,  tonnage:18.5, receiver:'M. Gautier', func:'Chef chantier', sig:'✓' },
+        { id:2, done:true,  tonnage:19.0, receiver:'M. Gautier', func:'Chef chantier', sig:'✓' },
+        { id:3, done:false, tonnage:null, receiver:null, func:null, sig:null },
+        { id:4, done:false, tonnage:null, receiver:null, func:null, sig:null },
+      ]
+    },
+    {
+      id:2, clientId:2, address:'Rue des Acacias, Lille', date:'2025-05-06',
+      truckId:2, driverId:2, type:'journee', materialId:null, nbEstimated:1, nbDone:0,
+      status:'en_cours', transports:[
+        { id:1, done:false, tonnage:null, receiver:null, func:null, sig:null },
+      ]
+    },
+    {
+      id:3, clientId:3, address:'Avenue de la Gare, Roubaix', date:'2025-05-04',
+      truckId:1, driverId:3, type:'materiaux', materialId:2, nbEstimated:3, nbDone:3,
+      status:'termine', transports:[
+        { id:1, done:true, tonnage:20.0, receiver:'M. Simon', func:'Conducteur', sig:'✓' },
+        { id:2, done:true, tonnage:19.5, receiver:'M. Simon', func:'Conducteur', sig:'✓' },
+        { id:3, done:true, tonnage:21.0, receiver:'M. Simon', func:'Conducteur', sig:'✓' },
+      ]
+    },
+  ],
+  audit: [
+    { id:1, ts:'2025-05-06 08:12', user:'Gérant', action:'Connexion', detail:'Connexion réussie — Mode DÉMO' },
+    { id:2, ts:'2025-05-06 08:15', user:'Gérant', action:'Création commande', detail:'Commande #1 — SARL Dupont BTP' },
+    { id:3, ts:'2025-05-06 09:30', user:'Thomas Leroy', action:'Transport validé', detail:'Commande #1 — Transport 1 — 18.5T' },
+    { id:4, ts:'2025-05-06 11:45', user:'Thomas Leroy', action:'Transport validé', detail:'Commande #1 — Transport 2 — 19.0T' },
+  ],
+};
+
+// Generate margin demo data
+db.margins = {};
+for(let m=0;m<12;m++){
+  const ca = Math.floor(Math.random()*15000+25000);
+  const carbu = Math.floor(Math.random()*2000+1500);
+  const vidange = Math.floor(Math.random()*300+0);
+  const repar = Math.floor(Math.random()*800+0);
+  const pneus = Math.floor(Math.random()*400+0);
+  const assurance = 580;
+  const total_dep = carbu+vidange+repar+pneus+assurance;
+  db.margins[m] = { ca, carbu, vidange, repar, pneus, assurance, total_dep, marge: ca-total_dep };
+}
+
+/* =================================================================
+   MAKE WEBHOOK CONFIG (Mode Réel)
+   ================================================================= */
+const MAKE_WEBHOOKS = {
+  newOrder:      'https://hook.eu1.make.com/YOUR_WEBHOOK_NEW_ORDER',
+  updateOrder:   'https://hook.eu1.make.com/YOUR_WEBHOOK_UPDATE_ORDER',
+  transportDone: 'https://hook.eu1.make.com/YOUR_WEBHOOK_TRANSPORT_DONE',
+  endOfDay:      'https://hook.eu1.make.com/YOUR_WEBHOOK_END_OF_DAY',
+  newDriver:     'https://hook.eu1.make.com/YOUR_WEBHOOK_NEW_DRIVER',
+  newTruck:      'https://hook.eu1.make.com/YOUR_WEBHOOK_NEW_TRUCK',
+  expense:       'https://hook.eu1.make.com/YOUR_WEBHOOK_EXPENSE',
+};
+
+const SHEETS_BASE = 'https://script.google.com/macros/s/YOUR_APPS_SCRIPT_DEPLOYMENT/exec';
+
+async function triggerMake(webhook, payload) {
+  if(state.mode !== 'real') return { ok:true, demo:true };
+  try {
+    const r = await fetch(webhook, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ ...payload, timestamp: new Date().toISOString(), mode: 'real' })
+    });
+    return { ok: r.ok };
+  } catch(e) {
+    console.warn('Make webhook error:', e);
+    showToast('⚠️ Webhook Make indisponible', 'warning');
+    return { ok:false, error:e.message };
+  }
+}
+
+async function syncSheets(action, data) {
+  if(state.mode !== 'real') return;
+  try {
+    await fetch(SHEETS_BASE, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ action, data })
+    });
+  } catch(e) {
+    console.warn('Sheets sync error:', e);
+  }
+}
+
+/* =================================================================
+   UTILS
+   ================================================================= */
+function uid() { return Date.now() + Math.floor(Math.random()*1000); }
+function today() { return new Date().toLocaleDateString('fr-FR', {weekday:'long',year:'numeric',month:'long',day:'numeric'}); }
+function initials(name) { return name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2); }
+function fmt(n) { return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'}).format(n); }
+function fmtDate(d) { if(!d) return '—'; try { return new Date(d).toLocaleDateString('fr-FR'); } catch(e){ return d; } }
+function isCTExpired(date) { return date && new Date(date) < new Date(); }
+function formatPhone(p) { return p || '—'; }
+function clientName(id) { const c=db.clients.find(c=>c.id==id); return c?c.company:'—'; }
+function driverName(id) { const d=db.drivers.find(d=>d.id==id); return d?d.name:'—'; }
+function truckPlate(id) { const t=db.trucks.find(t=>t.id==id); return t?t.plate:'—'; }
+function materialName(id) { const m=db.materials.find(m=>m.id==id); return m?m.name:'—'; }
+
+function showToast(msg, type='', duration=3000) {
+  const el = document.createElement('div');
+  el.className = 'toast ' + (type||'');
+  el.innerHTML = `<span>${msg}</span>`;
+  document.getElementById('toast-container').appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transform='translateX(30px)'; el.style.transition='.3s'; setTimeout(()=>el.remove(),300); }, duration);
+}
+
+function showLoader()  { document.getElementById('loader').classList.add('active'); }
+function hideLoader()  { document.getElementById('loader').classList.remove('active'); }
+
+function addAudit(action, detail) {
+  const ts = new Date().toLocaleString('fr-FR').replace(',', '');
+  const user = state.currentUser?.name || 'Système';
+  db.audit.unshift({ id:uid(), ts, user, action, detail });
+}
+
+function openModal(id) {
+  const m = document.getElementById(id);
+  m.classList.add('active');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  const m = document.getElementById(id);
+  m.classList.remove('active');
+  document.body.style.overflow = '';
+  state.editingId = null;
+}
+
+let confirmCb = null;
+function showConfirm(title, text, icon='⚠️', okLabel='Confirmer', okClass='btn-danger') {
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmText').textContent  = text;
+  document.getElementById('confirmIcon').textContent  = icon;
+  const ok = document.getElementById('confirmOk');
+  ok.textContent = okLabel;
+  ok.className = `btn ${okClass} btn-block`;
+  document.getElementById('confirmOverlay').classList.add('active');
+  return new Promise(res => { confirmCb = res; });
+}
+function closeConfirm(val) {
+  document.getElementById('confirmOverlay').classList.remove('active');
+  if(confirmCb) confirmCb(val);
+  confirmCb = null;
+}
+
+/* =================================================================
+   MODE TOGGLE
+   ================================================================= */
+function toggleMode() {
+  state.mode = state.mode === 'demo' ? 'real' : 'demo';
+  updateModeUI();
+  showToast(state.mode==='demo' ? '🟡 Mode DÉMO activé' : '🟢 Mode RÉEL activé — Connexion Google Sheets', state.mode==='demo'?'warning':'success');
+  addAudit('Changement de mode', `Passage en mode ${state.mode.toUpperCase()}`);
+}
+function updateModeUI() {
+  const tog = document.getElementById('modeToggle');
+  const tm  = document.getElementById('topbarMode');
+  if(!tog) return;
+  if(state.mode==='real') { tog.classList.add('real'); if(tm){tm.textContent='RÉEL';tm.className='topbar-mode real';} }
+  else                    { tog.classList.remove('real'); if(tm){tm.textContent='DÉMO';tm.className='topbar-mode demo';} }
+}
+
+/* =================================================================
+   SCREENS
+   ================================================================= */
+function showScreen(name) {
+  ['splash','select-driver','pin'].forEach(s=>{
+    document.getElementById('screen-'+s).classList[s===name?'remove':'add']('hidden');
+  });
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('modeSwitchWrap').classList.add('hidden');
+}
+
+function enterApp() {
+  ['splash','select-driver','pin'].forEach(s=>document.getElementById('screen-'+s).classList.add('hidden'));
+  document.getElementById('app').classList.add('active');
+  document.getElementById('modeSwitchWrap').classList.remove('hidden');
+  initApp();
+}
+
+/* =================================================================
+   ROLE SELECTION
+   ================================================================= */
+function selectRole(role) {
+  state.pendingRole = role;
+  if(role === 'chauffeur') {
+    renderDriverSelect();
+    showScreen('select-driver');
+  } else {
+    showPinScreen({ role:'gerant', badge:'👔 Gérant', title:'Code PIN Gérant', subtitle:'Entrez votre code à 6 chiffres' });
+    showScreen('pin');
+  }
+}
+
+function renderDriverSelect() {
+  const list = document.getElementById('driverList');
+  list.innerHTML = db.drivers.filter(d=>d.status==='actif').map(d=>`
+    <div class="driver-item" onclick="selectDriver(${d.id})">
+      <div class="driver-avatar">${initials(d.name)}</div>
+      <div>
+        <div class="driver-name">${d.name}</div>
+        <div class="driver-meta">Permis ${d.licence} · ${d.phone}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function selectDriver(id) {
+  state.pendingDriver = id;
+  const d = db.drivers.find(x=>x.id===id);
+  showPinScreen({ role:'chauffeur', badge:`🚛 ${d.name}`, title:`Bonjour, ${d.name.split(' ')[0]}`, subtitle:'Entrez votre code à 6 chiffres' });
+  showScreen('pin');
+}
+
+function goBackFromPin() {
+  if(state.pendingRole === 'chauffeur') showScreen('select-driver');
+  else showScreen('splash');
+}
+
+/* =================================================================
+   PIN SYSTEM
+   ================================================================= */
+function showPinScreen({role, badge, title, subtitle}) {
+  state.pinValue = '';
+  state.pinAttempts = state.pinAttempts || 0;
+  document.getElementById('pinRoleBadge').textContent = badge;
+  document.getElementById('pinTitle').textContent     = title;
+  document.getElementById('pinSubtitle').textContent  = subtitle;
+  document.getElementById('pinError').textContent     = '';
+  document.getElementById('pinAttempts').textContent  = '';
+  updatePinDots();
+  if(state.pinLocked) {
+    document.getElementById('pinError').textContent = '🔒 Accès verrouillé — Contactez le gérant';
+    document.querySelectorAll('.pin-key').forEach(k=>k.disabled=true);
+  } else {
+    document.querySelectorAll('.pin-key').forEach(k=>k.disabled=false);
+  }
+}
+
+function pinKey(digit) {
+  if(state.pinLocked || state.pinValue.length >= 6) return;
+  state.pinValue += digit;
+  updatePinDots();
+  if(state.pinValue.length === 6) setTimeout(validatePin, 120);
+}
+
+function pinDel() {
+  state.pinValue = state.pinValue.slice(0,-1);
+  updatePinDots();
+  document.getElementById('pinError').textContent = '';
+}
+
+function updatePinDots() {
+  for(let i=0;i<6;i++){
+    const d = document.getElementById('d'+i);
+    d.className = 'pin-dot' + (i < state.pinValue.length ? ' filled' : '');
+  }
+}
+
+function validatePin() {
+  const pin = state.pinValue;
+  let valid = false;
+  let user  = null;
+
+  if(state.pendingRole === 'gerant') {
+    if(pin === GERANT_PIN) {
+      valid = true;
+      user  = { id:0, name:'Gérant', role:'gerant', initials:'GE' };
+    }
+  } else {
+    const driver = db.drivers.find(d=>d.id===state.pendingDriver);
+    if(driver && pin === driver.pin) {
+      valid = true;
+      user  = { id:driver.id, name:driver.name, role:'chauffeur', initials:initials(driver.name) };
+    }
+  }
+
+  if(valid) {
+    state.pinAttempts = 0;
+    state.currentUser = user;
+    state.role = user.role;
+    addAudit('Connexion', `Connexion réussie — Mode ${state.mode.toUpperCase()}`);
+    enterApp();
+  } else {
+    state.pinAttempts++;
+    state.pinValue = '';
+    for(let i=0;i<6;i++){
+      const d = document.getElementById('d'+i);
+      d.className = 'pin-dot error';
+    }
+    setTimeout(updatePinDots, 600);
+    const rem = 3 - state.pinAttempts;
+    if(rem <= 0) {
+      state.pinLocked = true;
+      document.getElementById('pinError').textContent = '🔒 Accès bloqué — 3 tentatives incorrectes';
+      document.querySelectorAll('.pin-key').forEach(k=>k.disabled=true);
+      addAudit('Sécurité', 'Compte verrouillé — 3 tentatives incorrectes');
+    } else {
+      document.getElementById('pinError').textContent = `❌ Code incorrect — ${rem} tentative(s) restante(s)`;
+    }
+  }
+}
+
+/* =================================================================
+   APP INIT
+   ================================================================= */
+const NAV_GERANT = [
+  { id:'dashboard',  label:'Accueil',   icon:'🏠', page:'page-dashboard' },
+  { id:'commandes',  label:'Commandes', icon:'📋', page:'page-commandes' },
+  { id:'chauffeurs', label:'Chauffeurs',icon:'👤', page:'page-chauffeurs' },
+  { id:'camions',    label:'Camions',   icon:'🚛', page:'page-camions' },
+  { id:'clients',    label:'Clients',   icon:'🏢', page:'page-clients' },
+  { id:'materiaux',  label:'Matériaux', icon:'⚙️', page:'page-materiaux' },
+  { id:'rapports',   label:'Rapports',  icon:'📊', page:'page-rapports' },
+  { id:'marge',      label:'Marge',     icon:'💹', page:'page-marge' },
+  { id:'audit',      label:'Audit',     icon:'🔍', page:'page-audit' },
+];
+const NAV_CHAUFFEUR = [
+  { id:'driver-day',     label:'Transports', icon:'🚛', page:'page-driver-day' },
+  { id:'driver-fiche',   label:'Fiche jour', icon:'📝', page:'page-driver-fiche' },
+  { id:'driver-profile', label:'Profil',     icon:'👤', page:'page-driver-profile' },
+];
+
+function initApp() {
+  const u = state.currentUser;
+  document.getElementById('topbarAvatar').textContent = u.initials || 'U';
+  document.getElementById('topbarName').textContent   = u.name;
+  document.getElementById('topbarRole').textContent   = u.role === 'gerant' ? 'Administrateur' : 'Chauffeur';
+  updateModeUI();
+
+  const nav = u.role === 'gerant' ? NAV_GERANT : NAV_CHAUFFEUR;
+  buildNav(nav, u.role);
+
+  if(u.role === 'gerant') navigate('dashboard');
+  else navigate('driver-day');
+}
+
+function buildNav(nav, role) {
+  // Bottom nav (mobile)
+  const bottom = document.getElementById('bottomNav');
+  // Show max 5 items in bottom nav
+  const bottomItems = role === 'gerant'
+    ? [nav[0],nav[1],nav[2],nav[3],nav[4]]
+    : nav;
+  bottom.innerHTML = bottomItems.map(n=>`
+    <button class="nav-item" id="bnav-${n.id}" onclick="navigate('${n.id}')">
+      <span class="nav-icon">${n.icon}</span>
+      <span class="nav-label">${n.label}</span>
+    </button>
+  `).join('');
+
+  // Side nav (desktop)
+  const side = document.getElementById('sidenav');
+  side.innerHTML = `
+    <div class="sidenav-logo"><div class="t-mark">SN</div> SOTRANSNORD</div>
+    <div class="sidenav-section">
+      <div class="sidenav-section-label">Navigation</div>
+      ${nav.map(n=>`
+        <button class="sidenav-item" id="snav-${n.id}" onclick="navigate('${n.id}')">
+          <span class="nav-icon">${n.icon}</span> ${n.label}
+        </button>
+      `).join('')}
+    </div>
+    <div class="sidenav-footer">
+      <button class="sidenav-item" onclick="logout()" style="color:rgba(255,80,80,.7);">
+        <span class="nav-icon">⏻</span> Déconnexion
+      </button>
+    </div>
+  `;
+}
+
+function navigate(id) {
+  const navMap = state.role === 'gerant' ? NAV_GERANT : NAV_CHAUFFEUR;
+  const item = navMap.find(n=>n.id===id);
+  if(!item) return;
+
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(item.page).classList.add('active');
+
+  // Update nav active state
+  document.querySelectorAll('.nav-item,.sidenav-item').forEach(el=>el.classList.remove('active'));
+  ['bnav','snav'].forEach(prefix=>{
+    const el=document.getElementById(`${prefix}-${id}`);
+    if(el) el.classList.add('active');
+  });
+
+  state.currentPage = id;
+  renderPage(id);
+}
+
+function renderPage(id) {
+  switch(id) {
+    case 'dashboard':    renderDashboard(); break;
+    case 'commandes':    renderOrders(); break;
+    case 'chauffeurs':   renderDriversTable(); break;
+    case 'camions':      renderTrucks(); break;
+    case 'clients':      renderClients(); break;
+    case 'materiaux':    renderMaterials(); renderTariffs(); renderExpenses(); break;
+    case 'rapports':     renderReports(); break;
+    case 'marge':        renderMarginTable(); break;
+    case 'audit':        renderAudit(); break;
+    case 'driver-day':   renderDriverDay(); break;
+    case 'driver-fiche': renderDriverFiche(); break;
+    case 'driver-profile': renderDriverProfile(); break;
+  }
+}
+
+function logout() {
+  state.currentUser = null;
+  state.role = null;
+  state.pendingRole = null;
+  state.pendingDriver = null;
+  state.pinValue = '';
+  state.pinAttempts = 0;
+  document.getElementById('app').classList.remove('active');
+  document.getElementById('modeSwitchWrap').classList.add('hidden');
+  showScreen('splash');
+}
+
+/* =================================================================
+   RENDER: DASHBOARD
+   ================================================================= */
+function renderDashboard() {
+  document.getElementById('dashDate').textContent = today();
+  const active = db.orders.filter(o=>o.status==='en_cours').length;
+  const todayT  = db.orders.filter(o=>o.date===new Date().toISOString().split('T')[0]).reduce((s,o)=>s+o.nbEstimated,0);
+  const now = new Date();
+  const monthExp = db.expenses.filter(e=>{
+    const d=new Date(e.date); return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+  }).reduce((s,e)=>s+e.amount,0);
+  const margin = db.margins[now.getMonth()];
+  document.getElementById('stat-commandes').textContent = active;
+  document.getElementById('stat-transports').textContent = todayT;
+  document.getElementById('stat-ca').textContent = margin ? fmt(margin.ca) : '—';
+  document.getElementById('stat-frais').textContent = fmt(monthExp);
+
+  const recent = [...db.orders].sort((a,b)=>b.id-a.id).slice(0,5);
+  document.getElementById('recentOrders').innerHTML = recent.length ? recent.map(o=>orderCardHTML(o)).join('') :
+    `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Aucune commande</div></div>`;
+}
+
+function orderCardHTML(o) {
+  const statusMap = { en_cours:{cls:'badge-yellow',label:'En cours'}, termine:{cls:'badge-green',label:'Terminé'} };
+  const s = statusMap[o.status] || {cls:'badge-gray',label:o.status};
+  const pct = o.nbEstimated > 0 ? Math.round((o.nbDone/o.nbEstimated)*100) : 0;
+  const isFact = o.status==='termine';
+  return `
+  <div class="order-card">
+    <div class="order-card-head">
+      <div class="order-title">${clientName(o.clientId)}</div>
+      <span class="badge ${s.cls}">${s.label}</span>
+    </div>
+    <div class="order-meta">
+      <span class="order-meta-item">📅 ${fmtDate(o.date)}</span>
+      <span class="order-meta-item">📍 ${o.address}</span>
+      <span class="order-meta-item">🚛 ${truckPlate(o.truckId)}</span>
+      <span class="order-meta-item">👤 ${driverName(o.driverId)}</span>
+    </div>
+    <div style="margin-top:12px;">
+      <div class="flex justify-between items-center" style="margin-bottom:6px;">
+        <span class="text-sm" style="font-weight:600;">Transports : ${o.nbDone}/${o.nbEstimated}</span>
+        <span class="text-sm text-gray">${pct}%</span>
+      </div>
+      <div class="progress-bar-wrap"><div class="progress-bar-fill${pct>=100?' full':''}" style="width:${pct}%"></div></div>
+    </div>
+    <div class="flex gap-2 mt-3" style="flex-wrap:wrap;">
+      ${isFact ? `<button class="facturation-btn" onclick="facturer(${o.id})">💶 À facturer</button>` : ''}
+      <button class="btn btn-ghost btn-sm" onclick="editOrder(${o.id})">✏️ Modifier</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteOrder(${o.id})">🗑️</button>
+    </div>
+  </div>`;
+}
+
+/* =================================================================
+   RENDER: ORDERS
+   ================================================================= */
+function renderOrders() {
+  let list = db.orders;
+  if(state.filterOrders==='en_cours') list = list.filter(o=>o.status==='en_cours');
+  else if(state.filterOrders==='termine') list = list.filter(o=>o.status==='termine');
+  else if(state.filterOrders==='a_facturer') list = list.filter(o=>o.status==='termine');
+  document.getElementById('ordersList').innerHTML = list.length
+    ? list.map(o=>orderCardHTML(o)).join('')
+    : `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">Aucune commande</div><div class="empty-text">Créez votre première commande</div></div>`;
+}
+
+function filterOrders(f, btn) {
+  state.filterOrders = f;
+  document.querySelectorAll('#page-commandes .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderOrders();
+}
+
+function openOrderModal(id=null) {
+  state.editingId = id;
+  document.getElementById('orderModalTitle').textContent = id ? 'Modifier la commande' : 'Nouvelle commande';
+  // Populate selects
+  const cs = document.getElementById('om-client');
+  cs.innerHTML = db.clients.map(c=>`<option value="${c.id}">${c.company}</option>`).join('');
+  const ts = document.getElementById('om-truck');
+  ts.innerHTML = db.trucks.map(t=>`<option value="${t.id}">${t.plate} — ${t.type}</option>`).join('');
+  const ds = document.getElementById('om-driver');
+  ds.innerHTML = db.drivers.filter(d=>d.status==='actif').map(d=>`<option value="${d.id}">${d.name}</option>`).join('');
+  const ms = document.getElementById('om-material');
+  ms.innerHTML = db.materials.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
+
+  if(id) {
+    const o = db.orders.find(x=>x.id===id);
+    if(o){
+      document.getElementById('om-client').value   = o.clientId;
+      document.getElementById('om-date').value     = o.date;
+      document.getElementById('om-address').value  = o.address;
+      document.getElementById('om-truck').value    = o.truckId;
+      document.getElementById('om-driver').value   = o.driverId;
+      document.getElementById('om-type').value     = o.type;
+      document.getElementById('om-nb').value       = o.nbEstimated;
+      if(o.materialId) document.getElementById('om-material').value = o.materialId;
+      toggleOrderType();
+    }
+  } else {
+    document.getElementById('om-date').value = new Date().toISOString().split('T')[0];
+    toggleOrderType();
+  }
+  openModal('orderModal');
+}
+
+function toggleOrderType() {
+  const t = document.getElementById('om-type').value;
+  document.getElementById('om-mat-group').style.display = t==='materiaux' ? '' : 'none';
+}
+
+function saveOrder() {
+  const clientId  = parseInt(document.getElementById('om-client').value);
+  const date      = document.getElementById('om-date').value;
+  const address   = document.getElementById('om-address').value.trim();
+  const truckId   = parseInt(document.getElementById('om-truck').value);
+  const driverId  = parseInt(document.getElementById('om-driver').value);
+  const type      = document.getElementById('om-type').value;
+  const nb        = parseInt(document.getElementById('om-nb').value);
+  const matId     = type==='materiaux' ? parseInt(document.getElementById('om-material').value) : null;
+
+  if(!address || !nb || nb<1) { showToast('⚠️ Champs obligatoires manquants', 'error'); return; }
+
+  if(state.editingId) {
+    const o = db.orders.find(x=>x.id===state.editingId);
+    Object.assign(o, { clientId, date, address, truckId, driverId, type, materialId:matId, nbEstimated:nb });
+    showToast('✅ Commande mise à jour', 'success');
+    addAudit('Modification commande', `Commande #${o.id} — ${clientName(clientId)}`);
+    triggerMake(MAKE_WEBHOOKS.updateOrder, o);
+  } else {
+    const transports = Array.from({length:nb},(_,i)=>({ id:i+1, done:false, tonnage:null, receiver:null, func:null, sig:null }));
+    const o = { id:uid(), clientId, date, address, truckId, driverId, type, materialId:matId, nbEstimated:nb, nbDone:0, status:'en_cours', transports };
+    db.orders.unshift(o);
+    showToast('✅ Commande créée', 'success');
+    addAudit('Création commande', `Commande — ${clientName(clientId)} — ${nb} transport(s)`);
+    triggerMake(MAKE_WEBHOOKS.newOrder, o);
+    syncSheets('newOrder', o);
+  }
+  closeModal('orderModal');
+  renderOrders();
+}
+
+function editOrder(id) { openOrderModal(id); }
+
+async function deleteOrder(id) {
+  const ok = await showConfirm('Supprimer la commande', 'Cette action est irréversible.','🗑️','Supprimer','btn-danger');
+  if(!ok) return;
+  db.orders = db.orders.filter(o=>o.id!==id);
+  addAudit('Suppression commande', `Commande #${id}`);
+  renderOrders();
+  showToast('Commande supprimée', 'error');
+}
+
+function facturer(id) {
+  const o = db.orders.find(x=>x.id===id);
+  showToast(`💶 Facturation préparée pour ${clientName(o.clientId)}`, 'success');
+  addAudit('Facturation', `Commande #${id} — ${clientName(o.clientId)}`);
+  triggerMake(MAKE_WEBHOOKS.updateOrder, { ...o, action:'facturer' });
+}
+
+/* =================================================================
+   RENDER: DRIVERS TABLE
+   ================================================================= */
+function renderDriversTable(search='') {
+  let list = db.drivers;
+  if(search) list = list.filter(d=>d.name.toLowerCase().includes(search.toLowerCase()));
+  const tbody = document.getElementById('driversTableBody');
+  tbody.innerHTML = list.length ? list.map(d=>`
+    <tr>
+      <td><div style="font-weight:600;">${d.name}</div><div style="font-size:.78rem;color:var(--gray500);">${d.email}</div></td>
+      <td>${d.phone}</td>
+      <td><span class="badge badge-blue">${d.licence}</span></td>
+      <td><span class="badge ${d.status==='actif'?'badge-green':'badge-red'}">${d.status}</span></td>
+      <td><div class="table-actions">
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="editDriver(${d.id})" title="Modifier">✏️</button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteDriver(${d.id})" title="Supprimer">🗑️</button>
+      </div></td>
+    </tr>
+  `).join('') : `<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">👤</div><div class="empty-title">Aucun chauffeur</div></div></td></tr>`;
+}
+
+function openDriverModal(id=null) {
+  state.editingId = id;
+  document.getElementById('driverModalTitle').textContent = id ? 'Modifier chauffeur' : 'Nouveau chauffeur';
+  ['dm-name','dm-birth','dm-phone','dm-email','dm-pin'].forEach(f=>{ const el=document.getElementById(f); if(el) el.value=''; });
+  document.getElementById('dm-uploaded').innerHTML='';
+  if(id) {
+    const d = db.drivers.find(x=>x.id===id);
+    if(d){
+      document.getElementById('dm-name').value = d.name;
+      document.getElementById('dm-birth').value= d.birth||'';
+      document.getElementById('dm-phone').value= d.phone||'';
+      document.getElementById('dm-email').value= d.email||'';
+      document.getElementById('dm-licence').value= d.licence||'CE';
+    }
+  }
+  openModal('driverModal');
+}
+
+function saveDriver() {
+  const name = document.getElementById('dm-name').value.trim();
+  const pin  = document.getElementById('dm-pin').value.trim();
+  if(!name) { showToast('⚠️ Nom obligatoire', 'error'); return; }
+  if(!state.editingId && (!/^\d{6}$/.test(pin))) { showToast('⚠️ PIN doit être 6 chiffres', 'error'); return; }
+
+  const data = {
+    name, birth:document.getElementById('dm-birth').value,
+    phone:document.getElementById('dm-phone').value.trim(),
+    email:document.getElementById('dm-email').value.trim(),
+    licence:document.getElementById('dm-licence').value,
+    status:'actif', docs:[]
+  };
+
+  if(state.editingId) {
+    const d = db.drivers.find(x=>x.id===state.editingId);
+    Object.assign(d, data);
+    showToast('✅ Chauffeur mis à jour', 'success');
+    addAudit('Modification chauffeur', name);
+  } else {
+    db.drivers.push({ id:uid(), pin, ...data });
+    showToast('✅ Chauffeur ajouté', 'success');
+    addAudit('Création chauffeur', name);
+    triggerMake(MAKE_WEBHOOKS.newDriver, data);
+    syncSheets('newDriver', data);
+  }
+  closeModal('driverModal');
+  renderDriversTable();
+}
+
+function editDriver(id) { openDriverModal(id); }
+async function deleteDriver(id) {
+  const ok = await showConfirm('Supprimer ce chauffeur ?','Cette action est irréversible.','👤','Supprimer','btn-danger');
+  if(!ok) return;
+  db.drivers = db.drivers.filter(d=>d.id!==id);
+  addAudit('Suppression chauffeur', `ID ${id}`);
+  renderDriversTable();
+  showToast('Chauffeur supprimé','error');
+}
+
+/* =================================================================
+   RENDER: TRUCKS
+   ================================================================= */
+function renderTrucks() {
+  const tbody = document.getElementById('trucksTableBody');
+  tbody.innerHTML = db.trucks.length ? db.trucks.map(t=>{
+    const expired = isCTExpired(t.ct);
+    return `
+    <tr>
+      <td><div style="font-weight:700;">${t.plate}</div></td>
+      <td>${t.type}</td>
+      <td>${t.km?.toLocaleString('fr-FR')} km</td>
+      <td><span class="badge ${expired?'badge-red':'badge-green'}">${fmtDate(t.ct)}</span></td>
+      <td><span class="badge ${t.status==='actif'?'badge-green':'badge-red'}">${t.status}</span></td>
+      <td><div class="table-actions">
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="editTruck(${t.id})">✏️</button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTruck(${t.id})">🗑️</button>
+      </div></td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="6"><div class="empty-state"><div class="empty-icon">🚛</div><div class="empty-title">Aucun camion</div></div></td></tr>`;
+}
+
+function openTruckModal(id=null) {
+  state.editingId = id;
+  document.getElementById('truckModalTitle').textContent = id ? 'Modifier camion' : 'Nouveau camion';
+  ['tm-plate','tm-km','tm-ct'].forEach(f=>{ document.getElementById(f).value=''; });
+  document.getElementById('tm-uploaded').innerHTML='';
+  if(id){
+    const t=db.trucks.find(x=>x.id===id);
+    if(t){
+      document.getElementById('tm-plate').value=t.plate;
+      document.getElementById('tm-type').value=t.type;
+      document.getElementById('tm-km').value=t.km||'';
+      document.getElementById('tm-ct').value=t.ct||'';
+    }
+  }
+  openModal('truckModal');
+}
+
+function saveTruck() {
+  const plate = document.getElementById('tm-plate').value.trim();
+  if(!plate){ showToast('⚠️ Immatriculation obligatoire','error'); return; }
+  const data={plate,type:document.getElementById('tm-type').value,km:parseInt(document.getElementById('tm-km').value)||0,ct:document.getElementById('tm-ct').value,status:'actif',docs:[]};
+  if(state.editingId){ const t=db.trucks.find(x=>x.id===state.editingId); Object.assign(t,data); showToast('✅ Camion mis à jour','success'); addAudit('Modification camion',plate); }
+  else{ db.trucks.push({id:uid(),...data}); showToast('✅ Camion ajouté','success'); addAudit('Création camion',plate); triggerMake(MAKE_WEBHOOKS.newTruck,data); }
+  closeModal('truckModal'); renderTrucks();
+}
+
+function editTruck(id){ openTruckModal(id); }
+async function deleteTruck(id){
+  const ok=await showConfirm('Supprimer ce camion ?','Cette action est irréversible.','🚛','Supprimer','btn-danger');
+  if(!ok)return; db.trucks=db.trucks.filter(t=>t.id!==id); addAudit('Suppression camion',`ID ${id}`); renderTrucks(); showToast('Camion supprimé','error');
+}
+
+/* =================================================================
+   RENDER: CLIENTS
+   ================================================================= */
+function renderClients() {
+  const tbody=document.getElementById('clientsTableBody');
+  tbody.innerHTML=db.clients.length?db.clients.map(c=>`
+    <tr>
+      <td><div style="font-weight:700;">${c.company}</div></td>
+      <td>${c.manager||'—'}</td><td>${c.phone||'—'}</td><td>${c.email||'—'}</td>
+      <td><div class="table-actions">
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="editClient(${c.id})">✏️</button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteClient(${c.id})">🗑️</button>
+      </div></td>
+    </tr>`).join(''):`<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">🏢</div><div class="empty-title">Aucun client</div></div></td></tr>`;
+}
+
+function openClientModal(id=null){
+  state.editingId=id;
+  document.getElementById('clientModalTitle').textContent=id?'Modifier client':'Nouveau client';
+  ['cm-company','cm-manager','cm-phone','cm-email'].forEach(f=>document.getElementById(f).value='');
+  if(id){const c=db.clients.find(x=>x.id===id);if(c){document.getElementById('cm-company').value=c.company;document.getElementById('cm-manager').value=c.manager||'';document.getElementById('cm-phone').value=c.phone||'';document.getElementById('cm-email').value=c.email||'';}}
+  openModal('clientModal');
+}
+
+function saveClient(){
+  const company=document.getElementById('cm-company').value.trim();
+  if(!company){showToast('⚠️ Nom entreprise obligatoire','error');return;}
+  const data={company,manager:document.getElementById('cm-manager').value.trim(),phone:document.getElementById('cm-phone').value.trim(),email:document.getElementById('cm-email').value.trim()};
+  if(state.editingId){const c=db.clients.find(x=>x.id===state.editingId);Object.assign(c,data);showToast('✅ Client mis à jour','success');addAudit('Modification client',company);}
+  else{db.clients.push({id:uid(),...data});showToast('✅ Client ajouté','success');addAudit('Création client',company);}
+  closeModal('clientModal');renderClients();
+}
+function editClient(id){openClientModal(id);}
+async function deleteClient(id){
+  const ok=await showConfirm('Supprimer ce client ?','Cette action est irréversible.','🏢','Supprimer','btn-danger');
+  if(!ok)return;db.clients=db.clients.filter(c=>c.id!==id);addAudit('Suppression client',`ID ${id}`);renderClients();showToast('Client supprimé','error');
+}
+
+/* =================================================================
+   RENDER: MATERIALS / TARIFFS / EXPENSES
+   ================================================================= */
+function showMatTab(tab, btn){
+  ['mat','tarifs','frais'].forEach(t=>document.getElementById('mat-tab-'+t).classList[t===tab?'remove':'add']('hidden'));
+  document.querySelectorAll('#page-materiaux .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function renderMaterials(){
+  const tbody=document.getElementById('materialsTableBody');
+  tbody.innerHTML=db.materials.map(m=>`
+    <tr><td>${m.name}</td><td>${m.unit}</td>
+    <td><div class="table-actions">
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="editMaterial(${m.id})">✏️</button>
+      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteMaterial(${m.id})">🗑️</button>
+    </div></td></tr>`).join('');
+}
+
+function openMaterialModal(id=null){
+  state.editingId=id;
+  document.getElementById('mm-name').value='';document.getElementById('mm-unit').value='tonne';
+  if(id){const m=db.materials.find(x=>x.id===id);if(m){document.getElementById('mm-name').value=m.name;document.getElementById('mm-unit').value=m.unit;}}
+  openModal('materialModal');
+}
+function saveMaterial(){
+  const name=document.getElementById('mm-name').value.trim();
+  if(!name){showToast('⚠️ Nom obligatoire','error');return;}
+  const data={name,unit:document.getElementById('mm-unit').value};
+  if(state.editingId){const m=db.materials.find(x=>x.id===state.editingId);Object.assign(m,data);showToast('✅ Matériau mis à jour','success');}
+  else{db.materials.push({id:uid(),...data});showToast('✅ Matériau ajouté','success');addAudit('Création matériau',name);}
+  closeModal('materialModal');renderMaterials();
+}
+function editMaterial(id){openMaterialModal(id);}
+async function deleteMaterial(id){
+  const ok=await showConfirm('Supprimer ce matériau ?','','⚙️','Supprimer','btn-danger');
+  if(!ok)return;db.materials=db.materials.filter(m=>m.id!==id);renderMaterials();showToast('Matériau supprimé','error');
+}
+
+function renderTariffs(){
+  const tbody=document.getElementById('tariffsTableBody');
+  tbody.innerHTML=db.tariffs.map(t=>`
+    <tr><td><span class="badge ${t.type==='journee'?'badge-blue':'badge-orange'}">${t.type==='journee'?'Journée':'Matériaux'}</span></td>
+    <td>${t.name}</td><td style="font-weight:700;">${fmt(t.price)}</td>
+    <td><div class="table-actions">
+      <button class="btn btn-ghost btn-sm btn-icon" onclick="editTariff(${t.id})">✏️</button>
+      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTariff(${t.id})">🗑️</button>
+    </div></td></tr>`).join('');
+}
+
+function openTariffModal(id=null){
+  state.editingId=id;
+  document.getElementById('trf-name').value='';document.getElementById('trf-price').value='';
+  if(id){const t=db.tariffs.find(x=>x.id===id);if(t){document.getElementById('trf-type').value=t.type;document.getElementById('trf-name').value=t.name;document.getElementById('trf-price').value=t.price;}}
+  openModal('tariffModal');
+}
+function saveTariff(){
+  const name=document.getElementById('trf-name').value.trim();const price=parseFloat(document.getElementById('trf-price').value);
+  if(!name||isNaN(price)){showToast('⚠️ Champs obligatoires','error');return;}
+  const data={type:document.getElementById('trf-type').value,name,price};
+  if(state.editingId){const t=db.tariffs.find(x=>x.id===state.editingId);Object.assign(t,data);showToast('✅ Tarif mis à jour','success');}
+  else{db.tariffs.push({id:uid(),...data});showToast('✅ Tarif ajouté','success');addAudit('Création tarif',name);}
+  closeModal('tariffModal');renderTariffs();
+}
+function editTariff(id){openTariffModal(id);}
+async function deleteTariff(id){
+  const ok=await showConfirm('Supprimer ce tarif ?','','💰','Supprimer','btn-danger');
+  if(!ok)return;db.tariffs=db.tariffs.filter(t=>t.id!==id);renderTariffs();showToast('Tarif supprimé','error');
+}
+
+function renderExpenses(){
+  const tbody=document.getElementById('expensesTableBody');
+  tbody.innerHTML=db.expenses.map(e=>`
+    <tr><td>${fmtDate(e.date)}</td><td>${truckPlate(e.truckId)}</td>
+    <td><span class="badge badge-gray">${e.type}</span></td>
+    <td style="font-weight:700;">${fmt(e.amount)}</td>
+    <td><div class="table-actions">
+      <button class="btn btn-danger btn-sm btn-icon" onclick="deleteExpense(${e.id})">🗑️</button>
+    </div></td></tr>`).join('');
+}
+
+function openExpenseModal(){
+  document.getElementById('exp-truck').innerHTML=db.trucks.map(t=>`<option value="${t.id}">${t.plate}</option>`).join('');
+  document.getElementById('exp-date').value=new Date().toISOString().split('T')[0];
+  document.getElementById('exp-amount').value='';document.getElementById('exp-desc').value='';
+  openModal('expenseModal');
+}
+function saveExpense(){
+  const amount=parseFloat(document.getElementById('exp-amount').value);
+  if(isNaN(amount)||amount<=0){showToast('⚠️ Montant invalide','error');return;}
+  const data={truckId:parseInt(document.getElementById('exp-truck').value),date:document.getElementById('exp-date').value,type:document.getElementById('exp-type').value,amount,desc:document.getElementById('exp-desc').value.trim()};
+  db.expenses.push({id:uid(),...data});showToast('✅ Frais enregistré','success');addAudit('Ajout frais',`${data.type} — ${fmt(amount)}`);
+  triggerMake(MAKE_WEBHOOKS.expense,data);syncSheets('expense',data);
+  closeModal('expenseModal');renderExpenses();
+}
+async function deleteExpense(id){
+  const ok=await showConfirm('Supprimer ce frais ?','','💸','Supprimer','btn-danger');
+  if(!ok)return;db.expenses=db.expenses.filter(e=>e.id!==id);renderExpenses();showToast('Frais supprimé','error');
+}
+
+/* =================================================================
+   RENDER: REPORTS
+   ================================================================= */
+function renderReports(){
+  const now=new Date();
+  const monthExp=db.expenses.filter(e=>{const d=new Date(e.date);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  const totalFuel=monthExp.filter(e=>e.type==='carburant').reduce((s,e)=>s+e.amount,0);
+  const totalAll=monthExp.reduce((s,e)=>s+e.amount,0);
+  const avgConso=db.trucks.length>0?(totalFuel/db.trucks.length).toFixed(0):0;
+  document.getElementById('rpt-conso').textContent=`${avgConso} L`;
+  document.getElementById('rpt-frais').textContent=fmt(totalAll);
+
+  const tbody=document.getElementById('truckExpenseReport');
+  tbody.innerHTML=db.trucks.map(t=>{
+    const te=monthExp.filter(e=>e.truckId===t.id);
+    const carbu=te.filter(e=>e.type==='carburant').reduce((s,e)=>s+e.amount,0);
+    const vid=te.filter(e=>e.type==='vidange').reduce((s,e)=>s+e.amount,0);
+    const rep=te.filter(e=>e.type==='reparation').reduce((s,e)=>s+e.amount,0);
+    const pn=te.filter(e=>e.type==='pneus').reduce((s,e)=>s+e.amount,0);
+    const ass=te.filter(e=>e.type==='assurance').reduce((s,e)=>s+e.amount,0);
+    const total=carbu+vid+rep+pn+ass;
+    return `<tr><td style="font-weight:700;">${t.plate}</td><td>${fmt(carbu)}</td><td>${fmt(vid)}</td><td>${fmt(rep)}</td><td>${fmt(pn)}</td><td>${fmt(ass)}</td><td style="font-weight:700;color:var(--navy);">${fmt(total)}</td></tr>`;
+  }).join('');
+}
+
+/* =================================================================
+   RENDER: MARGIN TABLE
+   ================================================================= */
+function renderMarginTable(){
+  const headRow=document.getElementById('marginHead');
+  const body=document.getElementById('marginBody');
+  const rows=[
+    {key:'ca',        label:'Chiffre d\'affaires', bold:true, class:''},
+    {key:'carbu',     label:'↳ Carburant', bold:false, class:'text-red'},
+    {key:'vidange',   label:'↳ Vidange',   bold:false, class:'text-red'},
+    {key:'repar',     label:'↳ Réparations',bold:false,class:'text-red'},
+    {key:'pneus',     label:'↳ Pneus',     bold:false, class:'text-red'},
+    {key:'assurance', label:'↳ Assurance', bold:false, class:'text-red'},
+    {key:'total_dep', label:'Total dépenses',bold:true, class:'text-red'},
+    {key:'marge',     label:'MARGE BRUTE', bold:true,  class:''},
+  ];
+
+  headRow.innerHTML=`<th style="background:var(--navy);color:rgba(255,255,255,.85);padding:10px 12px;font-size:.78rem;font-weight:700;">Indicateur</th>`+
+    MONTHS.map((m,i)=>{
+      const isCurrent=i===CURRENT_MONTH;
+      return `<th class="month-header${isCurrent?' current-month-head':''}" style="background:var(--navy);color:rgba(255,255,255,.85);padding:10px 10px;font-size:.78rem;font-weight:600;${isCurrent?'color:var(--orange);background:rgba(244,130,31,.2);':''}">${m}</th>`;
+    }).join('');
+
+  body.innerHTML=rows.map(row=>`
+    <tr>
+      <td style="font-weight:${row.bold?700:500};padding:10px 12px;font-size:.84rem;background:var(--gray100);color:var(--navy);white-space:nowrap;">${row.label}</td>
+      ${MONTHS.map((_,i)=>{
+        const d=db.margins[i];if(!d) return `<td style="padding:9px 10px;text-align:right;">—</td>`;
+        const v=d[row.key];
+        const isCurrent=i===CURRENT_MONTH;
+        let display;
+        if(row.key==='marge'){
+          display=`<span class="${v>=0?'margin-positive':'margin-negative'}">${fmt(v)}</span>`;
+        } else {
+          display=`<span class="${row.class}">${fmt(v)}</span>`;
+        }
+        return `<td style="padding:9px 10px;text-align:right;font-size:.84rem;${isCurrent?'background:rgba(244,130,31,.06);':''}">${display}</td>`;
+      }).join('')}
+    </tr>`).join('');
+}
+
+/* =================================================================
+   RENDER: AUDIT
+   ================================================================= */
+function renderAudit(){
+  const tbody=document.getElementById('auditTableBody');
+  tbody.innerHTML=db.audit.length?db.audit.map(a=>`
+    <tr><td style="white-space:nowrap;font-size:.8rem;">${a.ts}</td>
+    <td style="font-size:.84rem;">${a.user}</td>
+    <td><span class="badge badge-blue">${a.action}</span></td>
+    <td style="font-size:.83rem;color:var(--gray500);">${a.detail}</td></tr>`).join('')
+    :`<tr><td colspan="4"><div class="empty-state"><div class="empty-icon">🔍</div><div class="empty-title">Historique vide</div></div></td></tr>`;
+}
+async function clearAudit(){
+  const ok=await showConfirm('Vider l\'historique ?','Cette action est irréversible.','🗑️','Vider','btn-danger');
+  if(!ok)return; db.audit=[]; renderAudit(); showToast('Historique vidé','error');
+}
+
+/* =================================================================
+   DRIVER: TRANSPORT DU JOUR
+   ================================================================= */
+function renderDriverDay(){
+  const d=new Date();
+  document.getElementById('driverDayDate').textContent=d.toLocaleDateString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const driverId=state.currentUser.id;
+  const todayStr=d.toISOString().split('T')[0];
+  const orders=db.orders.filter(o=>o.driverId===driverId && o.date===todayStr && o.status==='en_cours');
+
+  let allTransports=[];
+  orders.forEach(o=>{
+    o.transports.forEach(t=>{
+      allTransports.push({...t, orderId:o.id, clientName:clientName(o.clientId), address:o.address, material:o.materialId?materialName(o.materialId):null, orderType:o.type});
+    });
+  });
+
+  const total=allTransports.length;
+  const done=allTransports.filter(t=>t.done).length;
+  const pct=total>0?Math.round((done/total)*100):0;
+  document.getElementById('driverProgress').textContent=`${done} / ${total}`;
+  const bar=document.getElementById('driverProgressBar');
+  bar.style.width=pct+'%';
+  bar.className='progress-bar-fill'+(pct>=100?' full':'');
+
+  const list=document.getElementById('driverTransportList');
+  if(!allTransports.length){
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-title">Aucun transport aujourd'hui</div><div class="empty-text">Votre gérant n'a pas encore créé de commandes pour ce jour</div></div>`;
+    return;
+  }
+  list.innerHTML=allTransports.map((t,i)=>`
+    <div class="transport-item${t.done?' done':''}" onclick="${t.done?'':'openTransportModal('+t.orderId+','+t.id+')'}">
+      <div class="transport-num">${i+1}</div>
+      <div class="transport-info">
+        <div class="transport-client">${t.clientName}</div>
+        <div class="transport-meta">📍 ${t.address}${t.material?' · '+t.material:''}</div>
+        ${t.done?`<div class="text-sm text-green mt-2">✅ Validé — ${t.tonnage}T — ${t.receiver}</div>`:''}
+      </div>
+      ${t.done?'<span style="font-size:1.4rem;">✅</span>':'<span class="transport-arrow">›</span>'}
+    </div>`).join('');
+}
+
+function renderDriverFiche(){/* page is static */}
+function renderDriverProfile(){
+  const d=db.drivers.find(x=>x.id===state.currentUser.id);
+  if(!d){document.getElementById('driverProfileContent').innerHTML='—';return;}
+  document.getElementById('driverProfileContent').innerHTML=`
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+      <div style="width:64px;height:64px;border-radius:18px;background:var(--orange);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.5rem;font-weight:800;color:#fff;">${initials(d.name)}</div>
+      <div><div style="font-family:var(--font-display);font-size:1.2rem;font-weight:800;">${d.name}</div><div class="text-sm text-gray">Permis ${d.licence}</div></div>
+    </div>
+    <div class="form-grid-2">
+      <div class="form-group"><label class="form-label">Téléphone</label><div class="form-input" style="background:var(--gray100);">${d.phone||'—'}</div></div>
+      <div class="form-group"><label class="form-label">Email</label><div class="form-input" style="background:var(--gray100);">${d.email||'—'}</div></div>
+    </div>`;
+}
+
+/* =================================================================
+   TRANSPORT MODAL (chauffeur)
+   ================================================================= */
+function openTransportModal(orderId, transportId){
+  const o=db.orders.find(x=>x.id===orderId);if(!o)return;
+  const t=o.transports.find(x=>x.id===transportId);if(!t||t.done)return;
+  state.currentOrder=o; state.currentTransport=t;
+  document.getElementById('transportModalTitle').textContent=`Transport #${transportId}`;
+  document.getElementById('transportModalInfo').innerHTML=`
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      <span class="order-meta-item">🏢 ${clientName(o.clientId)}</span>
+      <span class="order-meta-item">📍 ${o.address}</span>
+      ${o.materialId?`<span class="order-meta-item">⚙️ ${materialName(o.materialId)}</span>`:''}
+    </div>`;
+  document.getElementById('tm-tonnage').value='';
+  document.getElementById('tm-receiver-name').value='';
+  document.getElementById('tm-receiver-func').value='';
+  initSigPad();
+  openModal('transportModal');
+}
+
+function confirmTransport(){
+  const tonnage=parseFloat(document.getElementById('tm-tonnage').value);
+  const receiver=document.getElementById('tm-receiver-name').value.trim();
+  const func=document.getElementById('tm-receiver-func').value.trim();
+  if(!tonnage||isNaN(tonnage)){showToast('⚠️ Tonnage obligatoire','error');return;}
+  if(!receiver){showToast('⚠️ Nom du réceptionnaire obligatoire','error');return;}
+  const sigData=getSigData();
+  if(!sigData){showToast('⚠️ Signature requise','error');return;}
+
+  const t=state.currentTransport; const o=state.currentOrder;
+  t.done=true; t.tonnage=tonnage; t.receiver=receiver; t.func=func; t.sig=sigData;
+  t.ts=new Date().toLocaleString('fr-FR');
+  o.nbDone=(o.transports.filter(x=>x.done).length);
+  if(o.nbDone>=o.nbEstimated) o.status='termine';
+
+  addAudit('Transport validé',`Commande — ${clientName(o.clientId)} — Transport ${t.id} — ${tonnage}T`);
+  const payload={orderId:o.id,transportId:t.id,driverId:state.currentUser.id,tonnage,receiver,func,timestamp:new Date().toISOString()};
+  triggerMake(MAKE_WEBHOOKS.transportDone,payload);
+  syncSheets('transportDone',payload);
+
+  closeModal('transportModal');
+  renderDriverDay();
+  showToast('✅ Transport validé avec succès !','success',4000);
+}
+
+async function submitFiche(){
+  const km=document.getElementById('fiche-km').value;
+  const conso=document.getElementById('fiche-conso').value;
+  const price=document.getElementById('fiche-fuel-price').value;
+  if(!km){showToast('⚠️ Kilométrage obligatoire','error');return;}
+  showLoader();
+  await new Promise(r=>setTimeout(r,800));
+  const payload={driverId:state.currentUser.id,driverName:state.currentUser.name,km:parseInt(km),fuelLiters:parseFloat(conso)||0,fuelPrice:parseFloat(price)||0,notes:document.getElementById('fiche-notes').value.trim(),date:new Date().toISOString()};
+  if(state.currentUser.id){
+    const d=db.drivers.find(x=>x.id===state.currentUser.id);
+    if(d) db.expenses.push({id:uid(),truckId:db.orders.find(o=>o.driverId===d.id)?.truckId||0,date:new Date().toISOString().split('T')[0],type:'carburant',amount:parseFloat(price)||0,desc:`Fin de journée — ${d.name}`});
+  }
+  triggerMake(MAKE_WEBHOOKS.endOfDay,payload);
+  syncSheets('endOfDay',payload);
+  addAudit('Fiche de fin de journée',`${state.currentUser.name} — ${km} km`);
+  hideLoader();
+  document.getElementById('fiche-km').value='';
+  document.getElementById('fiche-conso').value='';
+  document.getElementById('fiche-fuel-price').value='';
+  document.getElementById('fiche-notes').value='';
+  showToast('📤 Fiche envoyée au gérant !','success',4000);
+}
+
+/* =================================================================
+   SIGNATURE PAD
+   ================================================================= */
+let sigCtx, sigDrawing=false, sigHasData=false;
+function initSigPad(){
+  const canvas=document.getElementById('sigPad');
+  const wrap=canvas.parentElement;
+  canvas.width=wrap.offsetWidth||320;
+  canvas.height=140;
+  sigCtx=canvas.getContext('2d');
+  sigCtx.fillStyle='#f3f4f6';
+  sigCtx.fillRect(0,0,canvas.width,canvas.height);
+  sigCtx.strokeStyle='#0D1B2A';
+  sigCtx.lineWidth=2.5;
+  sigCtx.lineCap='round';
+  sigCtx.lineJoin='round';
+  sigHasData=false;
+  sigDrawing=false;
+  const pos=(e,el)=>{const r=el.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top};};
+  canvas.onmousedown=e=>{sigDrawing=true;const p=pos(e,canvas);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);};
+  canvas.onmousemove=e=>{if(!sigDrawing)return;const p=pos(e,canvas);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHasData=true;};
+  canvas.onmouseup=()=>{sigDrawing=false;};
+  canvas.ontouchstart=e=>{e.preventDefault();sigDrawing=true;const p=pos(e,canvas);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);};
+  canvas.ontouchmove=e=>{e.preventDefault();if(!sigDrawing)return;const p=pos(e,canvas);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();sigHasData=true;};
+  canvas.ontouchend=()=>{sigDrawing=false;};
+}
+function clearSig(){if(sigCtx){sigCtx.fillStyle='#f3f4f6';sigCtx.fillRect(0,0,sigCtx.canvas.width,sigCtx.canvas.height);sigHasData=false;}}
+function getSigData(){return sigHasData?document.getElementById('sigPad').toDataURL():null;}
+
+/* =================================================================
+   FILE UPLOAD HANDLER
+   ================================================================= */
+function handleFiles(input, targetId){
+  const wrap=document.getElementById(targetId);
+  Array.from(input.files).forEach(f=>{
+    const chip=document.createElement('div');chip.className='file-chip';
+    chip.innerHTML=`<span>📄 ${f.name}</span><button onclick="this.parentElement.remove()">×</button>`;
+    wrap.appendChild(chip);
+  });
+  input.value='';
+}
+
+/* =================================================================
+   INIT
+   ================================================================= */
+document.addEventListener('DOMContentLoaded',()=>{
+  showScreen('splash');
+  document.getElementById('dashDate').textContent=today();
+  document.querySelectorAll('.modal-overlay').forEach(mo=>{
+    mo.addEventListener('click',e=>{ if(e.target===mo) closeModal(mo.id); });
+  });
+});
+</script>
+</body>
+</html>
