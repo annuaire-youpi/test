@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Annuaire YOUPI - Fiches entreprises</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h1 { margin-bottom: 10px; }
+    form { margin-bottom: 30px; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
+    label { display: block; margin-top: 10px; }
+    input, select { width: 100%; padding: 6px; margin-top: 4px; }
+    button { margin-top: 15px; padding: 8px 16px; cursor: pointer; }
+    .liste { margin-top: 20px; }
+    .fiche { border: 1px solid #ddd; border-radius: 6px; padding: 10px; margin-bottom: 8px; }
+    .fiche-title { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Annuaire YOUPI - Fiches entreprises</h1>
+
+  <!-- Formulaire création fiche -->
+  <form id="form-fiche" action="https://hook.eu1.make.com/TON_WEBHOOK" method="POST">
+    <!-- App ID pour router côté Make si besoin -->
+    <input type="hidden" name="app_id" value="annuaire_youpi_fiche_entreprise" />
+
+    <label>
+      Nom de l'entreprise
+      <input type="text" name="entreprise_nom" required />
+    </label>
+
+    <label>
+      Ville
+      <input type="text" name="entreprise_ville" required />
+    </label>
+
+    <label>
+      Catégorie
+      <select name="categorie" required>
+        <option value="">-- Choisir --</option>
+        <option value="Restauration">Restauration</option>
+        <option value="Services">Services</option>
+        <option value="Commerce">Commerce</option>
+        <option value="Autre">Autre</option>
+      </select>
+    </label>
+
+    <label>
+      Téléphone
+      <input type="text" name="telephone" />
+    </label>
+
+    <label>
+      Email
+      <input type="email" name="email" />
+    </label>
+
+    <label>
+      Site web
+      <input type="url" name="site_web" />
+    </label>
+
+    <button type="submit">Enregistrer la fiche</button>
+  </form>
+
+  <div class="liste">
+    <h2>Liste des fiches (vue front)</h2>
+    <div id="liste-fiches"></div>
+  </div>
+
+  <script>
+    // ============================================
+    // 🔧 CONFIGURATION
+    // ============================================
+    const CONFIG = {
+      DATA_SOURCE: "demo", // "demo" ou "api"
+      API_URL: "https://hook.eu1.make.com/TON_WEBHOOK_LISTING", // webhook Make qui renvoie la liste des fiches
+      FORM_WEBHOOK_URL: "https://hook.eu1.make.com/TON_WEBHOOK", // webhook Make pour créer une fiche
+      APP_ID: "annuaire_youpi_fiche_entreprise"
+    };
+
+    // ============================================
+    // 📦 DONNÉES DE DÉMO
+    // ============================================
+    const DEMO_DATA = [
+      {
+        app_id: "annuaire_youpi_fiche_entreprise",
+        entreprise_nom: "Restaurant Ti-Punch",
+        entreprise_ville: "Fort-de-France",
+        categorie: "Restauration",
+        telephone: "0596 00 00 00",
+        email: "contact@tipunch.mq",
+        site_web: "https://tipunch.mq",
+        date_creation: "2026-05-01"
+      },
+      {
+        app_id: "annuaire_youpi_fiche_entreprise",
+        entreprise_nom: "Garage Auto Plus",
+        entreprise_ville: "Le Lamentin",
+        categorie: "Services",
+        telephone: "0596 11 22 33",
+        email: "garage@autoplus.mq",
+        site_web: "",
+        date_creation: "2026-05-03"
+      }
+    ];
+
+    // ============================================
+    // 🔌 CHARGEMENT DES DONNÉES
+    // ============================================
+    async function loadData() {
+      if (CONFIG.DATA_SOURCE === "demo") {
+        return DEMO_DATA;
+      } else {
+        const response = await fetch(CONFIG.API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ app_id: CONFIG.APP_ID })
+        });
+        if (!response.ok) {
+          console.error("Erreur API listing", await response.text());
+          return [];
+        }
+        return await response.json();
+      }
+    }
+
+    // ============================================
+    // 🧩 RENDU DES FICHES
+    // ============================================
+    function renderFiches(fiches) {
+      const container = document.getElementById("liste-fiches");
+      container.innerHTML = "";
+      if (!fiches || fiches.length === 0) {
+        container.textContent = "Aucune fiche pour le moment.";
+        return;
+      }
+      fiches.forEach(fiche => {
+        const div = document.createElement("div");
+        div.className = "fiche";
+        div.innerHTML = `
+          <div class="fiche-title">${fiche.entreprise_nom || ""}</div>
+          <div>${fiche.entreprise_ville || ""} - ${fiche.categorie || ""}</div>
+          <div>Tél : ${fiche.telephone || "n/c"}</div>
+          <div>Email : ${fiche.email || "n/c"}</div>
+          <div>Site : ${fiche.site_web || "n/c"}</div>
+          <div>Créée le : ${fiche.date_creation || ""}</div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // ============================================
+    // 📨 ENVOI DU FORMULAIRE → MAKE
+    // ============================================
+    async function handleFormSubmit(event) {
+      event.preventDefault();
+      const form = event.currentTarget;
+
+      const formData = new FormData(form);
+      const plainFormData = Object.fromEntries(formData.entries());
+      // Ajout de l'app_id en JS pour être sûr
+      plainFormData.app_id = CONFIG.APP_ID;
+      // Ajout de la date de création côté front (ou côté Make si tu préfères)
+      plainFormData.date_creation = new Date().toISOString().slice(0, 10);
+
+      const response = await fetch(CONFIG.FORM_WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
+        body: JSON.stringify(plainFormData)
+      });
+
+      if (!response.ok) {
+        alert("Erreur lors de l'enregistrement");
+        console.error(await response.text());
+        return;
+      }
+
+      alert("Fiche enregistrée !");
+      form.reset();
+
+      // Option : recharger la liste depuis la source
+      const data = await loadData();
+      renderFiches(data);
+    }
+
+    document
+      .getElementById("form-fiche")
+      .addEventListener("submit", handleFormSubmit);
+
+    // ============================================
+    // 🚀 INIT
+    // ============================================
+    (async function init() {
+      const data = await loadData();
+      renderFiches(data);
+    })();
+  </script>
+</body>
+</html>
