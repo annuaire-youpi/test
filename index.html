@@ -1022,6 +1022,57 @@
     .app-footer__brand strong { color: var(--ink); font-family: var(--font-display); font-size: 16px; }
 
     /* ---------- responsive ---------- */
+    /* Mobile-first ajustements (≤ 639px) */
+    @media (max-width: 639px) {
+      .container { padding: 0 14px; }
+      .header__inner { gap: 8px; }
+      .brand__name { font-size: 17px; }
+      .brand__mark { width: 32px; height: 32px; font-size: 16px; }
+      .header-nav { gap: 4px; }
+      .header-nav .btn { padding: 0 12px; font-size: 13px; }
+      .user-chip__name { max-width: 70px; font-size: 12px; }
+      .user-chip__avatar { width: 26px; height: 26px; font-size: 11px; }
+      .icon-btn { width: 36px; height: 36px; font-size: 16px; }
+      .hero { padding: 18px 0 24px; }
+      .hero h1 { margin: 10px 0 8px; }
+      .hero p.lead { margin-bottom: 18px; }
+      .hero-search { padding: 6px; }
+      .hero-search input { height: 40px; padding: 0 10px; font-size: 14px; }
+      .hero-search button { height: 40px; padding: 0 14px; font-size: 13px; }
+      .hero-stats { gap: 14px; margin-top: 16px; font-size: 12px; }
+      .section { padding: 22px 0; }
+      .section__title { font-size: 19px; }
+      .section__head { margin-bottom: 14px; }
+      .modal-backdrop { padding: 10px; align-items: flex-start; padding-top: 16px; }
+      .modal { max-height: calc(100dvh - 20px); border-radius: 14px; }
+      .modal__head { padding: 14px 16px; }
+      .modal__title { font-size: 16px; }
+      .modal__body { padding: 16px; }
+      .modal__footer { padding: 12px 16px; flex-direction: column-reverse; gap: 8px; }
+      .modal__footer .btn { width: 100%; }
+      .detail-cover { margin: -16px -16px 14px; aspect-ratio: 4 / 3; font-size: 80px; }
+      .detail-title { font-size: 20px; }
+      .detail-price { font-size: 22px; margin: 6px 0 2px; }
+      .detail-section { margin-top: 14px; padding-top: 14px; }
+      .actions-row { flex-direction: column; gap: 8px; }
+      .actions-row > .btn { width: 100%; min-width: 0; }
+      .filters-bar { padding: 12px 0; margin-bottom: 14px; gap: 6px; }
+      .filter-pill { padding: 7px 12px; font-size: 12px; }
+      .listing-card__body { padding: 10px 12px 12px; }
+      .listing-card__title { font-size: 13px; }
+      .listing-card__price { font-size: 16px; }
+      .demo-banner {
+        top: auto; right: auto;
+        bottom: 80px; left: 50%; transform: translateX(-50%);
+        font-size: 11px; padding: 5px 10px;
+      }
+      body.has-bottom-nav .demo-banner { bottom: 78px; }
+      .field { margin-bottom: 12px; }
+      .field--row { flex-direction: column; gap: 12px; }
+      .input, .select { height: 42px; }
+      .seller-card { padding: 12px; }
+    }
+
     @media (min-width: 640px) {
       .container { padding: 0 24px; }
       .listings-grid {
@@ -1061,6 +1112,35 @@
     @media (min-width: 900px) {
       body.has-bottom-nav { padding-bottom: 0; }
     }
+
+    /* ---------- badge "paiement en ligne" + bouton acheter ---------- */
+    .pay-badge {
+      position: absolute; bottom: 8px; left: 8px;
+      background: rgba(255,255,255,.95);
+      backdrop-filter: blur(4px);
+      padding: 3px 9px;
+      font-size: 11px; font-weight: 700;
+      border-radius: 999px;
+      color: var(--success);
+      letter-spacing: .02em;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .btn--buy {
+      background: var(--success);
+      color: #fff;
+    }
+    .btn--buy:hover { background: #245f3d; }
+    .pay-info {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px;
+      background: var(--success-s);
+      border: 1px solid #b9dac6;
+      border-radius: 10px;
+      font-size: 13px;
+      color: #1f4f33;
+      margin-top: 12px;
+    }
+    .pay-info__ico { font-size: 18px; flex-shrink: 0; }
   </style>
 </head>
 <body>
@@ -1115,7 +1195,7 @@
 
     const APP = {
       name: 'Matinik Market',
-      version: 'v0.1',
+      version: 'v0.2',
       year: 2026,
       // 🛠️ Coller ici l'URL du déploiement Apps Script (Web App)
       backendUrl: '',
@@ -1164,6 +1244,36 @@
     function catEmoji(id) {
       const c = [...PRODUCT_CATEGORIES, ...SERVICE_CATEGORIES].find(x => x.id === id);
       return c ? c.emoji : '📦';
+    }
+
+    /* ----- paiement en ligne (Niveau 1 : liens directs) ----------- */
+    // Domaines autorisés pour un lien de paiement direct (Niveau 1)
+    // → la plateforme ne touche jamais l'argent, c'est le vendeur qui encaisse.
+    const PAYMENT_PROVIDERS = [
+      { match: /^https?:\/\/(buy\.)?stripe\.com\//i,        name: 'Stripe',     emoji: '💳' },
+      { match: /^https?:\/\/(www\.)?paypal\.(com|me)\//i,    name: 'PayPal',     emoji: '🅿️' },
+      { match: /^https?:\/\/paypal\.me\//i,                  name: 'PayPal.me',  emoji: '🅿️' },
+      { match: /^https?:\/\/(www\.)?helloasso\.com\//i,      name: 'HelloAsso',  emoji: '💚' },
+      { match: /^https?:\/\/(www\.)?lyf\.eu\//i,             name: 'Lyf Pro',    emoji: '🟣' },
+      { match: /^https?:\/\/(www\.)?sumup\.(link|com)\//i,   name: 'SumUp',      emoji: '💳' },
+      { match: /^https?:\/\/(www\.)?payplug\.com\//i,        name: 'Payplug',    emoji: '💳' },
+      { match: /^https?:\/\/(www\.)?revolut\.me\//i,         name: 'Revolut',    emoji: '⚫' },
+      { match: /^https?:\/\/(www\.)?gocardless\.com\//i,     name: 'GoCardless', emoji: '💳' },
+      { match: /^https?:\/\/(www\.)?stancer\.com\//i,        name: 'Stancer',    emoji: '💳' },
+    ];
+    function detectPaymentProvider(url) {
+      if (!url || typeof url !== 'string') return null;
+      const u = url.trim();
+      for (const p of PAYMENT_PROVIDERS) {
+        if (p.match.test(u)) return p;
+      }
+      return null;
+    }
+    function isValidPaymentUrl(url) {
+      if (!url) return true; // vide = OK (champ optionnel)
+      const u = String(url).trim();
+      if (!/^https:\/\//i.test(u)) return false; // HTTPS uniquement
+      return detectPaymentProvider(u) !== null;
     }
 
     /* ----- état global -------------------------------------------- */
@@ -1351,9 +1461,9 @@
         u('u-aurelie','Aurélie Latchimy','aurelie@example.mq','0696 10 20 30','Fort-de-France','Artisane couturière, spécialiste du madras. Atelier ouvert sur RDV.'),
       ];
 
-      const L = (id, sellerId, type, category, title, description, price, priceMode, location, emoji, age=2) => ({
+      const L = (id, sellerId, type, category, title, description, price, priceMode, location, emoji, age=2, paymentUrl='') => ({
         id, sellerId, type, category, title, description, price, priceMode, location,
-        emoji, imageUrl: '',
+        emoji, imageUrl: '', paymentUrl,
         status: 'active',
         createdAt: new Date(now - age*day).toISOString(),
         views: Math.floor(Math.random() * 60) + 5,
@@ -1364,11 +1474,11 @@
         L('l1','u-marieclaire','product','alimentation',
           'Confitures artisanales goyave & maracudja',
           'Confitures faites maison à partir de fruits cueillis le matin même. Sans conservateur.\nPot de 250g — disponible aussi en lot de 3.',
-          5,'fixed','Sainte-Marie','🥭', 1),
+          5,'fixed','Sainte-Marie','🥭', 1, 'https://buy.stripe.com/test_demo_confiture'),
         L('l2','u-marieclaire','product','alimentation',
           'Coffret 3 rhums arrangés (gingembre, vanille, café)',
           'Trois recettes de la maison, vieillis 6 mois minimum. Coffret cadeau bois local.',
-          45,'fixed','Sainte-Marie','🥃', 4),
+          45,'fixed','Sainte-Marie','🥃', 4, 'https://www.paypal.com/paypalme/demoshop/45'),
         L('l3','u-marieclaire','product','alimentation',
           'Bocal d’achards de légumes pays',
           'Recette traditionnelle créole : chou, carottes, haricots verts, citron, piment doux.',
@@ -1386,7 +1496,7 @@
         L('l6','u-aurelie','product','mode',
           'Foulard madras authentique',
           'Tissu madras 100% coton, tissé en Inde. Format 90x90cm. Trois coloris au choix.',
-          25,'fixed','Fort-de-France','🧣', 2),
+          25,'fixed','Fort-de-France','🧣', 2, 'https://buy.stripe.com/test_demo_madras'),
         L('l7','u-aurelie','product','artisanat',
           'Sac tressé feuille de bananier',
           'Tressage main, finitions cuir véritable. Idéal plage ou marché.',
@@ -1432,7 +1542,7 @@
         L('l16','u-sebastien','service','tourisme',
           'Excursion guidée Montagne Pelée',
           'Randonnée guidée 4-5h, niveau intermédiaire. Eau et collation incluses.',
-          35,'fixed','Le Diamant','🌋', 1),
+          35,'fixed','Le Diamant','🌋', 1, 'https://www.helloasso.com/associations/demo-tour/evenements/pelee'),
         L('l17','u-sebastien','service','tourisme',
           'Sortie kayak transparent baie du Robert',
           'Découverte des fonds blancs et de la mangrove. 2h30 sur l’eau, départ matin.',
@@ -1819,12 +1929,14 @@
       const fav = isFav(l.id) ? 'is-active' : '';
       const typeLabel = l.type === 'service' ? 'Service' : 'Produit';
       const typeCls = l.type === 'service' ? 'is-service' : '';
+      const payP = detectPaymentProvider(l.paymentUrl);
       return `
         <article class="listing-card" data-listing="${l.id}">
           <div class="listing-card__media">
             ${l.imageUrl ? `<img src="${escapeHtml(l.imageUrl)}" alt="" loading="lazy" />` : (l.emoji || catEmoji(l.category))}
             <span class="listing-card__type ${typeCls}">${typeLabel}</span>
             <button class="fav-btn ${fav}" data-fav="${l.id}" title="Favoris">${isFav(l.id) ? '❤️' : '🤍'}</button>
+            ${payP ? `<span class="pay-badge" title="Paiement en ligne via ${payP.name}">💳 En ligne</span>` : ''}
           </div>
           <div class="listing-card__body">
             <h3 class="listing-card__title">${escapeHtml(l.title)}</h3>
@@ -1923,7 +2035,7 @@
       const l = editing || {
         type: 'product', category: 'alimentation', title:'', description:'',
         price:'', priceMode:'fixed', location: state.currentUser?.city || '',
-        emoji:'', imageUrl:'', status:'active'
+        emoji:'', imageUrl:'', paymentUrl:'', status:'active'
       };
       const cats = l.type === 'product' ? PRODUCT_CATEGORIES : SERVICE_CATEGORIES;
       return `
@@ -1993,6 +2105,15 @@
             <label class="label" for="lf-img">URL d’image (optionnel)</label>
             <input id="lf-img" class="input" name="imageUrl" type="url" value="${escapeHtml(l.imageUrl)}" placeholder="https://…"/>
             <div class="field-help">Si vide, l’emoji ci-dessus sera utilisé comme visuel.</div>
+          </div>
+
+          <div class="field">
+            <label class="label" for="lf-pay">💳 Lien de paiement en ligne (optionnel)</label>
+            <input id="lf-pay" class="input" name="paymentUrl" type="url" value="${escapeHtml(l.paymentUrl || '')}" placeholder="https://buy.stripe.com/… ou https://paypal.me/…"/>
+            <div class="field-help">
+              Collez ici votre lien Stripe Payment Link, PayPal.me, HelloAsso, Lyf Pro, SumUp, Payplug, etc.
+              L'acheteur sera redirigé vers <strong>votre</strong> page de paiement — Matinik Market ne touche jamais l'argent.
+            </div>
           </div>
 
           <div class="modal__footer" style="border-top:1px solid var(--line); margin-top:18px; padding:14px 0 0">
@@ -2277,6 +2398,14 @@
                 </div>
               </div>
             </div>
+            ${(() => {
+              const p = detectPaymentProvider(l.paymentUrl);
+              return p ? `
+                <div class="pay-info">
+                  <span class="pay-info__ico">${p.emoji}</span>
+                  <span>Ce vendeur accepte le paiement en ligne via <strong>${p.name}</strong>. Vous serez redirigé(e) vers une page sécurisée tenue par le vendeur.</span>
+                </div>` : '';
+            })()}
             ${isMine ? `
               <div class="actions-row">
                 <button class="btn btn--ghost" data-listing-edit="${l.id}">Modifier</button>
@@ -2285,6 +2414,7 @@
               </div>` : `
               <div class="actions-row">
                 <button class="btn btn--soft" data-fav="${l.id}">${fav?'❤️ Retirer des favoris':'🤍 Ajouter aux favoris'}</button>
+                ${detectPaymentProvider(l.paymentUrl) ? `<button class="btn btn--buy" data-buy="${l.id}">💳 Acheter en ligne</button>` : ''}
                 <button class="btn btn--primary" data-contact="${l.id}">💬 Contacter le vendeur</button>
               </div>`}
           </div>
@@ -2568,10 +2698,33 @@
         location:    fd.get('location'),
         emoji:       fd.get('emoji')?.trim() || '',
         imageUrl:    fd.get('imageUrl')?.trim() || '',
+        paymentUrl:  fd.get('paymentUrl')?.trim() || '',
       };
     }
 
     /* ----- handlers : favoris / messages / annonces --------------- */
+    async function handleBuyOnline(listingId) {
+      const l = listingById(listingId);
+      if (!l) return;
+      const provider = detectPaymentProvider(l.paymentUrl);
+      if (!provider) {
+        toast('Aucun lien de paiement disponible pour cette annonce.', 'warning');
+        return;
+      }
+      // Trace pour audit (avant la redirection)
+      audit('buy_click', { listingId, provider: provider.name });
+      // En démo on ne redirige pas vers une URL bidon : on affiche une note
+      if (state.mode === 'demo' || /test_demo_|demoshop|demo-tour/.test(l.paymentUrl)) {
+        toast(`🎭 Démo : redirection vers ${provider.name} simulée. En vrai, l'utilisateur serait redirigé vers la page de paiement du vendeur.`, 'info', 5000);
+        return;
+      }
+      // Ouverture dans un nouvel onglet (sécurisé)
+      const w = window.open(l.paymentUrl, '_blank', 'noopener,noreferrer');
+      if (!w) {
+        toast('Le navigateur a bloqué l\'ouverture. Autorisez les popups ou copiez le lien.', 'warning', 4500);
+      }
+    }
+
     async function handleToggleFavorite(listingId) {
       if (!state.currentUser) {
         toast('Connectez-vous pour ajouter aux favoris.', 'info');
@@ -2603,6 +2756,10 @@
       const data = collectListingForm(form);
       if (!data.title || !data.description) {
         toast('Veuillez remplir tous les champs requis.', 'error');
+        return;
+      }
+      if (data.paymentUrl && !isValidPaymentUrl(data.paymentUrl)) {
+        toast('Lien de paiement invalide. Utilisez un lien Stripe, PayPal, HelloAsso, Lyf, SumUp, Payplug, Revolut ou GoCardless (en HTTPS).', 'error', 5500);
         return;
       }
       if (editId) {
@@ -2864,6 +3021,8 @@
         }
         const cn = e.target.closest('[data-contact]');
         if (cn) { openContactModal(cn.getAttribute('data-contact')); return; }
+        const buy = e.target.closest('[data-buy]');
+        if (buy) { handleBuyOnline(buy.getAttribute('data-buy')); return; }
         const li = e.target.closest('[data-listing]');
         if (li && !e.target.closest('form')) {
           openListingModal(li.getAttribute('data-listing'));
