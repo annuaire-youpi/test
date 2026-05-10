@@ -11,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap">
-  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%230d9488'/><text x='50%25' y='58%25' font-family='Arial' font-size='110' text-anchor='middle' fill='white' font-weight='bold'>EF</text></svg>">
-  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%230d9488'/><text x='50%25' y='62%25' font-family='Arial' font-size='38' text-anchor='middle' fill='white' font-weight='bold'>EF</text></svg>">
+  <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect width='180' height='180' rx='40' fill='%235B7FBF'/><text x='50%25' y='58%25' font-family='Arial' font-size='110' text-anchor='middle' fill='white' font-weight='bold'>EF</text></svg>">
+  <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%235B7FBF'/><text x='50%25' y='62%25' font-family='Arial' font-size='38' text-anchor='middle' fill='white' font-weight='bold'>EF</text></svg>">
   <style>
     /* ============================================================
        RESET + BASE
@@ -1098,7 +1098,7 @@
     </button>
 
     <div class="splash-footer">
-      Energy Force CRM · v0.1 — 2026
+      Energy Force CRM · <span id="splash-version">v0.4</span> — 2026
     </div>
   </div>
 </div>
@@ -1186,7 +1186,7 @@
    v0.1 — 2026
    ============================================================ */
 
-const VERSION = 'v0.2';
+const VERSION = 'v0.4';
 const APP_NAME = 'EnergyForce';
 
 /* ============================================================
@@ -1673,6 +1673,10 @@ const App = {
     log(`booting ${VERSION}`);
     PIN.init();
 
+    // Affichage dynamique de la version sur l'écran de connexion (toujours à jour)
+    const splashVer = document.getElementById('splash-version');
+    if (splashVer) splashVer.textContent = VERSION;
+
     // Service worker / PWA manifest dynamique
     this.installManifest();
 
@@ -1689,7 +1693,7 @@ const App = {
       background_color: '#f7f8fa',
       theme_color: '#5B7FBF',
       icons: [
-        { src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='42' fill='%230d9488'/><text x='50%25' y='62%25' font-family='Arial' font-size='110' text-anchor='middle' fill='white' font-weight='bold'>EF</text></svg>",
+        { src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='42' fill='%235B7FBF'/><text x='50%25' y='62%25' font-family='Arial' font-size='110' text-anchor='middle' fill='white' font-weight='bold'>EF</text></svg>",
           sizes: '192x192', type: 'image/svg+xml' }
       ]
     };
@@ -1729,6 +1733,7 @@ const App = {
     // Sync depuis backend
     if (CONFIG.BACKEND_URL) {
       this.syncNow(true);
+      this.startAutoSync();
     } else {
       toast('Aucun backend configuré — données locales uniquement', 'warning', 5000);
     }
@@ -1764,6 +1769,10 @@ const App = {
     btn.classList.add('spin');
     if (!silent) showLoader();
     try {
+      // Snapshot avant sync : on retient les ids et statuts des bookings actuels
+      const beforeIds = new Set(state.data.bookings.filter(b => b.statut === 'en_attente').map(b => b.id));
+      const beforePendingCount = beforeIds.size;
+
       const res = await apiCall('getAllData');
       if (res && res.ok) {
         state.data = {
@@ -1773,7 +1782,17 @@ const App = {
         };
         this.saveToCache();
         this.refreshCurrentView();
-        if (!silent) toast('Synchronisation réussie', 'success');
+
+        // Détection nouveaux bookings en_attente (probablement reçus via webhook)
+        const afterPending = state.data.bookings.filter(b => b.statut === 'en_attente');
+        const newOnes = afterPending.filter(b => !beforeIds.has(b.id));
+        if (newOnes.length > 0) {
+          const noms = newOnes.slice(0, 2).map(b => b.nom || 'Inconnu').join(', ');
+          const more = newOnes.length > 2 ? ` (+${newOnes.length - 2})` : '';
+          toast(`📥 ${newOnes.length} nouvelle${newOnes.length > 1 ? 's' : ''} réservation${newOnes.length > 1 ? 's' : ''} cal.com : ${noms}${more}`, 'success', 6000);
+        } else if (!silent) {
+          toast('Synchronisation réussie', 'success');
+        }
       } else {
         if (!silent) toast('Erreur de synchronisation', 'error');
       }
@@ -1786,9 +1805,33 @@ const App = {
     }
   },
 
+  startAutoSync() {
+    // Auto-refresh toutes les 3 minutes en mode réel pour récupérer les nouveaux webhooks cal.com
+    if (this._autoSyncTimer) clearInterval(this._autoSyncTimer);
+    this._autoSyncTimer = setInterval(() => {
+      if (state.mode !== 'real') return;
+      if (!CONFIG.BACKEND_URL) return;
+      // Skip si un modal est ouvert (utilisateur en train de saisir quelque chose)
+      const modal = document.querySelector('.modal-backdrop:not(.hidden)');
+      if (modal) return;
+      // Skip si onglet pas visible
+      if (document.hidden) return;
+      log('autosync tick');
+      this.syncNow(true);
+    }, 180000); // 3 min
+  },
+
+  stopAutoSync() {
+    if (this._autoSyncTimer) {
+      clearInterval(this._autoSyncTimer);
+      this._autoSyncTimer = null;
+    }
+  },
+
   logout() {
     confirmModal('Se déconnecter ?', () => {
       audit('logout');
+      this.stopAutoSync();
       state.authed = false;
       if (state.mode === 'demo') {
         state.data = { clients: [], sessions: [], bookings: [] };
@@ -2429,7 +2472,118 @@ const Actions = {
     a.click();
     URL.revokeObjectURL(url);
     toast('Export téléchargé', 'success');
-  }
+  },
+
+  openWebhookHelp() {
+    const url = CONFIG.BACKEND_URL || '';
+    if (!url) {
+      toast('Configure d\u2019abord l\u2019URL du backend Apps Script', 'warning');
+      return;
+    }
+    openModal({
+      size: 'lg',
+      title: '⚡ Webhook cal.com — configuration en 5 étapes',
+      body: `
+        <div class="text-sm" style="line-height:1.6;">
+          <div style="background:var(--primary-soft-2);border:1px solid var(--primary-soft);border-radius:var(--radius);padding:12px;margin-bottom:16px;">
+            <div class="font-semibold mb-2">URL à coller dans cal.com :</div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <code style="background:var(--card);border:1px solid var(--border);padding:6px 10px;border-radius:var(--radius-sm);flex:1;word-break:break-all;font-size:11px;">${escapeHtml(url)}</code>
+              <button class="btn btn-primary btn-sm" onclick="Actions.copyWebhookUrl()">📋 Copier</button>
+            </div>
+          </div>
+
+          <div class="font-semibold mb-2">Étape 1 — Ouvrir cal.com</div>
+          <div class="mb-3">Va sur <a href="https://app.cal.com/settings/developer/webhooks" target="_blank" rel="noopener" style="color:var(--primary);">app.cal.com/settings/developer/webhooks</a> et clique sur <b>+ New Webhook</b>.</div>
+
+          <div class="font-semibold mb-2">Étape 2 — Coller l'URL</div>
+          <div class="mb-3">Dans le champ <b>Subscriber URL</b>, colle l'URL ci-dessus (celle de ton backend Apps Script).</div>
+
+          <div class="font-semibold mb-2">Étape 3 — Choisir les événements</div>
+          <div class="mb-3">Coche au minimum :
+            <ul style="margin:6px 0 0 20px;">
+              <li><b>Booking Created</b> — pour recevoir chaque nouveau RDV</li>
+              <li><b>Booking Rescheduled</b> — pour mettre à jour si le client reprogramme</li>
+              <li><b>Booking Cancelled</b> — pour marquer en refusé si le client annule</li>
+            </ul>
+          </div>
+
+          <div class="font-semibold mb-2">Étape 4 — Activer et sauvegarder</div>
+          <div class="mb-3">Vérifie que <b>Enabled</b> est ✓ activé. Laisse le champ <b>Secret</b> vide pour commencer (tu pourras le sécuriser plus tard). Clique sur <b>Create Webhook</b>.</div>
+
+          <div class="font-semibold mb-2">Étape 5 — Tester</div>
+          <div class="mb-3">Soit tu cliques sur <b>Ping Test</b> dans cal.com, soit tu fais une vraie réservation de test depuis ta page publique. Reviens dans l'app, clique sur <b>Synchroniser</b>, et le RDV doit apparaître dans tes "RDV à traiter".</div>
+
+          <div style="background:var(--info-soft);border-left:3px solid var(--info);border-radius:var(--radius-sm);padding:10px 12px;margin-top:16px;">
+            <div class="font-semibold mb-1">💡 Sécurité (optionnel)</div>
+            <div class="text-xs">Pour empêcher quelqu'un d'envoyer de faux RDV à ton backend, tu peux configurer un secret partagé. Dans Apps Script, exécute la fonction <code>_setWebhookSecret</code> (modifie la valeur d'abord). Puis dans cal.com, utilise un <b>Custom Payload Template</b> qui ajoute le champ <code>"secret": "ta-valeur"</code> dans le body.</div>
+          </div>
+
+          <div style="background:var(--warning-soft);border-left:3px solid var(--warning);border-radius:var(--radius-sm);padding:10px 12px;margin-top:12px;">
+            <div class="font-semibold mb-1">⚠️ Anti-doublon</div>
+            <div class="text-xs">Si tu reçois un RDV en double (par exemple parce que tu l'avais saisi à la main avant), supprime simplement le doublon manuel. Le webhook utilise l'identifiant unique cal.com pour ne jamais créer deux fois le même RDV.</div>
+          </div>
+        </div>
+      `,
+      footer: `<button class="btn btn-secondary" onclick="closeModal()">Fermer</button>
+               <button class="btn btn-primary" onclick="Actions.testWebhookConnection()">🧪 Tester maintenant</button>`
+    });
+  },
+
+  copyWebhookUrl() {
+    const url = CONFIG.BACKEND_URL || '';
+    if (!url) { toast('Backend non configuré', 'error'); return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(
+        () => toast('URL copiée dans le presse-papier', 'success'),
+        () => toast('Impossible de copier — sélectionne et copie manuellement', 'warning')
+      );
+    } else {
+      toast('Copie indisponible — sélectionne le texte', 'info');
+    }
+  },
+
+  async testWebhookConnection() {
+    const url = CONFIG.BACKEND_URL || '';
+    if (!url) { toast('Configure l\u2019URL backend d\u2019abord', 'error'); return; }
+    if (state.mode === 'demo') { toast('Test impossible en mode démo', 'info'); return; }
+    closeModal();
+    showLoader('Envoi d\u2019un faux booking au backend…');
+    const fakePayload = {
+      triggerEvent: 'BOOKING_CREATED',
+      createdAt: new Date().toISOString(),
+      payload: {
+        uid: 'test-frontend-' + Date.now(),
+        bookingId: 'test-' + Date.now(),
+        startTime: new Date(Date.now() + 86400000 * 2).toISOString(),
+        endTime: new Date(Date.now() + 86400000 * 2 + 1800000).toISOString(),
+        additionalNotes: 'Test depuis l\u2019app Energy Force — peut être supprimé',
+        organizer: { name: 'Test', email: 'test@example.fr', timeZone: 'Europe/Paris' },
+        attendees: [{ name: 'Client Test (à supprimer)', email: 'client.test@exemple.fr', phoneNumber: '+33600000000', timeZone: 'Europe/Paris' }]
+      }
+    };
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(fakePayload),
+        headers: { 'Content-Type': 'text/plain' },
+        redirect: 'follow'
+      });
+      const json = await res.json();
+      hideLoader();
+      if (json.ok) {
+        toast('✓ Test réussi ! Synchronisation en cours…', 'success');
+        await App.syncNow();
+      } else {
+        toast('Backend a refusé : ' + (json.error || 'erreur inconnue'), 'error');
+      }
+    } catch (err) {
+      hideLoader();
+      toast('Échec du test : ' + err.message, 'error');
+    }
+  },
+
+  exportDataNoop() {} // placeholder
 };
 
 /* ============================================================
@@ -3118,6 +3272,31 @@ const Views = {
           <button class="settings-item" onclick="Actions.exportData()">
             <div class="settings-item-icon">⬇️</div>
             <div class="settings-item-label">Exporter mes données (JSON)</div>
+            <div class="settings-item-value">›</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-title mb-3">⚡ Webhook cal.com — réception auto des RDV</div>
+        <div class="text-sm text-muted mb-3">
+          Configure cal.com pour qu'il envoie automatiquement chaque nouvelle réservation directement dans tes "RDV à traiter".
+          Plus besoin de saisir manuellement : la fiche apparaît seule dès qu'un client réserve.
+        </div>
+        <div class="settings-list">
+          <button class="settings-item" onclick="Actions.openWebhookHelp()">
+            <div class="settings-item-icon">📖</div>
+            <div class="settings-item-label">Procédure de configuration</div>
+            <div class="settings-item-value">${backendUrl ? '5 étapes ›' : 'Backend non configuré ›'}</div>
+          </button>
+          <a class="settings-item" href="https://app.cal.com/settings/developer/webhooks" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+            <div class="settings-item-icon">🔗</div>
+            <div class="settings-item-label">Ouvrir cal.com › Developer › Webhooks</div>
+            <div class="settings-item-value">↗</div>
+          </a>
+          <button class="settings-item" onclick="Actions.testWebhookConnection()">
+            <div class="settings-item-icon">🧪</div>
+            <div class="settings-item-label">Tester la chaîne (envoie un faux booking)</div>
             <div class="settings-item-value">›</div>
           </button>
         </div>
