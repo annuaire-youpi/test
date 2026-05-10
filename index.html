@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#0d9488">
+  <meta name="theme-color" content="#5B7FBF">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Energy Force">
@@ -51,10 +51,10 @@
       --text: #0f172a;
       --text-muted: #475569;
       --text-soft: #94a3b8;
-      --primary: #0d9488;
-      --primary-hover: #0f766e;
-      --primary-soft: #ccfbf1;
-      --primary-soft-2: #f0fdfa;
+      --primary: #5B7FBF;
+      --primary-hover: #4567A8;
+      --primary-soft: #DDE6F5;
+      --primary-soft-2: #EEF3FB;
       --accent: #1e293b;
       --success: #16a34a;
       --success-soft: #dcfce7;
@@ -105,7 +105,7 @@
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       padding: 24px;
-      background: linear-gradient(180deg, #f0fdfa 0%, #f7f8fa 60%);
+      background: linear-gradient(180deg, #EEF3FB 0%, #f7f8fa 60%);
       z-index: 100;
     }
     .splash-card {
@@ -119,7 +119,7 @@
     .splash-logo {
       width: 64px; height: 64px;
       border-radius: 16px;
-      background: linear-gradient(135deg, #0d9488, #14b8a6);
+      background: linear-gradient(135deg, #5B7FBF, #7B9DD0);
       color: white;
       display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 24px;
@@ -255,7 +255,7 @@
     .header-logo-icon {
       width: 32px; height: 32px;
       border-radius: 8px;
-      background: linear-gradient(135deg, #0d9488, #14b8a6);
+      background: linear-gradient(135deg, #5B7FBF, #7B9DD0);
       color: white;
       display: flex; align-items: center; justify-content: center;
       font-weight: 700; font-size: 13px;
@@ -756,7 +756,7 @@
        SESSION VIEW
        ============================================================ */
     .session-context {
-      background: linear-gradient(135deg, var(--primary-soft-2), #ecfeff);
+      background: linear-gradient(135deg, var(--primary-soft-2), #F4F7FC);
       border: 1px solid var(--primary-soft);
       border-radius: var(--radius-lg);
       padding: 16px 18px;
@@ -856,6 +856,156 @@
       opacity: 0.6;
       border-color: var(--border);
       border-left-color: var(--text-soft);
+    }
+
+    /* ============================================================
+       AGENDA HEBDOMADAIRE
+       ============================================================ */
+    .agenda-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .agenda-legend {
+      display: flex;
+      gap: 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+    .agenda-legend-dot {
+      display: inline-block;
+      width: 10px; height: 10px;
+      border-radius: 3px;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+    .week-agenda {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    @media (min-width: 900px) {
+      .week-agenda { grid-template-columns: repeat(7, 1fr); gap: 8px; }
+    }
+    .day-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: auto;
+      transition: box-shadow .15s ease;
+    }
+    @media (min-width: 900px) {
+      .day-card { min-height: 160px; padding: 10px 8px 8px; }
+    }
+    .day-card.today {
+      background: var(--primary-soft-2);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-soft);
+    }
+    .day-card.weekend {
+      background: #fafbfc;
+    }
+    .day-card.today.weekend { background: var(--primary-soft-2); }
+    .day-header {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .day-name {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+    .day-num {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .day-month {
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-left: auto;
+      font-weight: 500;
+    }
+    .day-card.today .day-num,
+    .day-card.today .day-name { color: var(--primary-hover); }
+    .day-card.today .day-name::after { content: ' · auj.'; font-weight: 600; }
+    .day-rdvs {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex: 1;
+    }
+    .rdv-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--primary);
+      border-radius: var(--radius-sm);
+      padding: 6px 8px;
+      cursor: pointer;
+      transition: transform .1s ease, box-shadow .1s ease, border-color .1s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .rdv-item:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-sm);
+    }
+    .rdv-item.rdv-booking {
+      border-left-color: var(--info);
+      background: var(--info-soft);
+    }
+    .rdv-time-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+    .rdv-time {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-hover);
+      font-variant-numeric: tabular-nums;
+    }
+    .rdv-item.rdv-booking .rdv-time { color: var(--info); }
+    .rdv-source-icon {
+      font-size: 11px;
+      opacity: 0.7;
+    }
+    .rdv-name {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text);
+    }
+    .rdv-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .day-empty {
+      font-size: 11px;
+      color: var(--text-soft);
+      text-align: center;
+      padding: 8px 0;
+      font-style: italic;
     }
 
     /* ============================================================
@@ -1036,7 +1186,7 @@
    v0.1 — 2026
    ============================================================ */
 
-const VERSION = 'v0.1';
+const VERSION = 'v0.2';
 const APP_NAME = 'EnergyForce';
 
 /* ============================================================
@@ -1115,7 +1265,7 @@ function initials(name) {
   return name.trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
 }
 function avatarColor(name) {
-  const palette = ['#0d9488','#0284c7','#7c3aed','#db2777','#f59e0b','#16a34a','#dc2626','#475569'];
+  const palette = ['#5B7FBF','#0284c7','#7c3aed','#db2777','#f59e0b','#16a34a','#dc2626','#475569'];
   let h = 0;
   for (let i = 0; i < (name || '').length; i++) h = (h * 31 + name.charCodeAt(i)) | 0;
   return palette[Math.abs(h) % palette.length];
@@ -1398,6 +1548,29 @@ function generateDemoData() {
   ];
 
   const sessions = [
+    // ----- Séances FUTURES (RDV programmés manuellement) -----
+    { id: 's_d_f1', client_id: 'c_demo_1', client_nom: 'Sophie Martin',
+      date: new Date(now + 1*86400000).toISOString().slice(0,10), heure: '09:00', type: 'suivi',
+      realise: '', notes: '', recommandations: '',
+      date_creation: days(0) },
+    { id: 's_d_f2', client_id: 'c_demo_4', client_nom: 'Pierre Lefevre',
+      date: new Date(now + 2*86400000).toISOString().slice(0,10), heure: '11:30', type: 'suivi',
+      realise: '', notes: '', recommandations: '',
+      date_creation: days(0) },
+    { id: 's_d_f3', client_id: 'c_demo_5', client_nom: 'Marie Lambert',
+      date: new Date(now + 3*86400000).toISOString().slice(0,10), heure: '15:00', type: 'suivi',
+      realise: '', notes: '', recommandations: '',
+      date_creation: days(0) },
+    { id: 's_d_f4', client_id: 'c_demo_2', client_nom: 'Jean Dupont',
+      date: new Date(now + 4*86400000).toISOString().slice(0,10), heure: '17:00', type: 'controle',
+      realise: '', notes: '', recommandations: '',
+      date_creation: days(0) },
+    { id: 's_d_f5', client_id: 'c_demo_1', client_nom: 'Sophie Martin',
+      date: new Date(now + 6*86400000).toISOString().slice(0,10), heure: '09:30', type: 'suivi',
+      realise: '', notes: '', recommandations: '',
+      date_creation: days(0) },
+
+    // ----- Séances PASSÉES (historique) -----
     { id: 's_d_1', client_id: 'c_demo_1', client_nom: 'Sophie Martin', date: days(2), type: 'suivi',
       realise: 'Travail sur 3 situations professionnelles récentes. Identifié un schéma de retrait en réunion.',
       notes: 'Sophie a beaucoup avancé. Visualisation positive testée et bien intégrée. Voix plus posée en fin de séance.',
@@ -1514,7 +1687,7 @@ const App = {
       start_url: '.',
       display: 'standalone',
       background_color: '#f7f8fa',
-      theme_color: '#0d9488',
+      theme_color: '#5B7FBF',
       icons: [
         { src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='42' fill='%230d9488'/><text x='50%25' y='62%25' font-family='Arial' font-size='110' text-anchor='middle' fill='white' font-weight='bold'>EF</text></svg>",
           sizes: '192x192', type: 'image/svg+xml' }
@@ -1808,6 +1981,7 @@ const Actions = {
     const s = session || {
       client_id: clientId || '',
       date: todayIsoDate(),
+      heure: '',
       type: 'suivi', realise: '', notes: '', recommandations: ''
     };
     const clients = [...state.data.clients].sort((a,b)=>a.nom_complet.localeCompare(b.nom_complet));
@@ -1830,13 +2004,19 @@ const Actions = {
               <input class="form-input" type="date" name="date" required value="${(s.date || '').slice(0,10)}">
             </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Type<span class="req">*</span></label>
-            <select class="form-select" name="type" required>
-              <option value="initial" ${s.type === 'initial' ? 'selected' : ''}>Initiale</option>
-              <option value="suivi" ${s.type === 'suivi' ? 'selected' : ''}>Suivi</option>
-              <option value="controle" ${s.type === 'controle' ? 'selected' : ''}>Contrôle</option>
-            </select>
+          <div class="form-row cols-2">
+            <div class="form-group">
+              <label class="form-label">Heure</label>
+              <input class="form-input" type="time" name="heure" value="${escapeHtml(s.heure || '')}" placeholder="—">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Type<span class="req">*</span></label>
+              <select class="form-select" name="type" required>
+                <option value="initial" ${s.type === 'initial' ? 'selected' : ''}>Initiale</option>
+                <option value="suivi" ${s.type === 'suivi' ? 'selected' : ''}>Suivi</option>
+                <option value="controle" ${s.type === 'controle' ? 'selected' : ''}>Contrôle</option>
+              </select>
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">Réalisé</label>
@@ -1872,6 +2052,7 @@ const Actions = {
       client_id: clientId,
       client_nom: client.nom_complet,
       date: f.date.value,
+      heure: f.heure ? f.heure.value : '',
       type: f.type.value,
       realise: f.realise.value.trim(),
       notes: f.notes.value.trim(),
@@ -2258,6 +2439,7 @@ const Views = {
   // ----- DASHBOARD -----
   dashboard() {
     const today = todayIsoDate();
+    const todayStart = new Date(today + 'T00:00:00');
     const sessionsThisMonth = state.data.sessions.filter(s => {
       const d = new Date(s.date);
       const now = new Date();
@@ -2265,14 +2447,58 @@ const Views = {
     }).length;
     const activeClients = state.data.clients.filter(c => c.statut === 'actif').length;
     const pendingBookings = state.data.bookings.filter(b => b.statut === 'en_attente').length;
-    const todaySessions = state.data.sessions.filter(s => s.date && s.date.slice(0, 10) === today);
-    const upcomingValid = state.data.bookings
-      .filter(b => b.statut === 'valide' && b.date_rdv >= today)
-      .sort((a,b) => (a.date_rdv + a.heure_rdv).localeCompare(b.date_rdv + b.heure_rdv))
-      .slice(0, 3);
+
+    // ----- Agenda 7 jours : sessions futures + bookings validés -----
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(todayStart);
+      d.setDate(d.getDate() + i);
+      days.push({ date: d, iso: d.toISOString().slice(0, 10), rdvs: [] });
+    }
+    state.data.sessions.forEach(s => {
+      const sIso = (s.date || '').slice(0, 10);
+      const day = days.find(d => d.iso === sIso);
+      if (day) {
+        const c = state.data.clients.find(cl => cl.id === s.client_id);
+        day.rdvs.push({
+          source: 'session',
+          id: s.id,
+          client_id: s.client_id,
+          nom: c ? c.nom_complet : (s.client_nom || 'Client'),
+          heure: s.heure || '',
+          meta: this.sessionTypeLabel(s.type),
+          sortKey: s.heure || '99:99'
+        });
+      }
+    });
+    state.data.bookings.filter(b => b.statut === 'valide').forEach(b => {
+      const day = days.find(d => d.iso === b.date_rdv);
+      if (day) {
+        day.rdvs.push({
+          source: 'booking',
+          id: b.id,
+          nom: b.nom,
+          heure: b.heure_rdv || '',
+          meta: 'cal.com',
+          sortKey: b.heure_rdv || '99:99'
+        });
+      }
+    });
+    days.forEach(d => d.rdvs.sort((a, b) => a.sortKey.localeCompare(b.sortKey)));
+    const totalWeekRdv = days.reduce((sum, d) => sum + d.rdvs.length, 0);
+    const todayRdv = days[0].rdvs.length;
+
+    // ----- Dernières séances réalisées (passées ou avec contenu) -----
     const recentSessions = [...state.data.sessions]
-      .sort((a,b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 5);
+      .filter(s => {
+        const sIso = (s.date || '').slice(0, 10);
+        return sIso < today || (s.realise && s.realise.length) || (s.notes && s.notes.length);
+      })
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 4);
+
+    const dayNames = ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+    const monthNames = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
 
     return `
       <div class="page-header">
@@ -2296,84 +2522,99 @@ const Views = {
         </div>
         <div class="stat-card">
           <div class="stat-icon" style="background:var(--warning-soft);color:var(--warning);">📅</div>
-          <div class="stat-label">RDV en attente</div>
+          <div class="stat-label">cal.com en attente</div>
           <div class="stat-value">${pendingBookings}</div>
         </div>
         <div class="stat-card">
-          <div class="stat-icon" style="background:var(--success-soft);color:var(--success);">📞</div>
-          <div class="stat-label">Aujourd'hui</div>
-          <div class="stat-value">${todaySessions.length}</div>
+          <div class="stat-icon" style="background:var(--success-soft);color:var(--success);">📆</div>
+          <div class="stat-label">RDV cette semaine</div>
+          <div class="stat-value">${totalWeekRdv}</div>
         </div>
       </div>
 
-      <div class="grid-2">
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">📅 Prochains rendez-vous validés</div>
-            <button class="btn btn-ghost btn-sm" onclick="App.go('bookings')">Voir tout →</button>
+      <div class="card mt-4">
+        <div class="agenda-toolbar">
+          <div class="card-title">📆 Ma semaine — ${todayRdv === 0 ? 'rien aujourd’hui' : todayRdv + ' RDV aujourd’hui'}</div>
+          <div class="agenda-legend">
+            <span><span class="agenda-legend-dot" style="background:var(--primary);"></span>Programmé</span>
+            <span><span class="agenda-legend-dot" style="background:var(--info);"></span>cal.com</span>
           </div>
-          ${upcomingValid.length === 0 ? `
-            <div class="empty-state">
-              <div class="empty-state-icon">📅</div>
-              <div class="empty-state-title">Aucun RDV à venir</div>
-              <div class="text-sm">Les réservations validées apparaîtront ici.</div>
-            </div>
-          ` : `
-            <div class="list">
-              ${upcomingValid.map(b => `
-                <div class="list-item" onclick="App.go('bookings')">
-                  <div class="avatar" style="background:${avatarColor(b.nom)}20;color:${avatarColor(b.nom)};">${initials(b.nom)}</div>
-                  <div class="grow">
-                    <div class="font-semibold truncate">${escapeHtml(b.nom)}</div>
-                    <div class="text-sm text-muted">${fmtDate(b.date_rdv)} · ${escapeHtml(b.heure_rdv)}</div>
-                  </div>
-                  <span class="badge badge-success">validé</span>
-                </div>
-              `).join('')}
-            </div>
-          `}
         </div>
-
-        <div class="card">
-          <div class="card-header">
-            <div class="card-title">📋 Dernières séances</div>
-            <button class="btn btn-ghost btn-sm" onclick="App.go('sessions')">Voir tout →</button>
-          </div>
-          ${recentSessions.length === 0 ? `
-            <div class="empty-state">
-              <div class="empty-state-icon">📋</div>
-              <div class="empty-state-title">Aucune séance</div>
-              <div class="text-sm">Crée ta première séance avec un client.</div>
-            </div>
-          ` : `
-            <div class="list">
-              ${recentSessions.map(s => {
-                const c = state.data.clients.find(cl => cl.id === s.client_id);
-                const nom = c ? c.nom_complet : (s.client_nom || 'Client supprimé');
-                return `
-                  <div class="list-item" onclick="App.go('session', {id: '${s.id}'})">
-                    <div class="avatar sm" style="background:${avatarColor(nom)}20;color:${avatarColor(nom)};">${initials(nom)}</div>
-                    <div class="grow">
-                      <div class="font-semibold truncate">${escapeHtml(nom)}</div>
-                      <div class="text-sm text-muted">${fmtDate(s.date)} · ${this.sessionTypeLabel(s.type)}</div>
-                    </div>
-                  </div>
-                `;
-              }).join('')}
-            </div>
-          `}
+        <div class="week-agenda">
+          ${days.map((d, idx) => {
+            const dayOfWeek = d.date.getDay();
+            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+            const isToday = idx === 0;
+            return `
+              <div class="day-card ${isToday ? 'today' : ''} ${isWeekend ? 'weekend' : ''}">
+                <div class="day-header">
+                  <div class="day-name">${dayNames[dayOfWeek]}</div>
+                  <div class="day-num">${d.date.getDate()}</div>
+                  <div class="day-month">${monthNames[d.date.getMonth()]}</div>
+                </div>
+                <div class="day-rdvs">
+                  ${d.rdvs.length === 0 ? '<div class="day-empty">—</div>' : d.rdvs.map(r => {
+                    const onClick = r.source === 'session'
+                      ? (r.client_id ? `App.go('client', {id: '${r.client_id}'})` : `App.go('session', {id: '${r.id}'})`)
+                      : `App.go('bookings')`;
+                    const tooltip = r.source === 'booking' ? 'Réservation cal.com — ouvrir la liste' : 'RDV programmé — ouvrir la fiche client';
+                    return `
+                      <div class="rdv-item ${r.source === 'booking' ? 'rdv-booking' : ''}" onclick="${onClick}" title="${tooltip}">
+                        <div class="rdv-time-row">
+                          <span class="rdv-time">${escapeHtml(r.heure || '—')}</span>
+                          <span class="rdv-source-icon">${r.source === 'booking' ? '🌐' : '✏️'}</span>
+                        </div>
+                        <div class="rdv-name">${escapeHtml(r.nom)}</div>
+                        <div class="rdv-meta">${escapeHtml(r.meta)}</div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          }).join('')}
         </div>
       </div>
 
       ${pendingBookings > 0 ? `
         <div class="card mt-4" style="border-color: var(--warning); background: linear-gradient(135deg, #fffbeb, var(--card));">
           <div class="card-header">
-            <div class="card-title">⚠️ ${pendingBookings} réservation${pendingBookings > 1 ? 's' : ''} à valider</div>
+            <div class="card-title">⚠️ ${pendingBookings} réservation${pendingBookings > 1 ? 's' : ''} cal.com à valider</div>
             <button class="btn btn-warning btn-sm" onclick="App.go('bookings')">Traiter →</button>
           </div>
-          <div class="text-sm text-muted">Confirme ou refuse les rendez-vous reçus depuis cal.com.</div>
+          <div class="text-sm text-muted">Confirme-les pour qu'elles apparaissent dans ton agenda ci-dessus.</div>
         </div>
       ` : ''}
+
+      <div class="card mt-4">
+        <div class="card-header">
+          <div class="card-title">📋 Dernières séances réalisées</div>
+          <button class="btn btn-ghost btn-sm" onclick="App.go('sessions')">Voir tout →</button>
+        </div>
+        ${recentSessions.length === 0 ? `
+          <div class="empty-state">
+            <div class="empty-state-icon">📋</div>
+            <div class="empty-state-title">Aucune séance réalisée</div>
+            <div class="text-sm">Tes notes de séance apparaîtront ici.</div>
+          </div>
+        ` : `
+          <div class="list">
+            ${recentSessions.map(s => {
+              const c = state.data.clients.find(cl => cl.id === s.client_id);
+              const nom = c ? c.nom_complet : (s.client_nom || 'Client supprimé');
+              return `
+                <div class="list-item" onclick="App.go('session', {id: '${s.id}'})">
+                  <div class="avatar sm" style="background:${avatarColor(nom)}20;color:${avatarColor(nom)};">${initials(nom)}</div>
+                  <div class="grow">
+                    <div class="font-semibold truncate">${escapeHtml(nom)}</div>
+                    <div class="text-sm text-muted">${fmtDate(s.date)} · ${this.sessionTypeLabel(s.type)}</div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `}
+      </div>
 
       <div class="card mt-4">
         <div class="card-title mb-3">🚀 Liens rapides cal.com</div>
