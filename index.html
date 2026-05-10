@@ -1098,7 +1098,7 @@
     </button>
 
     <div class="splash-footer">
-      Energy Force CRM · <span id="splash-version">v0.4</span> — 2026
+      Energy Force CRM · <span id="splash-version">v0.5</span> — 2026
     </div>
   </div>
 </div>
@@ -1186,7 +1186,7 @@
    v0.1 — 2026
    ============================================================ */
 
-const VERSION = 'v0.4';
+const VERSION = 'v0.5';
 const APP_NAME = 'EnergyForce';
 
 /* ============================================================
@@ -1196,7 +1196,10 @@ const CONFIG = {
   // 👇 À REMPLACER par l'URL de déploiement Apps Script (voir apps-script.js)
   BACKEND_URL: localStorage.getItem('ef_backend_url') || '',
   // PIN par défaut (à changer dans les Paramètres)
-  DEFAULT_PIN: '141214'
+  DEFAULT_PIN: '141214',
+  // Indicatif téléphonique par défaut (modifiable dans Paramètres)
+  // Utilisé si le numéro saisi n'a pas de + ni de 00
+  PHONE_PREFIX: localStorage.getItem('ef_phone_prefix') || '+596'
 };
 
 /* ============================================================
@@ -1272,6 +1275,42 @@ function avatarColor(name) {
 }
 function debounce(fn, ms) {
   let t; return (...a) => { clearTimeout(t); t = setTimeout(() => fn(...a), ms); };
+}
+
+/* ============================================================
+   PHONE FORMAT
+   Convertit un numéro saisi en format international E.164 sans le +
+   (utilisable directement dans https://wa.me/...)
+   Accepte tous les formats :
+   - "+596696123456" → "596696123456"
+   - "00596696123456" → "596696123456"
+   - "0696123456" + indicatif "+596" → "596696123456"
+   - "696 12 34 56" + indicatif "+596" → "596696123456"
+   ============================================================ */
+function formatPhoneE164(phone, defaultPrefix) {
+  if (!phone) return '';
+  const prefix = (defaultPrefix || CONFIG.PHONE_PREFIX || '+33').replace(/[^0-9]/g, '');
+  // Supprime tout ce qui n'est pas chiffre ou +
+  let s = String(phone).replace(/[\s.\-()_/]/g, '').trim();
+  if (!s) return '';
+  // Format international avec +
+  if (s.charAt(0) === '+') {
+    return s.substring(1).replace(/\D/g, '');
+  }
+  // Format international avec 00
+  if (s.indexOf('00') === 0 && s.length > 4) {
+    return s.substring(2).replace(/\D/g, '');
+  }
+  // Numéro local : on enlève chiffres non-numériques, retire le 0 initial s'il y en a un, préfixe
+  s = s.replace(/\D/g, '');
+  if (s.charAt(0) === '0') s = s.substring(1);
+  return prefix + s;
+}
+
+/* Affichage lisible d'un numéro avec le + devant (pour UI) */
+function displayPhone(phone, defaultPrefix) {
+  const e164 = formatPhoneE164(phone, defaultPrefix);
+  return e164 ? '+' + e164 : (phone || '');
 }
 
 /* ============================================================
@@ -1511,35 +1550,35 @@ function generateDemoData() {
 
   const clients = [
     {
-      id: 'c_demo_1', nom_complet: 'Sophie Martin', telephone: '0612345678', email: 'sophie.martin@exemple.fr',
+      id: 'c_demo_1', nom_complet: 'Sophie Martin', telephone: '+33612345678', email: 'sophie.martin@exemple.fr',
       statut: 'actif', metier: 'Designer UX', typologie: 'Performance / Confiance',
       objectif: 'Reprendre confiance pour parler en public et présenter mes projets sans stress.',
       commentaires: 'Très impliquée. Préfère les séances le matin.',
       date_creation: days(45), date_modification: days(2)
     },
     {
-      id: 'c_demo_2', nom_complet: 'Jean Dupont', telephone: '0698765432', email: 'jean.dupont@exemple.fr',
+      id: 'c_demo_2', nom_complet: 'Jean Dupont', telephone: '+33698765432', email: 'jean.dupont@exemple.fr',
       statut: 'actif', metier: 'Ingénieur logiciel', typologie: 'Reconversion',
       objectif: 'Préparer une transition vers un poste de manager d\'équipe.',
       commentaires: 'Aime la structure, demande des feuilles de route claires.',
       date_creation: days(60), date_modification: days(5)
     },
     {
-      id: 'c_demo_3', nom_complet: 'Aïcha Benali', telephone: '0623456789', email: 'aicha.benali@exemple.fr',
+      id: 'c_demo_3', nom_complet: 'Aïcha Benali', telephone: '+32475123456', email: 'aicha.benali@exemple.fr',
       statut: 'pause', metier: 'Infirmière', typologie: 'Burnout / Rééquilibrage',
       objectif: 'Sortir d\'un cycle d\'épuisement professionnel et retrouver de l\'énergie.',
-      commentaires: 'En arrêt de travail. Reprise du suivi prévue dans 2 semaines.',
+      commentaires: 'Cliente belge. En arrêt de travail. Reprise du suivi prévue dans 2 semaines.',
       date_creation: days(90), date_modification: days(15)
     },
     {
-      id: 'c_demo_4', nom_complet: 'Pierre Lefevre', telephone: '0654321098', email: 'pierre.lefevre@exemple.fr',
+      id: 'c_demo_4', nom_complet: 'Pierre Lefevre', telephone: '+596696543210', email: 'pierre.lefevre@exemple.fr',
       statut: 'actif', metier: 'Dirigeant PME', typologie: 'Leadership',
       objectif: 'Mieux déléguer et structurer ma vision long terme pour l\'entreprise.',
-      commentaires: 'Disponibilités très limitées, séances de 30 min uniquement.',
+      commentaires: 'Client local Martinique. Disponibilités limitées, séances de 30 min uniquement.',
       date_creation: days(30), date_modification: days(1)
     },
     {
-      id: 'c_demo_5', nom_complet: 'Marie Lambert', telephone: '0676543210', email: 'marie.lambert@exemple.fr',
+      id: 'c_demo_5', nom_complet: 'Marie Lambert', telephone: '+33676543210', email: 'marie.lambert@exemple.fr',
       statut: 'actif', metier: 'Professeure des écoles', typologie: 'Gestion du stress',
       objectif: 'Apprendre à mettre des limites avec les parents d\'élèves et la hiérarchie.',
       commentaires: 'Très sensible aux exercices de respiration.',
@@ -1648,17 +1687,17 @@ function generateDemoData() {
   ];
 
   const bookings = [
-    { id: 'b_d_1', nom: 'Thomas Bernard', email: 'thomas.bernard@exemple.fr', telephone: '0611223344',
+    { id: 'b_d_1', nom: 'Thomas Bernard', email: 'thomas.bernard@exemple.ch', telephone: '+41791223344',
       date_rdv: new Date(now + 86400000).toISOString().slice(0, 10),
-      heure_rdv: '14:00', message: 'Première séance de découverte. J\'ai été recommandé par Sophie Martin.',
+      heure_rdv: '14:00', message: 'Première séance de découverte. J\'ai été recommandé par Sophie Martin. Je suis basé à Genève.',
       statut: 'en_attente', date_reception: days(0), source: 'cal.com' },
-    { id: 'b_d_2', nom: 'Sarah Cohen', email: 'sarah.cohen@exemple.fr', telephone: '0699887766',
+    { id: 'b_d_2', nom: 'Sarah Cohen', email: 'sarah.cohen@exemple.ca', telephone: '+15149887766',
       date_rdv: new Date(now + 3*86400000).toISOString().slice(0, 10),
-      heure_rdv: '10:30', message: 'Coaching pour gestion du temps. 30 min OK.',
+      heure_rdv: '10:30', message: 'Coaching pour gestion du temps. Je suis à Montréal, prévoir le décalage horaire.',
       statut: 'en_attente', date_reception: days(0), source: 'cal.com' },
-    { id: 'b_d_3', nom: 'Karim Ali', email: 'karim.ali@exemple.fr', telephone: '0633445566',
+    { id: 'b_d_3', nom: 'Karim Ali', email: 'karim.ali@exemple.ma', telephone: '+212661334455',
       date_rdv: new Date(now + 5*86400000).toISOString().slice(0, 10),
-      heure_rdv: '16:00', message: 'Renouvellement du cycle après pause.',
+      heure_rdv: '16:00', message: 'Renouvellement du cycle après pause. Casablanca.',
       statut: 'valide', date_reception: days(2), source: 'cal.com' }
   ];
 
@@ -1923,7 +1962,8 @@ const Actions = {
           <div class="form-row cols-2">
             <div class="form-group">
               <label class="form-label">Téléphone</label>
-              <input class="form-input" name="telephone" type="tel" value="${escapeHtml(c.telephone)}" placeholder="06 12 34 56 78">
+              <input class="form-input" name="telephone" type="tel" id="client-phone-input" value="${escapeHtml(c.telephone)}" placeholder="${escapeHtml(CONFIG.PHONE_PREFIX)} 696 12 34 56" oninput="Actions.updatePhonePreview()">
+              <div class="form-hint" id="client-phone-hint" style="font-size:11px;color:var(--text-muted);margin-top:4px;">Indicatif par défaut : <b>${escapeHtml(CONFIG.PHONE_PREFIX)}</b> · Pour un autre pays, saisis le numéro avec son indicatif (ex : +33612345678).</div>
             </div>
             <div class="form-group">
               <label class="form-label">Email</label>
@@ -2281,12 +2321,12 @@ const Actions = {
   // ----- WHATSAPP / EMAIL / CALL -----
   whatsapp(client) {
     if (!client.telephone) { toast('Pas de numéro de téléphone', 'warning'); return; }
-    const phone = client.telephone.replace(/\D/g, '');
-    const phoneIntl = phone.startsWith('0') ? '33' + phone.slice(1) : phone;
+    const phoneIntl = formatPhoneE164(client.telephone);
+    if (!phoneIntl) { toast('Numéro de téléphone invalide', 'error'); return; }
     this.openMessageTemplates(client, 'whatsapp', (msg) => {
       const url = `https://wa.me/${phoneIntl}?text=${encodeURIComponent(msg)}`;
       window.open(url, '_blank');
-      audit('whatsapp_send', { client_id: client.id });
+      audit('whatsapp_send', { client_id: client.id, phone: phoneIntl });
       if (state.mode === 'demo') toast('WhatsApp ouvert (démo)', 'info');
     });
   },
@@ -2303,8 +2343,37 @@ const Actions = {
 
   call(client) {
     if (!client.telephone) { toast('Pas de numéro', 'warning'); return; }
-    window.location.href = 'tel:' + client.telephone.replace(/\s/g, '');
+    const e164 = formatPhoneE164(client.telephone);
+    // tel: accepte le + devant (recommandé pour mobile)
+    window.location.href = 'tel:+' + e164;
     audit('call', { client_id: client.id });
+  },
+
+  updatePhonePreview() {
+    const input = document.getElementById('client-phone-input');
+    const hint = document.getElementById('client-phone-hint');
+    if (!input || !hint) return;
+    const v = input.value.trim();
+    if (!v) {
+      hint.innerHTML = `Indicatif par défaut : <b>${escapeHtml(CONFIG.PHONE_PREFIX)}</b> · Pour un autre pays, saisis le numéro avec son indicatif (ex : +33612345678).`;
+      hint.style.color = 'var(--text-muted)';
+      return;
+    }
+    const e164 = formatPhoneE164(v);
+    if (!e164 || e164.length < 6) {
+      hint.innerHTML = `⚠️ Numéro trop court ou invalide`;
+      hint.style.color = 'var(--warning)';
+      return;
+    }
+    // Détection si le numéro est déjà au format international
+    const userTyped = v.replace(/[\s.\-()_/]/g, '');
+    const isIntl = userTyped.charAt(0) === '+' || userTyped.indexOf('00') === 0;
+    if (isIntl) {
+      hint.innerHTML = `✓ Format international détecté → WhatsApp utilisera <b>+${escapeHtml(e164)}</b>`;
+    } else {
+      hint.innerHTML = `↪ Indicatif <b>${escapeHtml(CONFIG.PHONE_PREFIX)}</b> ajouté → WhatsApp utilisera <b>+${escapeHtml(e164)}</b>`;
+    }
+    hint.style.color = 'var(--success)';
   },
 
   openMessageTemplates(client, channel, onSend) {
@@ -2450,6 +2519,65 @@ const Actions = {
     closeModal();
     toast('URL backend enregistrée', 'success');
     if (v) App.syncNow();
+    App.refreshCurrentView();
+  },
+
+  setPhonePrefix() {
+    const cur = CONFIG.PHONE_PREFIX || '+596';
+    const presets = [
+      { code: '+596', label: '🇲🇶 Martinique / Guadeloupe' },
+      { code: '+33',  label: '🇫🇷 France métropolitaine' },
+      { code: '+594', label: '🇬🇫 Guyane' },
+      { code: '+262', label: '🇷🇪 Réunion / Mayotte' },
+      { code: '+590', label: '🇬🇵 Guadeloupe (autre)' },
+      { code: '+1',   label: '🇺🇸 USA / 🇨🇦 Canada' },
+      { code: '+32',  label: '🇧🇪 Belgique' },
+      { code: '+41',  label: '🇨🇭 Suisse' },
+      { code: '+44',  label: '🇬🇧 Royaume-Uni' },
+      { code: '+212', label: '🇲🇦 Maroc' },
+      { code: '+213', label: '🇩🇿 Algérie' },
+      { code: '+216', label: '🇹🇳 Tunisie' },
+      { code: '+221', label: '🇸🇳 Sénégal' },
+      { code: '+225', label: '🇨🇮 Côte d\u2019Ivoire' }
+    ];
+    openModal({
+      title: '📱 Indicatif téléphonique par défaut',
+      body: `
+        <div class="text-sm text-muted mb-3">
+          Cet indicatif est utilisé quand tu saisis un numéro local sans + (ex : <code>0696123456</code>).
+          Tu peux toujours saisir un numéro avec son indicatif (ex : <code>+33612345678</code>) — il sera respecté.
+        </div>
+        <div class="form-group">
+          <label class="form-label">Choisir un pays</label>
+          <select class="form-select" id="phone-prefix-select" onchange="document.getElementById('phone-prefix-input').value = this.value;">
+            <option value="">— Choisis ou tape librement —</option>
+            ${presets.map(p => `<option value="${p.code}" ${p.code === cur ? 'selected' : ''}>${p.label} (${p.code})</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ou saisir manuellement<span class="req">*</span></label>
+          <input class="form-input" id="phone-prefix-input" value="${escapeHtml(cur)}" placeholder="+596" required>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">Format : commence par <code>+</code> suivi de 1 à 4 chiffres.</div>
+        </div>
+      `,
+      footer: `
+        <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-primary" onclick="Actions.savePhonePrefix()">Enregistrer</button>
+      `
+    });
+  },
+
+  savePhonePrefix() {
+    const v = document.getElementById('phone-prefix-input').value.trim();
+    if (!/^\+\d{1,4}$/.test(v)) {
+      toast('Indicatif invalide. Format : +33, +596, +1, etc.', 'error');
+      return;
+    }
+    localStorage.setItem('ef_phone_prefix', v);
+    CONFIG.PHONE_PREFIX = v;
+    audit('phone_prefix_changed', { new: v });
+    closeModal();
+    toast(`Indicatif par défaut : ${v}`, 'success');
     App.refreshCurrentView();
   },
 
@@ -3252,6 +3380,17 @@ const Views = {
             <div class="settings-item-icon">📜</div>
             <div class="settings-item-label">Journal d'audit</div>
             <div class="settings-item-value">${auditCount} entrées ›</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="card mb-4">
+        <div class="card-title mb-3">⚙️ Préférences</div>
+        <div class="settings-list">
+          <button class="settings-item" onclick="Actions.setPhonePrefix()">
+            <div class="settings-item-icon">📱</div>
+            <div class="settings-item-label">Indicatif téléphonique par défaut</div>
+            <div class="settings-item-value">${escapeHtml(CONFIG.PHONE_PREFIX)} ›</div>
           </button>
         </div>
       </div>
