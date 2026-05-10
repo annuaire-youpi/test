@@ -789,6 +789,106 @@
   /* ====== UNAVAILABLE DATES INFO ====== */
   .dates-info { background: var(--warning-soft); border: 1px solid #fde68a; padding: 10px 12px; border-radius: var(--radius); font-size: 13px; color: #92400e; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
   .dates-info-empty { background: var(--success-soft); border-color: #bbf7d0; color: #166534; }
+
+  /* ====== FLATPICKR PARTIAL BADGES ====== */
+  .flatpickr-day { position: relative; }
+  .flatpickr-day.bk-partial::after {
+    content: '';
+    position: absolute;
+    bottom: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--warning);
+    box-shadow: 0 0 0 1px white;
+  }
+  .flatpickr-day.bk-partial.selected::after { background: white; box-shadow: 0 0 0 1px var(--primary); }
+  .calendar-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 12px;
+    color: var(--text-2);
+    margin-top: 6px;
+    padding: 8px 10px;
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 4px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+  .legend-dot.green { background: var(--success); }
+  .legend-dot.orange { background: var(--warning); }
+  .legend-dot.red { background: var(--danger); }
+
+  /* ====== PRICING GRID (form bateau) ====== */
+  .pricing-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .pricing-row {
+    display: grid;
+    grid-template-columns: 1fr 140px;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: all .15s;
+  }
+  .pricing-row.disabled { opacity: .5; }
+  .pricing-row .checkbox-row { margin: 0; }
+  .pricing-row .checkbox-row span { font-weight: 600; font-size: 14px; }
+  .pricing-row .price-input { display: flex; align-items: center; gap: 4px; }
+  .pricing-row .price-input input { width: 100px; padding: 8px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: white; font-size: 14px; outline: none; text-align: right; }
+  .pricing-row .price-input input:focus { border-color: var(--primary); }
+  .pricing-row .price-input .suffix { font-weight: 600; color: var(--text-2); font-size: 14px; }
+  .pricing-row .slot-meta { display: block; font-size: 11px; color: var(--text-2); font-weight: 500; margin-top: 2px; }
+  @media (max-width: 480px) {
+    .pricing-row { grid-template-columns: 1fr; gap: 8px; }
+  }
+  .pricing-helper {
+    background: var(--info-soft);
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius);
+    padding: 10px 12px;
+    font-size: 12px;
+    color: #1e40af;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .pricing-helper button { background: white; border: 1px solid #bfdbfe; padding: 4px 10px; border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; color: #1e40af; margin-left: auto; }
+
+  /* ====== PRICE OPTIONS DETAIL ====== */
+  .price-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .price-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 13px;
+  }
+  .price-option .price-name { display: flex; align-items: center; gap: 6px; font-weight: 500; }
+  .price-option .price-value { font-weight: 700; color: var(--primary); }
+  .price-option.unavailable { opacity: .4; text-decoration: line-through; }
+
+  /* ====== PWA INSTALL BUTTON ====== */
+  #installBtn { display: none; }
+  #installBtn.visible { display: inline-flex; }
 </style>
 </head>
 <body>
@@ -808,7 +908,7 @@
 
   <footer class="footer">
     <div>BatoKreyòl — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v0.3 — 2026</div>
+    <div class="version">v0.5 — 2026</div>
   </footer>
 </div>
 
@@ -819,11 +919,11 @@
 
 <script>
 /* ============================================================
-   BatoKreyòl v0.3
+   BatoKreyòl v0.5
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v0.3';
+const VERSION = 'v0.5';
 const APP_NAME = 'BatoKreyol';
 
 // CONFIG : remplacer par votre URL Apps Script déployée en Web App
@@ -870,9 +970,14 @@ function isSlotCompatible(takenTypes, newType) {
   return true;
 }
 
-function getAvailableDurations(dateISO, bookings) {
+function getAvailableDurations(dateISO, bookings, boat) {
   const takenOnDate = bookings.filter(b => b.startDate === dateISO).map(b => b.durationType);
-  return DURATIONS.filter(d => isSlotCompatible(takenOnDate, d.id)).map(d => d.id);
+  let candidates = DURATIONS.filter(d => isSlotCompatible(takenOnDate, d.id));
+  if (boat) {
+    const b = normalizeBoatPricing(boat);
+    candidates = candidates.filter(d => b.availableSlots.includes(d.id));
+  }
+  return candidates.map(d => d.id);
 }
 
 function getTakenSlotsOnDate(dateISO, bookings) {
@@ -881,6 +986,42 @@ function getTakenSlotsOnDate(dateISO, bookings) {
 
 function isDateFullyBooked(dateISO, bookings) {
   return getAvailableDurations(dateISO, bookings).length === 0;
+}
+
+/* Migration & helpers de tarification par créneau. Un bateau peut avoir :
+   - prices: { halfday, day, sunset } → prix explicites par créneau
+   - availableSlots: ['halfday', 'day', 'sunset'] → créneaux activés
+   Pour les bateaux qui n'ont pas encore ces champs (ex: anciennes données),
+   on les calcule depuis pricePerDay × facteur. */
+function normalizeBoatPricing(boat) {
+  if (!boat) return boat;
+  const basePrice = Number(boat.pricePerDay) || 500;
+  const fallback = {
+    halfday: Math.round(basePrice * 0.6),
+    day: basePrice,
+    sunset: Math.round(basePrice * 0.45)
+  };
+  const prices = { ...fallback, ...(boat.prices || {}) };
+  const availableSlots = Array.isArray(boat.availableSlots) && boat.availableSlots.length
+    ? boat.availableSlots.filter(s => DURATIONS.find(d => d.id === s))
+    : ['halfday', 'day', 'sunset'];
+  return { ...boat, prices, availableSlots, pricePerDay: prices.day };
+}
+
+function getBoatSlotPrice(boat, slotId) {
+  const b = normalizeBoatPricing(boat);
+  return b.prices[slotId] ?? Math.round((b.pricePerDay || 500) * (DURATIONS.find(d => d.id === slotId)?.factor || 1));
+}
+
+function getBoatStartingPrice(boat) {
+  const b = normalizeBoatPricing(boat);
+  const offered = b.availableSlots.map(s => b.prices[s]).filter(p => p > 0);
+  return offered.length ? Math.min(...offered) : (b.pricePerDay || 0);
+}
+
+function isSlotOfferedByBoat(boat, slotId) {
+  const b = normalizeBoatPricing(boat);
+  return b.availableSlots.includes(slotId);
 }
 const EQUIPMENT_PRESETS = ['GPS', 'Sondeur', 'Glacière', 'Douche de pont', 'Snorkeling', 'Bain de soleil', 'Toilettes', 'Cuisine', 'Bluetooth', 'Échelle de bain', 'Bouées', 'Punch maison 🍹'];
 
@@ -1250,27 +1391,27 @@ function logout() {
 
 /* ---------- API CALLS (avec fallback demo) ---------- */
 async function fetchPublicBoats() {
-  if (state.mode === 'demo') { return state.boats; }
+  if (state.mode === 'demo') { state.boats = state.boats.map(normalizeBoatPricing); return state.boats; }
   try {
     const cached = cache.get('public_boats');
-    if (cached) state.boats = cached;
+    if (cached) state.boats = cached.map(normalizeBoatPricing);
     const res = await syncToBackend('listBoats', {});
     if (res?.success && res.data) {
-      state.boats = res.data;
-      cache.set('public_boats', res.data);
+      state.boats = res.data.map(normalizeBoatPricing);
+      cache.set('public_boats', state.boats);
     }
     return state.boats;
   } catch (e) {
     log('fetchPublicBoats fail', e);
-    return cache.get('public_boats') || [];
+    return (cache.get('public_boats') || []).map(normalizeBoatPricing);
   }
 }
 
 async function fetchMyBoats() {
-  if (state.mode === 'demo') { return state.myBoats; }
+  if (state.mode === 'demo') { state.myBoats = state.myBoats.map(normalizeBoatPricing); return state.myBoats; }
   try {
     const res = await syncToBackend('listBoatsForPro', { proId: state.currentUser.id });
-    if (res?.success) state.myBoats = res.data || [];
+    if (res?.success) state.myBoats = (res.data || []).map(normalizeBoatPricing);
     return state.myBoats;
   } catch (e) { log('fetchMyBoats fail', e); return state.myBoats; }
 }
@@ -1304,16 +1445,19 @@ function render() {
   // Nav
   if (state.currentUser?.type === 'pro') {
     nav.innerHTML = `
+      <button class="btn btn-ghost btn-sm" id="installBtn" onclick="installPWA()">📱 Installer</button>
       <a class="header-link ${state.view === '/' ? 'active' : ''}" onclick="navigate('/')">Catalogue</a>
       <a class="header-link ${state.view.startsWith('/pro/') ? 'active' : ''}" onclick="navigate('/pro/dashboard')">Espace pro</a>
       <button class="btn btn-secondary btn-sm" onclick="logout()">Déconnexion</button>
     `;
   } else {
     nav.innerHTML = `
+      <button class="btn btn-ghost btn-sm" id="installBtn" onclick="installPWA()">📱 Installer</button>
       <a class="header-link ${state.view === '/' ? 'active' : ''}" onclick="navigate('/')">Catalogue</a>
       <button class="btn btn-secondary btn-sm" onclick="openAuthModal()">Espace pro</button>
     `;
   }
+  if (_pwaDeferredPrompt) document.getElementById('installBtn')?.classList.add('visible');
 
   // Route
   const path = state.view;
@@ -1396,7 +1540,11 @@ function renderBoatGrid() {
     return;
   }
 
-  grid.innerHTML = `<div class="grid">${list.map(b => `
+  grid.innerHTML = `<div class="grid">${list.map(b => {
+    const startPrice = getBoatStartingPrice(b);
+    const dayPrice = getBoatSlotPrice(b, 'day');
+    const showFrom = startPrice < dayPrice;
+    return `
     <div class="boat-card" onclick="navigate('/boat/${b.id}')">
       <div class="boat-img" ${b.images?.[0] ? `style="background-image: url('${escapeHtml(b.images[0])}')"` : ''}>
         ${!b.images?.[0] ? `<div class="boat-img-placeholder">⛵</div>` : ''}
@@ -1411,14 +1559,15 @@ function renderBoatGrid() {
         </div>
         <div class="boat-price">
           <div>
-            <div class="boat-price-amount">${fmtEUR(b.pricePerDay)}</div>
-            <div class="boat-price-unit">par journée</div>
+            <div class="boat-price-amount">${fmtEUR(startPrice)}</div>
+            <div class="boat-price-unit">${showFrom ? 'à partir de · ' : ''}par sortie</div>
           </div>
           <span class="pill pill-info">Voir →</span>
         </div>
       </div>
     </div>
-  `).join('')}</div>`;
+    `;
+  }).join('')}</div>`;
 }
 
 function applyFiltersFromHero() {
@@ -1449,11 +1598,12 @@ let _currentBoatId = null;
 async function viewBoatDetail(id) {
   const main = document.getElementById('main');
   await fetchPublicBoats();
-  const boat = state.boats.find(b => b.id === id);
+  let boat = state.boats.find(b => b.id === id);
   if (!boat) {
     main.innerHTML = `<div class="container"><div class="empty-state"><div class="empty-state-icon">❓</div><h3>Bateau introuvable</h3><p><a onclick="navigate('/')">← Retour au catalogue</a></p></div></div>`;
     return;
   }
+  boat = normalizeBoatPricing(boat);
 
   // Récupère les créneaux déjà réservés (confirmés + en attente)
   let bookings = [];
@@ -1470,18 +1620,19 @@ async function viewBoatDetail(id) {
   _currentBookings = bookings;
   _currentBoatId = id;
 
-  // Calcule les dates totalement bloquées (aucun créneau disponible)
+  // Calcule les dates totalement bloquées et partiellement réservées
   const datesGrouped = {};
   bookings.forEach(b => {
     if (!datesGrouped[b.startDate]) datesGrouped[b.startDate] = [];
     datesGrouped[b.startDate].push(b.durationType);
   });
-  const fullyBookedDates = Object.keys(datesGrouped).filter(d => !DURATIONS.some(dur => isSlotCompatible(datesGrouped[d], dur.id)));
-  const partiallyBookedCount = Object.keys(datesGrouped).filter(d => !fullyBookedDates.includes(d)).length;
+  const fullyBookedDates = Object.keys(datesGrouped).filter(d => getAvailableDurations(d, bookings, boat).length === 0);
+  const partiallyBookedDates = Object.keys(datesGrouped).filter(d => !fullyBookedDates.includes(d));
 
   const imgs = boat.images?.length ? boat.images : [];
   const mainImg = imgs[0];
   const thumbs = imgs.slice(1, 3);
+  const startPrice = getBoatStartingPrice(boat);
 
   main.innerHTML = `
     <div class="container">
@@ -1512,6 +1663,25 @@ async function viewBoatDetail(id) {
             <p>${escapeHtml(boat.description)}</p>
           </div>
 
+          <div class="description">
+            <h3>Tarifs et formules proposées</h3>
+            <div class="price-options">
+              ${DURATIONS.map(d => {
+                const offered = isSlotOfferedByBoat(boat, d.id);
+                const price = getBoatSlotPrice(boat, d.id);
+                return `
+                  <div class="price-option ${offered ? '' : 'unavailable'}">
+                    <span class="price-name">
+                      ${d.id === 'halfday' ? '🌅' : d.id === 'sunset' ? '🌇' : '☀️'}
+                      <span>${escapeHtml(d.label)}</span>
+                    </span>
+                    <span class="price-value">${offered ? fmtEUR(price) : 'Non proposé'}</span>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+
           ${boat.equipment?.length ? `
             <div class="description">
               <h3>Équipement à bord</h3>
@@ -1523,20 +1693,25 @@ async function viewBoatDetail(id) {
         <aside>
           <div class="booking-card">
             <div class="booking-price">
-              <span class="booking-price-amount">${fmtEUR(boat.pricePerDay)}</span>
-              <span class="booking-price-unit">/ journée</span>
+              <span class="booking-price-amount">${fmtEUR(startPrice)}</span>
+              <span class="booking-price-unit">${startPrice < getBoatSlotPrice(boat, 'day') ? '· à partir de' : '/ journée'}</span>
             </div>
 
-            ${renderAvailabilityHint(fullyBookedDates.length, partiallyBookedCount)}
+            ${renderAvailabilityHint(fullyBookedDates.length, partiallyBookedDates.length)}
 
             <div class="form-group">
               <label>Date souhaitée <span class="req">*</span></label>
               <input type="text" id="resDate" class="form-control" placeholder="Sélectionnez une date">
               <div id="dateInfoLine"></div>
+              <div class="calendar-legend">
+                <span class="legend-item"><span class="legend-dot green"></span>Libre</span>
+                <span class="legend-item"><span class="legend-dot orange"></span>Partiel</span>
+                <span class="legend-item"><span class="legend-dot red"></span>Complet</span>
+              </div>
             </div>
             <div class="form-group">
               <label>Créneau <span class="req">*</span></label>
-              <select id="resDuration" class="form-control" onchange="updateBookingPrice('${boat.id}')"></select>
+              <select id="resDuration" class="form-control" onchange="updateBookingPriceV2()"></select>
             </div>
             <div class="form-group">
               <label>Votre nom <span class="req">*</span></label>
@@ -1555,7 +1730,7 @@ async function viewBoatDetail(id) {
 
             <div id="bookingTotal" style="background: var(--primary-soft); padding: 12px 14px; border-radius: var(--radius); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: baseline;">
               <span style="color: var(--text-2); font-size: 13px;">Total estimé</span>
-              <strong id="bookingTotalAmount" style="color: var(--primary); font-size: 20px;">${fmtEUR(boat.pricePerDay * DURATIONS[1].factor)}</strong>
+              <strong id="bookingTotalAmount" style="color: var(--primary); font-size: 20px;">—</strong>
             </div>
 
             <button class="btn btn-primary btn-block btn-lg" onclick="submitReservation('${boat.id}')">
@@ -1571,10 +1746,10 @@ async function viewBoatDetail(id) {
     </div>
   `;
 
-  // Initialise le select de durée avec toutes les options par défaut
+  // Initialise le select de durée avec tous les créneaux offerts par le bateau
   refreshDurationOptions(boat.id, null);
 
-  // Initialise le calendrier flatpickr
+  // Initialise le calendrier flatpickr avec dates bloquées + badges partielles
   setTimeout(() => {
     const input = document.getElementById('resDate');
     if (!input || typeof flatpickr === 'undefined') return;
@@ -1587,12 +1762,30 @@ async function viewBoatDetail(id) {
       altFormat: 'l j F Y',
       disable: fullyBookedDates,
       disableMobile: false,
+      onDayCreate: (dObj, dStr, fp, dayElem) => {
+        // Ajoute un badge ambre sur les dates partiellement réservées
+        try {
+          const d = dayElem.dateObj;
+          const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+          if (partiallyBookedDates.includes(iso)) dayElem.classList.add('bk-partial');
+        } catch {}
+      },
       onChange: (selectedDates, dateStr) => {
         refreshDurationOptions(boat.id, dateStr);
         renderDateInfoLine(dateStr);
       }
     });
   }, 50);
+}
+
+function updateBookingPriceV2() {
+  const boat = state.boats.find(b => b.id === _currentBoatId);
+  if (!boat) return;
+  const sel = document.getElementById('resDuration');
+  const slotId = sel.value;
+  if (!slotId) { document.getElementById('bookingTotalAmount').textContent = '—'; return; }
+  const price = getBoatSlotPrice(boat, slotId);
+  document.getElementById('bookingTotalAmount').textContent = fmtEUR(price);
 }
 
 function renderAvailabilityHint(fullyBooked, partiallyBooked) {
@@ -1611,7 +1804,10 @@ function refreshDurationOptions(boatId, dateISO) {
   if (!boat || !select) return;
   const prevValue = select.value;
 
-  const availIds = dateISO ? getAvailableDurations(dateISO, _currentBookings) : DURATIONS.map(d => d.id);
+  // Tient compte à la fois des créneaux offerts par le bateau ET des conflits du jour
+  const availIds = dateISO
+    ? getAvailableDurations(dateISO, _currentBookings, boat)
+    : DURATIONS.filter(d => isSlotOfferedByBoat(boat, d.id)).map(d => d.id);
 
   if (availIds.length === 0) {
     select.innerHTML = '<option value="">Aucun créneau disponible ce jour</option>';
@@ -1623,12 +1819,13 @@ function refreshDurationOptions(boatId, dateISO) {
   select.disabled = false;
   select.innerHTML = availIds.map(id => {
     const d = DURATIONS.find(x => x.id === id);
-    return `<option value="${d.id}" data-factor="${d.factor}">${d.label} — ${fmtEUR(boat.pricePerDay * d.factor)}</option>`;
+    const price = getBoatSlotPrice(boat, id);
+    return `<option value="${d.id}">${d.label} — ${fmtEUR(price)}</option>`;
   }).join('');
 
   // Restaure la valeur si elle est toujours dispo
   if (availIds.includes(prevValue)) select.value = prevValue;
-  updateBookingPrice(boatId);
+  updateBookingPriceV2();
 }
 
 function renderDateInfoLine(dateISO) {
@@ -1636,8 +1833,9 @@ function renderDateInfoLine(dateISO) {
   if (!wrap) return;
   if (!dateISO) { wrap.innerHTML = '<div class="help">Les dates barrées sont entièrement réservées.</div>'; return; }
 
+  const boat = state.boats.find(b => b.id === _currentBoatId);
   const taken = getTakenSlotsOnDate(dateISO, _currentBookings);
-  const avail = getAvailableDurations(dateISO, _currentBookings);
+  const avail = getAvailableDurations(dateISO, _currentBookings, boat);
 
   if (taken.length === 0) {
     wrap.innerHTML = `<div class="help" style="color: var(--success); font-weight: 600;">✓ Tous les créneaux sont libres ce jour</div>`;
@@ -1650,14 +1848,6 @@ function renderDateInfoLine(dateISO) {
   const takenLabels = taken.map(id => DURATIONS.find(d => d.id === id)?.shortLabel || id);
   const availLabels = avail.map(id => DURATIONS.find(d => d.id === id)?.shortLabel || id);
   wrap.innerHTML = `<div class="help" style="color: #92400e;">⚠️ Déjà pris : <strong>${takenLabels.join(', ')}</strong> · Encore libre : <strong style="color: var(--success);">${availLabels.join(', ')}</strong></div>`;
-}
-
-function updateBookingPrice(boatId) {
-  const boat = state.boats.find(b => b.id === boatId);
-  if (!boat) return;
-  const dur = document.getElementById('resDuration');
-  const factor = Number(dur.selectedOptions[0].dataset.factor);
-  document.getElementById('bookingTotalAmount').textContent = fmtEUR(boat.pricePerDay * factor);
 }
 
 async function submitReservation(boatId) {
@@ -1686,6 +1876,10 @@ async function submitReservation(boatId) {
       if (res?.success) bookings = res.data || [];
     }
     _currentBookings = bookings;
+    if (!isSlotOfferedByBoat(boat, durId)) {
+      toast('Ce créneau n\'est pas proposé par ce bateau.', 'error');
+      return;
+    }
     const takenOnDate = getTakenSlotsOnDate(date, bookings);
     if (!isSlotCompatible(takenOnDate, durId)) {
       const dur = DURATIONS.find(d => d.id === durId);
@@ -1696,8 +1890,7 @@ async function submitReservation(boatId) {
     }
   } catch (e) { log('slot recheck fail', e); }
 
-  const duration = DURATIONS.find(d => d.id === durId);
-  const totalPrice = Math.round(boat.pricePerDay * duration.factor);
+  const totalPrice = getBoatSlotPrice(boat, durId);
 
   const reservation = {
     id: uid(),
@@ -2030,7 +2223,10 @@ async function viewProBoats() {
         <button class="btn btn-primary mt-2" onclick="navigate('/pro/boats/new')">Ajouter mon premier bateau</button>
       </div>
     ` : `
-      <div class="grid">${state.myBoats.map(b => `
+      <div class="grid">${state.myBoats.map(b => {
+        const start = getBoatStartingPrice(b);
+        const nbSlots = (b.availableSlots || ['halfday','day','sunset']).length;
+        return `
         <div class="boat-card">
           <div class="boat-img" ${b.images?.[0] ? `style="background-image: url('${escapeHtml(b.images[0])}')"` : ''}>
             ${!b.images?.[0] ? `<div class="boat-img-placeholder">⛵</div>` : ''}
@@ -2041,10 +2237,14 @@ async function viewProBoats() {
             <div class="boat-location">📍 ${escapeHtml(b.location)} · ${escapeHtml(b.type)}</div>
             <div class="boat-meta">
               <span>👥 ${b.capacity}</span>
+              <span>🏷️ ${nbSlots} créneau${nbSlots > 1 ? 'x' : ''}</span>
               <span>${b.paymentLink ? '💳 Paiement en ligne' : '📞 Contact manuel'}</span>
             </div>
             <div class="boat-price">
-              <div class="boat-price-amount">${fmtEUR(b.pricePerDay)}</div>
+              <div>
+                <div class="boat-price-amount">${fmtEUR(start)}</div>
+                <div class="boat-price-unit">${start < getBoatSlotPrice(b, 'day') ? 'à partir de' : 'par sortie'}</div>
+              </div>
               <div class="flex gap-1">
                 <button class="btn btn-ghost btn-sm" onclick="navigate('/pro/boats/edit/${b.id}')">✏️ Modifier</button>
                 <button class="btn btn-ghost btn-sm" onclick="toggleBoatStatus('${b.id}')">${b.status === 'active' ? '⏸️' : '▶️'}</button>
@@ -2052,7 +2252,8 @@ async function viewProBoats() {
             </div>
           </div>
         </div>
-      `).join('')}</div>
+        `;
+      }).join('')}</div>
     `}
   `, 'boats');
 }
@@ -2079,22 +2280,40 @@ let boatFormState = null;
 function viewBoatForm(editId) {
   if (!state.currentUser) { openAuthModal(); return; }
   const editing = editId ? state.myBoats.find(b => b.id === editId) : null;
-  boatFormState = editing ? { ...editing, images: [...(editing.images || [])], equipment: [...(editing.equipment || [])] } : {
-    id: uid(),
-    proId: state.currentUser.id,
-    proName: state.currentUser.company || state.currentUser.name,
-    name: '',
-    type: BOAT_TYPES[0],
-    capacity: 6,
-    location: LOCATIONS_MQ[0],
-    description: '',
-    pricePerDay: 500,
-    images: [],
-    paymentLink: '',
-    withSkipper: true,
-    equipment: [],
-    status: 'active'
-  };
+  if (editing) {
+    const normalized = normalizeBoatPricing(editing);
+    boatFormState = {
+      ...normalized,
+      images: [...(normalized.images || [])],
+      equipment: [...(normalized.equipment || [])],
+      prices: { ...normalized.prices },
+      availableSlots: [...normalized.availableSlots]
+    };
+  } else {
+    const basePrice = 500;
+    boatFormState = {
+      id: uid(),
+      proId: state.currentUser.id,
+      proName: state.currentUser.company || state.currentUser.name,
+      name: '',
+      type: BOAT_TYPES[0],
+      capacity: 6,
+      location: LOCATIONS_MQ[0],
+      description: '',
+      pricePerDay: basePrice,
+      prices: {
+        halfday: Math.round(basePrice * 0.6),
+        day: basePrice,
+        sunset: Math.round(basePrice * 0.45)
+      },
+      availableSlots: ['halfday', 'day', 'sunset'],
+      images: [],
+      paymentLink: '',
+      withSkipper: true,
+      equipment: [],
+      status: 'active'
+    };
+  }
 
   renderBoatForm(!!editing);
 }
@@ -2125,15 +2344,9 @@ function renderBoatForm(editing) {
           <select id="bfLoc" class="form-control">${LOCATIONS_MQ.map(l => `<option ${l === b.location ? 'selected' : ''}>${l}</option>`).join('')}</select>
         </div>
       </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Capacité (passagers) <span class="req">*</span></label>
-          <input type="number" id="bfCap" class="form-control" min="1" max="50" value="${b.capacity}">
-        </div>
-        <div class="form-group">
-          <label>Prix par journée (€) <span class="req">*</span></label>
-          <input type="number" id="bfPrice" class="form-control" min="50" step="10" value="${b.pricePerDay}">
-        </div>
+      <div class="form-group">
+        <label>Capacité (passagers) <span class="req">*</span></label>
+        <input type="number" id="bfCap" class="form-control" min="1" max="50" value="${b.capacity}">
       </div>
       <div class="form-group">
         <label>Description</label>
@@ -2142,6 +2355,42 @@ function renderBoatForm(editing) {
       <div class="form-group checkbox-row">
         <input type="checkbox" id="bfSkipper" ${b.withSkipper ? 'checked' : ''}>
         <label for="bfSkipper">Skipper inclus dans le prix</label>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
+
+      <h3 style="font-size: 16px; margin-bottom: 8px;">🏷️ Tarifs et créneaux proposés</h3>
+      <p class="small text-muted mb-2">Cochez les créneaux que vous proposez et fixez votre prix pour chacun. Vous pouvez par exemple ne proposer que le coucher de soleil, ou cumuler matin + soir pour vendre deux prestations sur la même journée.</p>
+
+      <div class="pricing-helper">
+        <span>💡</span>
+        <span>Suggestion d'ordre de grandeur : demi-journée ≈ 60% de la journée, coucher de soleil ≈ 45%.</span>
+        <button type="button" onclick="suggestPricesFromDay()">Calculer automatiquement</button>
+      </div>
+
+      <div class="pricing-grid">
+        ${DURATIONS.map(d => {
+          const enabled = b.availableSlots.includes(d.id);
+          const icon = d.id === 'halfday' ? '🌅' : d.id === 'sunset' ? '🌇' : '☀️';
+          const meta = d.id === 'halfday' ? 'Matin (généralement 8h–12h)'
+                     : d.id === 'sunset'  ? 'Fin d\'après-midi / soirée'
+                     : 'Journée entière';
+          return `
+          <div class="pricing-row ${enabled ? '' : 'disabled'}" id="priceRow-${d.id}">
+            <label class="checkbox-row">
+              <input type="checkbox" id="slot-${d.id}" ${enabled ? 'checked' : ''} onchange="toggleSlot('${d.id}', ${!!editing})">
+              <span>
+                ${icon} ${escapeHtml(d.label)}
+                <span class="slot-meta">${meta}</span>
+              </span>
+            </label>
+            <div class="price-input">
+              <input type="number" id="price-${d.id}" min="0" step="10" value="${b.prices[d.id] || 0}" ${enabled ? '' : 'disabled'}>
+              <span class="suffix">€</span>
+            </div>
+          </div>
+          `;
+        }).join('')}
       </div>
 
       <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
@@ -2210,10 +2459,49 @@ function syncBoatFormFromDOM() {
   b.type = document.getElementById('bfType')?.value || b.type;
   b.location = document.getElementById('bfLoc')?.value || b.location;
   b.capacity = Number(document.getElementById('bfCap')?.value) || b.capacity;
-  b.pricePerDay = Number(document.getElementById('bfPrice')?.value) || b.pricePerDay;
   b.description = document.getElementById('bfDesc')?.value.trim() || b.description;
   b.withSkipper = document.getElementById('bfSkipper')?.checked ?? b.withSkipper;
   b.paymentLink = document.getElementById('bfPayLink')?.value.trim() || '';
+
+  // Récupère les prix et créneaux cochés
+  const slots = [];
+  DURATIONS.forEach(d => {
+    const cb = document.getElementById('slot-' + d.id);
+    const pi = document.getElementById('price-' + d.id);
+    if (cb && cb.checked) slots.push(d.id);
+    if (pi) b.prices[d.id] = Number(pi.value) || 0;
+  });
+  b.availableSlots = slots.length ? slots : ['day'];
+  // pricePerDay reste synchronisé avec prices.day pour le catalogue
+  b.pricePerDay = b.prices.day || b.prices[b.availableSlots[0]] || 0;
+}
+
+function toggleSlot(slotId, editing) {
+  syncBoatFormFromDOM();
+  const cb = document.getElementById('slot-' + slotId);
+  const pi = document.getElementById('price-' + slotId);
+  const row = document.getElementById('priceRow-' + slotId);
+  if (cb && cb.checked) {
+    row?.classList.remove('disabled');
+    if (pi) pi.disabled = false;
+  } else {
+    row?.classList.add('disabled');
+    if (pi) pi.disabled = true;
+  }
+}
+
+function suggestPricesFromDay() {
+  const dayInput = document.getElementById('price-day');
+  const day = Number(dayInput?.value) || 0;
+  if (day <= 0) {
+    toast('Saisissez d\'abord un prix pour la journée complète', 'warning');
+    return;
+  }
+  const halfInput = document.getElementById('price-halfday');
+  const sunsetInput = document.getElementById('price-sunset');
+  if (halfInput) halfInput.value = Math.round(day * 0.6);
+  if (sunsetInput) sunsetInput.value = Math.round(day * 0.45);
+  toast('Tarifs ajustés (60% matin, 45% coucher)', 'success');
 }
 
 function addImageUrl() {
@@ -2279,7 +2567,14 @@ async function saveBoat(editing) {
   syncBoatFormFromDOM();
   const b = boatFormState;
   if (!b.name) { toast('Le nom du bateau est requis', 'warning'); return; }
-  if (b.pricePerDay < 50) { toast('Prix minimum : 50€', 'warning'); return; }
+  if (b.availableSlots.length === 0) { toast('Sélectionnez au moins un créneau proposé', 'warning'); return; }
+  // Vérifie qu'au moins un prix activé est > 0
+  const invalidSlots = b.availableSlots.filter(s => !(Number(b.prices[s]) > 0));
+  if (invalidSlots.length > 0) {
+    const labels = invalidSlots.map(s => DURATIONS.find(d => d.id === s)?.shortLabel || s).join(', ');
+    toast(`Prix manquant ou invalide pour : ${labels}`, 'warning');
+    return;
+  }
 
   showLoader();
   if (state.mode === 'demo') {
@@ -2554,10 +2849,116 @@ function doClearLocal() {
   navigate('/');
 }
 
+/* ---------- PWA SETUP ----------
+   On génère un manifest dynamique pour permettre l'ajout à l'écran
+   d'accueil sur iOS (Safari) et Android (Chrome). On n'utilise PAS de
+   Service Worker car celui-ci impose un fichier .js séparé sur le
+   même domaine (contrainte de sécurité des navigateurs). */
+let _pwaDeferredPrompt = null;
+
+function setupPWA() {
+  const iconSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="110" fill="#0e6e6e"/><text x="256" y="340" font-size="280" text-anchor="middle" fill="white" font-family="system-ui">⛵</text></svg>';
+  const iconURL = 'data:image/svg+xml;utf8,' + encodeURIComponent(iconSVG);
+  const manifest = {
+    name: 'BatoKreyòl — Louer un bateau en Martinique',
+    short_name: 'BatoKreyòl',
+    description: 'Louez votre bateau avec skipper en Martinique. Marketplace nautique 100% locale.',
+    start_url: './',
+    scope: './',
+    display: 'standalone',
+    background_color: '#fafaf7',
+    theme_color: '#0e6e6e',
+    orientation: 'any',
+    lang: 'fr-FR',
+    icons: [
+      { src: iconURL, sizes: '192x192', type: 'image/svg+xml', purpose: 'any maskable' },
+      { src: iconURL, sizes: '512x512', type: 'image/svg+xml', purpose: 'any maskable' }
+    ]
+  };
+  try {
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = url;
+    document.head.appendChild(link);
+    log('manifest injected');
+  } catch (e) { log('manifest fail', e); }
+
+  // Captation de l'évènement d'installation Chrome / Android (si disponible)
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    _pwaDeferredPrompt = e;
+    const btn = document.getElementById('installBtn');
+    if (btn) btn.classList.add('visible');
+    log('PWA installable (prompt natif disponible)');
+  });
+
+  window.addEventListener('appinstalled', () => {
+    _pwaDeferredPrompt = null;
+    document.getElementById('installBtn')?.classList.remove('visible');
+    audit('pwa_installed');
+    toast('Application installée 🎉', 'success');
+  });
+
+  // Le bouton "Installer" est toujours affiché : si le prompt natif n'est
+  // pas dispo (iOS, Firefox…), on guide l'utilisateur manuellement.
+  setTimeout(() => {
+    document.getElementById('installBtn')?.classList.add('visible');
+  }, 100);
+}
+
+async function installPWA() {
+  // Si le navigateur a déclenché beforeinstallprompt, on lance la boîte native
+  if (_pwaDeferredPrompt) {
+    _pwaDeferredPrompt.prompt();
+    const choice = await _pwaDeferredPrompt.userChoice;
+    log('PWA install choice', choice);
+    _pwaDeferredPrompt = null;
+    document.getElementById('installBtn')?.classList.remove('visible');
+    return;
+  }
+  // Sinon, on affiche les instructions selon la plateforme
+  const ua = navigator.userAgent;
+  const isiOS = /iPad|iPhone|iPod/.test(ua);
+  const isAndroid = /Android/.test(ua);
+  modal(`
+    <div class="modal-header"><h3>📱 Installer BatoKreyòl</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      ${isiOS ? `
+        <p class="mb-2">Sur iPhone / iPad :</p>
+        <ol style="padding-left: 18px; line-height: 1.8;">
+          <li>Touchez l'icône <strong>Partager</strong> ▢↑ en bas de Safari</li>
+          <li>Faites défiler et touchez <strong>« Sur l'écran d'accueil »</strong></li>
+          <li>Confirmez en touchant <strong>« Ajouter »</strong></li>
+        </ol>
+        <p class="small text-muted mt-2">L'app s'ouvrira ensuite en plein écran depuis votre bureau, comme une vraie application.</p>
+      ` : isAndroid ? `
+        <p class="mb-2">Sur Android Chrome :</p>
+        <ol style="padding-left: 18px; line-height: 1.8;">
+          <li>Touchez le menu <strong>⋮</strong> en haut à droite</li>
+          <li>Touchez <strong>« Ajouter à l'écran d'accueil »</strong> ou <strong>« Installer l'application »</strong></li>
+          <li>Confirmez</li>
+        </ol>
+      ` : `
+        <p class="mb-2">Sur ordinateur (Chrome, Edge) :</p>
+        <ol style="padding-left: 18px; line-height: 1.8;">
+          <li>Ouvrez le menu <strong>⋮</strong> en haut à droite</li>
+          <li>Cliquez sur <strong>« Installer BatoKreyòl »</strong> ou <strong>« Plus d'outils → Créer un raccourci »</strong></li>
+          <li>Cochez « Ouvrir comme une fenêtre » et validez</li>
+        </ol>
+        <p class="small text-muted mt-2">Sur Firefox, vous pouvez épingler l'onglet pour un accès rapide.</p>
+      `}
+      <button class="btn btn-primary btn-block mt-2" onclick="closeModal()">D'accord</button>
+    </div>
+  `);
+}
+
 /* ---------- BOOT ---------- */
 window.addEventListener('DOMContentLoaded', () => {
   log('Boot', VERSION, LOCAL_MODE ? '(backend local)' : '(backend distant)');
   if (LOCAL_MODE) localBackend.seed();
+  setupPWA();
   const path = (window.location.hash || '#/').slice(1) || '/';
   state.view = path;
   render();
