@@ -808,7 +808,7 @@
 
   <footer class="footer">
     <div>BatoKreyòl — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v0.2 — 2026</div>
+    <div class="version">v0.3 — 2026</div>
   </footer>
 </div>
 
@@ -819,11 +819,11 @@
 
 <script>
 /* ============================================================
-   BatoKreyòl v0.2
+   BatoKreyòl v0.3
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v0.2';
+const VERSION = 'v0.3';
 const APP_NAME = 'BatoKreyol';
 
 // CONFIG : remplacer par votre URL Apps Script déployée en Web App
@@ -854,10 +854,34 @@ const LOCATIONS_MQ = [
 ];
 const BOAT_TYPES = ['Catamaran', 'Voilier', 'Bateau à moteur', 'Yacht', 'Semi-rigide', 'Pêche-promenade'];
 const DURATIONS = [
-  { id: 'halfday', label: 'Demi-journée (4h)', factor: 0.6 },
-  { id: 'day', label: 'Journée (8h)', factor: 1 },
-  { id: 'sunset', label: 'Coucher de soleil (3h)', factor: 0.45 },
+  { id: 'halfday', label: 'Demi-journée (4h)', shortLabel: 'Matin', factor: 0.6, slot: 'morning' },
+  { id: 'day',     label: 'Journée (8h)',     shortLabel: 'Journée', factor: 1,   slot: 'full' },
+  { id: 'sunset',  label: 'Coucher de soleil (3h)', shortLabel: 'Coucher de soleil', factor: 0.45, slot: 'evening' },
 ];
+
+/* Règle métier : sur une même date, on peut cumuler une demi-journée
+   (matin) ET un coucher de soleil (soir) car ces créneaux ne se
+   chevauchent pas. Une "journée complète" bloque tout, et deux
+   créneaux identiques sont évidemment incompatibles. */
+function isSlotCompatible(takenTypes, newType) {
+  if (takenTypes.includes('day')) return false;
+  if (newType === 'day' && takenTypes.length > 0) return false;
+  if (takenTypes.includes(newType)) return false;
+  return true;
+}
+
+function getAvailableDurations(dateISO, bookings) {
+  const takenOnDate = bookings.filter(b => b.startDate === dateISO).map(b => b.durationType);
+  return DURATIONS.filter(d => isSlotCompatible(takenOnDate, d.id)).map(d => d.id);
+}
+
+function getTakenSlotsOnDate(dateISO, bookings) {
+  return bookings.filter(b => b.startDate === dateISO).map(b => b.durationType);
+}
+
+function isDateFullyBooked(dateISO, bookings) {
+  return getAvailableDurations(dateISO, bookings).length === 0;
+}
 const EQUIPMENT_PRESETS = ['GPS', 'Sondeur', 'Glacière', 'Douche de pont', 'Snorkeling', 'Bain de soleil', 'Toilettes', 'Cuisine', 'Bluetooth', 'Échelle de bain', 'Bouées', 'Punch maison 🍹'];
 
 /* ---------- STORAGE ---------- */
@@ -1034,6 +1058,14 @@ const localBackend = {
   },
 
   createReservation(data) {
+    // Vérifie qu'aucun conflit de créneau n'existe pour cette date
+    const existing = this._read('reservations')
+      .filter(r => r.boatId === data.boatId && r.startDate === data.startDate)
+      .filter(r => r.status === 'confirmed' || r.status === 'pending')
+      .map(r => r.durationType);
+    if (!isSlotCompatible(existing, data.durationType)) {
+      return { success: false, error: 'Ce créneau vient d\'être réservé pour cette date.' };
+    }
     const reservations = this._read('reservations');
     const r = { ...data, id: data.id || this._uid(), createdAt: new Date().toISOString() };
     reservations.unshift(r);
@@ -1059,11 +1091,14 @@ const localBackend = {
     return { success: true };
   },
 
-  getBoatBookedDates(data) {
+  /* Renvoie les créneaux occupés pour ce bateau : tableau d'objets
+     {startDate, durationType}. Le frontend combine cette info avec la
+     matrice de compatibilité pour proposer les créneaux dispos. */
+  getBoatBookings(data) {
     const list = this._read('reservations')
       .filter(r => r.boatId === data.boatId && ['confirmed', 'pending'].includes(r.status))
-      .map(r => r.startDate)
-      .filter(Boolean);
+      .map(r => ({ startDate: r.startDate, durationType: r.durationType }))
+      .filter(x => x.startDate);
     return { success: true, data: list };
   },
 
@@ -1166,6 +1201,8 @@ function loadDemoData() {
     { id: 'r8', boatId: 'b6', boatName: 'Karaïbes Pêche', proId: 'p3', clientName: 'Patrick Coloss', clientEmail: 'coloss@demo.fr', clientPhone: '0696 12 21 21', startDate: '2026-06-08', durationType: 'day', totalPrice: 540, paymentStatus: 'pending', status: 'pending', createdAt: '2026-05-10T07:00:00Z' },
     { id: 'r9', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Sortie Comité', clientEmail: 'comite@demo.fr', clientPhone: '0596 78 89 90', startDate: '2026-07-20', durationType: 'day', totalPrice: 850, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-06T13:00:00Z' },
     { id: 'r10', boatId: 'b12', boatName: 'Zandoli', proId: 'p4', clientName: 'Touristes Allemands', clientEmail: 'klaus@demo.de', clientPhone: '+49 30 1234567', startDate: '2026-06-01', durationType: 'halfday', totalPrice: 246, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-07T15:45:00Z' },
+    { id: 'r11', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Apéro Coucher', clientEmail: 'apero@demo.fr', clientPhone: '0696 11 11 11', startDate: '2026-06-18', durationType: 'sunset', totalPrice: 383, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-09T10:00:00Z' },
+    { id: 'r12', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Famille Vincent', clientEmail: 'vincent@demo.fr', clientPhone: '0696 22 22 22', startDate: '2026-06-25', durationType: 'halfday', totalPrice: 510, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-09T11:00:00Z' },
   ];
 
   state.demoSnapshot = { pros: demoPros, boats: demoBoats, reservations: demoReservations };
@@ -1406,6 +1443,9 @@ function resetFilters() {
 }
 
 /* ---------- VIEW: BOAT DETAIL ---------- */
+let _currentBookings = []; // cache des réservations du bateau en cours
+let _currentBoatId = null;
+
 async function viewBoatDetail(id) {
   const main = document.getElementById('main');
   await fetchPublicBoats();
@@ -1415,19 +1455,29 @@ async function viewBoatDetail(id) {
     return;
   }
 
-  // Récupère les dates déjà réservées (confirmées + en attente)
-  let bookedDates = [];
+  // Récupère les créneaux déjà réservés (confirmés + en attente)
+  let bookings = [];
   if (state.mode === 'demo') {
-    bookedDates = state.reservations
+    bookings = state.reservations
       .filter(r => r.boatId === id && ['confirmed', 'pending'].includes(r.status))
-      .map(r => r.startDate)
-      .filter(Boolean);
+      .map(r => ({ startDate: r.startDate, durationType: r.durationType }));
   } else {
     try {
-      const res = await syncToBackend('getBoatBookedDates', { boatId: id });
-      if (res?.success) bookedDates = res.data || [];
-    } catch (e) { log('booked dates fail', e); }
+      const res = await syncToBackend('getBoatBookings', { boatId: id });
+      if (res?.success) bookings = res.data || [];
+    } catch (e) { log('bookings fail', e); }
   }
+  _currentBookings = bookings;
+  _currentBoatId = id;
+
+  // Calcule les dates totalement bloquées (aucun créneau disponible)
+  const datesGrouped = {};
+  bookings.forEach(b => {
+    if (!datesGrouped[b.startDate]) datesGrouped[b.startDate] = [];
+    datesGrouped[b.startDate].push(b.durationType);
+  });
+  const fullyBookedDates = Object.keys(datesGrouped).filter(d => !DURATIONS.some(dur => isSlotCompatible(datesGrouped[d], dur.id)));
+  const partiallyBookedCount = Object.keys(datesGrouped).filter(d => !fullyBookedDates.includes(d)).length;
 
   const imgs = boat.images?.length ? boat.images : [];
   const mainImg = imgs[0];
@@ -1477,23 +1527,16 @@ async function viewBoatDetail(id) {
               <span class="booking-price-unit">/ journée</span>
             </div>
 
-            <div class="dates-info ${bookedDates.length === 0 ? 'dates-info-empty' : ''}">
-              ${bookedDates.length === 0
-                ? '<span>✓</span><span>Toutes les dates sont disponibles</span>'
-                : `<span>📅</span><span>${bookedDates.length} date${bookedDates.length > 1 ? 's' : ''} déjà réservée${bookedDates.length > 1 ? 's' : ''} et indisponible${bookedDates.length > 1 ? 's' : ''}</span>`
-              }
-            </div>
+            ${renderAvailabilityHint(fullyBookedDates.length, partiallyBookedCount)}
 
             <div class="form-group">
               <label>Date souhaitée <span class="req">*</span></label>
               <input type="text" id="resDate" class="form-control" placeholder="Sélectionnez une date">
-              <div class="help">Les dates barrées sont déjà réservées.</div>
+              <div id="dateInfoLine"></div>
             </div>
             <div class="form-group">
-              <label>Durée <span class="req">*</span></label>
-              <select id="resDuration" class="form-control" onchange="updateBookingPrice('${boat.id}')">
-                ${DURATIONS.map(d => `<option value="${d.id}" data-factor="${d.factor}">${d.label} — ${fmtEUR(boat.pricePerDay * d.factor)}</option>`).join('')}
-              </select>
+              <label>Créneau <span class="req">*</span></label>
+              <select id="resDuration" class="form-control" onchange="updateBookingPrice('${boat.id}')"></select>
             </div>
             <div class="form-group">
               <label>Votre nom <span class="req">*</span></label>
@@ -1528,7 +1571,10 @@ async function viewBoatDetail(id) {
     </div>
   `;
 
-  // Initialise le sélecteur de date avec les jours réservés désactivés
+  // Initialise le select de durée avec toutes les options par défaut
+  refreshDurationOptions(boat.id, null);
+
+  // Initialise le calendrier flatpickr
   setTimeout(() => {
     const input = document.getElementById('resDate');
     if (!input || typeof flatpickr === 'undefined') return;
@@ -1539,13 +1585,71 @@ async function viewBoatDetail(id) {
       dateFormat: 'Y-m-d',
       altInput: true,
       altFormat: 'l j F Y',
-      disable: bookedDates,
+      disable: fullyBookedDates,
       disableMobile: false,
-      onChange: () => updateBookingPrice(boat.id)
+      onChange: (selectedDates, dateStr) => {
+        refreshDurationOptions(boat.id, dateStr);
+        renderDateInfoLine(dateStr);
+      }
     });
-    // Stocke pour validation
-    input.dataset.booked = JSON.stringify(bookedDates);
   }, 50);
+}
+
+function renderAvailabilityHint(fullyBooked, partiallyBooked) {
+  if (fullyBooked === 0 && partiallyBooked === 0) {
+    return `<div class="dates-info dates-info-empty"><span>✓</span><span>Toutes les dates sont entièrement disponibles</span></div>`;
+  }
+  const parts = [];
+  if (fullyBooked > 0) parts.push(`${fullyBooked} date${fullyBooked > 1 ? 's' : ''} complète${fullyBooked > 1 ? 's' : ''}`);
+  if (partiallyBooked > 0) parts.push(`${partiallyBooked} date${partiallyBooked > 1 ? 's' : ''} partiellement réservée${partiallyBooked > 1 ? 's' : ''}`);
+  return `<div class="dates-info"><span>📅</span><span>${parts.join(' · ')}. Choisissez votre date pour voir les créneaux libres.</span></div>`;
+}
+
+function refreshDurationOptions(boatId, dateISO) {
+  const boat = state.boats.find(b => b.id === boatId);
+  const select = document.getElementById('resDuration');
+  if (!boat || !select) return;
+  const prevValue = select.value;
+
+  const availIds = dateISO ? getAvailableDurations(dateISO, _currentBookings) : DURATIONS.map(d => d.id);
+
+  if (availIds.length === 0) {
+    select.innerHTML = '<option value="">Aucun créneau disponible ce jour</option>';
+    select.disabled = true;
+    document.getElementById('bookingTotalAmount').textContent = '—';
+    return;
+  }
+
+  select.disabled = false;
+  select.innerHTML = availIds.map(id => {
+    const d = DURATIONS.find(x => x.id === id);
+    return `<option value="${d.id}" data-factor="${d.factor}">${d.label} — ${fmtEUR(boat.pricePerDay * d.factor)}</option>`;
+  }).join('');
+
+  // Restaure la valeur si elle est toujours dispo
+  if (availIds.includes(prevValue)) select.value = prevValue;
+  updateBookingPrice(boatId);
+}
+
+function renderDateInfoLine(dateISO) {
+  const wrap = document.getElementById('dateInfoLine');
+  if (!wrap) return;
+  if (!dateISO) { wrap.innerHTML = '<div class="help">Les dates barrées sont entièrement réservées.</div>'; return; }
+
+  const taken = getTakenSlotsOnDate(dateISO, _currentBookings);
+  const avail = getAvailableDurations(dateISO, _currentBookings);
+
+  if (taken.length === 0) {
+    wrap.innerHTML = `<div class="help" style="color: var(--success); font-weight: 600;">✓ Tous les créneaux sont libres ce jour</div>`;
+    return;
+  }
+  if (avail.length === 0) {
+    wrap.innerHTML = `<div class="help" style="color: var(--danger); font-weight: 600;">✕ Aucun créneau disponible ce jour</div>`;
+    return;
+  }
+  const takenLabels = taken.map(id => DURATIONS.find(d => d.id === id)?.shortLabel || id);
+  const availLabels = avail.map(id => DURATIONS.find(d => d.id === id)?.shortLabel || id);
+  wrap.innerHTML = `<div class="help" style="color: #92400e;">⚠️ Déjà pris : <strong>${takenLabels.join(', ')}</strong> · Encore libre : <strong style="color: var(--success);">${availLabels.join(', ')}</strong></div>`;
 }
 
 function updateBookingPrice(boatId) {
@@ -1561,35 +1665,36 @@ async function submitReservation(boatId) {
   if (!boat) return;
   const dateInput = document.getElementById('resDate');
   const date = dateInput.value;
-  const durId = document.getElementById('resDuration').value;
+  const durSelect = document.getElementById('resDuration');
+  const durId = durSelect.value;
   const name = document.getElementById('resName').value.trim();
   const email = document.getElementById('resEmail').value.trim();
   const phone = document.getElementById('resPhone').value.trim();
 
-  if (!date || !name || !email || !phone) { toast('Merci de remplir tous les champs requis', 'warning'); return; }
+  if (!date || !durId || !name || !email || !phone) { toast('Merci de remplir tous les champs requis', 'warning'); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Email invalide', 'warning'); return; }
 
-  // Re-vérifie côté serveur que la date est toujours libre (défense en profondeur)
+  // Re-vérifie côté serveur que ce créneau est toujours libre
   try {
-    let booked = [];
+    let bookings = [];
     if (state.mode === 'demo') {
-      booked = state.reservations
+      bookings = state.reservations
         .filter(r => r.boatId === boat.id && ['confirmed', 'pending'].includes(r.status))
-        .map(r => r.startDate);
+        .map(r => ({ startDate: r.startDate, durationType: r.durationType }));
     } else {
-      const res = await syncToBackend('getBoatBookedDates', { boatId: boat.id });
-      if (res?.success) booked = res.data || [];
+      const res = await syncToBackend('getBoatBookings', { boatId: boat.id });
+      if (res?.success) bookings = res.data || [];
     }
-    if (booked.includes(date)) {
-      toast('Cette date vient d\'être réservée par un autre client. Choisissez-en une autre.', 'error');
-      // Rafraîchit le calendrier
-      if (dateInput._flatpickr) {
-        dateInput._flatpickr.set('disable', booked);
-        dateInput._flatpickr.clear();
-      }
+    _currentBookings = bookings;
+    const takenOnDate = getTakenSlotsOnDate(date, bookings);
+    if (!isSlotCompatible(takenOnDate, durId)) {
+      const dur = DURATIONS.find(d => d.id === durId);
+      toast(`Le créneau "${dur?.shortLabel}" vient d'être pris pour cette date. Réessayez avec un autre.`, 'error');
+      refreshDurationOptions(boatId, date);
+      renderDateInfoLine(date);
       return;
     }
-  } catch (e) { log('date recheck fail', e); }
+  } catch (e) { log('slot recheck fail', e); }
 
   const duration = DURATIONS.find(d => d.id === durId);
   const totalPrice = Math.round(boat.pricePerDay * duration.factor);
@@ -1624,7 +1729,7 @@ async function submitReservation(boatId) {
         audit('reservation_created', { id: reservation.id });
         showReservationConfirmation(boat, reservation);
       } else {
-        toast('Erreur lors de la réservation. Veuillez réessayer.', 'error');
+        toast(res?.error || 'Erreur lors de la réservation. Veuillez réessayer.', 'error');
       }
     }
   } catch (e) {
