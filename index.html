@@ -13,6 +13,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/fr.min.js"></script>
 <style>
   :root {
     --primary: #0e6e6e;
@@ -768,6 +771,24 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+  /* ====== FLATPICKR OVERRIDES ====== */
+  .flatpickr-calendar { font-family: var(--font-sans) !important; box-shadow: var(--shadow-lg) !important; border-radius: var(--radius-lg) !important; border: 1px solid var(--border) !important; }
+  .flatpickr-day.selected, .flatpickr-day.selected:hover, .flatpickr-day.startRange, .flatpickr-day.endRange { background: var(--primary) !important; border-color: var(--primary) !important; }
+  .flatpickr-day:hover:not(.flatpickr-disabled):not(.selected) { background: var(--primary-soft) !important; }
+  .flatpickr-day.flatpickr-disabled, .flatpickr-day.flatpickr-disabled:hover {
+    background: repeating-linear-gradient(45deg, var(--danger-soft), var(--danger-soft) 3px, transparent 3px, transparent 6px) !important;
+    color: var(--danger) !important;
+    text-decoration: line-through !important;
+    cursor: not-allowed !important;
+  }
+  .flatpickr-months .flatpickr-month { color: var(--text) !important; }
+  .flatpickr-current-month .flatpickr-monthDropdown-months, .flatpickr-current-month input.cur-year { color: var(--text) !important; font-weight: 600 !important; }
+  .flatpickr-weekday { color: var(--text-2) !important; font-weight: 600 !important; }
+
+  /* ====== UNAVAILABLE DATES INFO ====== */
+  .dates-info { background: var(--warning-soft); border: 1px solid #fde68a; padding: 10px 12px; border-radius: var(--radius); font-size: 13px; color: #92400e; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .dates-info-empty { background: var(--success-soft); border-color: #bbf7d0; color: #166534; }
 </style>
 </head>
 <body>
@@ -787,7 +808,7 @@
 
   <footer class="footer">
     <div>BatoKreyòl — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v0.1 — 2026</div>
+    <div class="version">v0.2 — 2026</div>
   </footer>
 </div>
 
@@ -798,15 +819,18 @@
 
 <script>
 /* ============================================================
-   BatoKreyòl v0.1
+   BatoKreyòl v0.2
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v0.1';
+const VERSION = 'v0.2';
 const APP_NAME = 'BatoKreyol';
 
 // CONFIG : remplacer par votre URL Apps Script déployée en Web App
+// Si laissée vide ou non configurée, l'app bascule automatiquement sur un
+// backend local (localStorage) qui permet de tester tout le flow.
 const BACKEND_URL = 'https://script.google.com/macros/s/REPLACE_WITH_YOUR_DEPLOYMENT_ID/exec';
+const LOCAL_MODE = !BACKEND_URL || BACKEND_URL.includes('REPLACE_WITH_YOUR_DEPLOYMENT_ID');
 
 const log = (...args) => console.log('[BatoKreyol]', ...args);
 
@@ -866,9 +890,10 @@ async function syncToBackend(action, data) {
     log('demo no-op', action);
     return { success: true, demo: true };
   }
-  if (!BACKEND_URL || BACKEND_URL.includes('REPLACE_WITH_YOUR_DEPLOYMENT_ID')) {
-    log('backend not configured');
-    return { success: false, error: 'backend_not_configured' };
+  if (LOCAL_MODE) {
+    log('[localBackend]', action);
+    await sleep(120); // simule la latence réseau
+    return localBackend.handle(action, data);
   }
   const delays = [300, 800, 2000];
   let lastErr = null;
@@ -891,6 +916,167 @@ async function syncToBackend(action, data) {
   throw lastErr;
 }
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+/* ---------- LOCAL BACKEND (mémoire localStorage) ----------
+   Simule l'API Apps Script tant que BACKEND_URL n'est pas configuré.
+   Permet de tester intégralement l'inscription, la connexion, l'ajout
+   de bateaux, les réservations… avec persistance entre sessions. */
+const localBackend = {
+  _k: (t) => 'bk_local_' + t,
+  _read(t) { try { return JSON.parse(localStorage.getItem(this._k(t))) || []; } catch { return []; } },
+  _write(t, data) { try { localStorage.setItem(this._k(t), JSON.stringify(data)); } catch (e) { log('lb write err', e); } },
+  _uid() { return Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4); },
+
+  handle(action, data) {
+    try {
+      if (typeof this[action] === 'function') return this[action](data || {});
+      return { success: false, error: 'Action inconnue: ' + action };
+    } catch (e) { return { success: false, error: String(e) }; }
+  },
+
+  seed() {
+    if (localStorage.getItem('bk_local_seeded') === '1') return;
+    // Compte de test pré-créé pour faciliter les essais
+    this._write('pros', [
+      { id: 'pro_demo_1', name: 'Compte de test', company: 'Mon entreprise nautique', email: 'test@batokreyol.fr', phone: '0696 00 00 00', password: 'test1234', createdAt: new Date().toISOString(), status: 'active' }
+    ]);
+    this._write('boats', []);
+    this._write('reservations', []);
+    localStorage.setItem('bk_local_seeded', '1');
+    log('localBackend seeded');
+  },
+
+  clearAll() {
+    ['pros', 'boats', 'reservations', 'audit'].forEach(t => localStorage.removeItem(this._k(t)));
+    localStorage.removeItem('bk_local_seeded');
+    this.seed();
+    log('localBackend cleared & re-seeded');
+  },
+
+  registerPro(data) {
+    const email = String(data.email || '').toLowerCase().trim();
+    if (!email || !data.password || !data.name) return { success: false, error: 'Champs requis manquants' };
+    const pros = this._read('pros');
+    if (pros.find(p => p.email === email)) return { success: false, error: 'Cet email est déjà utilisé' };
+    const pro = {
+      id: this._uid(), name: data.name, company: data.company || '',
+      email, phone: data.phone || '', password: data.password,
+      createdAt: new Date().toISOString(), status: 'active'
+    };
+    pros.push(pro);
+    this._write('pros', pros);
+    return { success: true, data: { id: pro.id, name: pro.name, company: pro.company, email: pro.email, phone: pro.phone } };
+  },
+
+  loginPro(data) {
+    const email = String(data.email || '').toLowerCase().trim();
+    const pro = this._read('pros').find(p => p.email === email);
+    if (!pro) return { success: false, error: 'Identifiants incorrects' };
+    if (pro.password !== data.password) return { success: false, error: 'Identifiants incorrects' };
+    if (pro.status !== 'active') return { success: false, error: 'Compte désactivé' };
+    return { success: true, data: { id: pro.id, name: pro.name, company: pro.company, email: pro.email, phone: pro.phone } };
+  },
+
+  updatePro(data) {
+    const pros = this._read('pros');
+    const i = pros.findIndex(p => p.id === data.id);
+    if (i === -1) return { success: false, error: 'Profil introuvable' };
+    ['name', 'company', 'phone'].forEach(k => { if (data[k] !== undefined) pros[i][k] = data[k]; });
+    this._write('pros', pros);
+    return { success: true };
+  },
+
+  changePassword(data) {
+    const pros = this._read('pros');
+    const i = pros.findIndex(p => p.email === String(data.email || '').toLowerCase());
+    if (i === -1) return { success: false, error: 'Compte introuvable' };
+    if (pros[i].password !== data.oldPassword) return { success: false, error: 'Mot de passe actuel incorrect' };
+    pros[i].password = data.newPassword;
+    this._write('pros', pros);
+    return { success: true };
+  },
+
+  listBoats() {
+    return { success: true, data: this._read('boats').filter(b => b.status === 'active') };
+  },
+
+  listBoatsForPro(data) {
+    return { success: true, data: this._read('boats').filter(b => b.proId === data.proId) };
+  },
+
+  getBoat(data) {
+    const b = this._read('boats').find(x => x.id === data.id);
+    return b ? { success: true, data: b } : { success: false, error: 'Bateau introuvable' };
+  },
+
+  createBoat(data) {
+    const boats = this._read('boats');
+    const boat = { ...data, id: data.id || this._uid(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() };
+    boats.push(boat);
+    this._write('boats', boats);
+    return { success: true, data: boat };
+  },
+
+  updateBoat(data) {
+    const boats = this._read('boats');
+    const i = boats.findIndex(b => b.id === data.id);
+    if (i === -1) return { success: false, error: 'Bateau introuvable' };
+    boats[i] = { ...boats[i], ...data, updatedAt: new Date().toISOString() };
+    this._write('boats', boats);
+    return { success: true };
+  },
+
+  deleteBoat(data) {
+    let boats = this._read('boats');
+    boats = boats.filter(b => b.id !== data.id);
+    this._write('boats', boats);
+    return { success: true };
+  },
+
+  createReservation(data) {
+    const reservations = this._read('reservations');
+    const r = { ...data, id: data.id || this._uid(), createdAt: new Date().toISOString() };
+    reservations.unshift(r);
+    this._write('reservations', reservations);
+    return { success: true, data: r };
+  },
+
+  listReservationsForPro(data) {
+    const list = this._read('reservations')
+      .filter(r => r.proId === data.proId)
+      .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+    return { success: true, data: list };
+  },
+
+  updateReservation(data) {
+    const list = this._read('reservations');
+    const i = list.findIndex(r => r.id === data.id);
+    if (i === -1) return { success: false, error: 'Réservation introuvable' };
+    if (data.status !== undefined) list[i].status = data.status;
+    if (data.paymentStatus !== undefined) list[i].paymentStatus = data.paymentStatus;
+    list[i].updatedAt = new Date().toISOString();
+    this._write('reservations', list);
+    return { success: true };
+  },
+
+  getBoatBookedDates(data) {
+    const list = this._read('reservations')
+      .filter(r => r.boatId === data.boatId && ['confirmed', 'pending'].includes(r.status))
+      .map(r => r.startDate)
+      .filter(Boolean);
+    return { success: true, data: list };
+  },
+
+  sendClientEmail(data) { return { success: true, simulated: true }; },
+
+  audit(data) {
+    const logs = this._read('audit');
+    logs.push(data);
+    if (logs.length > 200) logs.shift();
+    this._write('audit', logs);
+    return { success: true };
+  }
+};
 
 /* ---------- TOAST ---------- */
 function toast(msg, type = 'info', ttl = 4000) {
@@ -1229,6 +1415,20 @@ async function viewBoatDetail(id) {
     return;
   }
 
+  // Récupère les dates déjà réservées (confirmées + en attente)
+  let bookedDates = [];
+  if (state.mode === 'demo') {
+    bookedDates = state.reservations
+      .filter(r => r.boatId === id && ['confirmed', 'pending'].includes(r.status))
+      .map(r => r.startDate)
+      .filter(Boolean);
+  } else {
+    try {
+      const res = await syncToBackend('getBoatBookedDates', { boatId: id });
+      if (res?.success) bookedDates = res.data || [];
+    } catch (e) { log('booked dates fail', e); }
+  }
+
   const imgs = boat.images?.length ? boat.images : [];
   const mainImg = imgs[0];
   const thumbs = imgs.slice(1, 3);
@@ -1277,9 +1477,17 @@ async function viewBoatDetail(id) {
               <span class="booking-price-unit">/ journée</span>
             </div>
 
+            <div class="dates-info ${bookedDates.length === 0 ? 'dates-info-empty' : ''}">
+              ${bookedDates.length === 0
+                ? '<span>✓</span><span>Toutes les dates sont disponibles</span>'
+                : `<span>📅</span><span>${bookedDates.length} date${bookedDates.length > 1 ? 's' : ''} déjà réservée${bookedDates.length > 1 ? 's' : ''} et indisponible${bookedDates.length > 1 ? 's' : ''}</span>`
+              }
+            </div>
+
             <div class="form-group">
               <label>Date souhaitée <span class="req">*</span></label>
-              <input type="date" id="resDate" class="form-control" min="${todayISO()}">
+              <input type="text" id="resDate" class="form-control" placeholder="Sélectionnez une date">
+              <div class="help">Les dates barrées sont déjà réservées.</div>
             </div>
             <div class="form-group">
               <label>Durée <span class="req">*</span></label>
@@ -1319,6 +1527,25 @@ async function viewBoatDetail(id) {
       </div>
     </div>
   `;
+
+  // Initialise le sélecteur de date avec les jours réservés désactivés
+  setTimeout(() => {
+    const input = document.getElementById('resDate');
+    if (!input || typeof flatpickr === 'undefined') return;
+    flatpickr(input, {
+      locale: 'fr',
+      minDate: 'today',
+      maxDate: new Date().fp_incr(365),
+      dateFormat: 'Y-m-d',
+      altInput: true,
+      altFormat: 'l j F Y',
+      disable: bookedDates,
+      disableMobile: false,
+      onChange: () => updateBookingPrice(boat.id)
+    });
+    // Stocke pour validation
+    input.dataset.booked = JSON.stringify(bookedDates);
+  }, 50);
 }
 
 function updateBookingPrice(boatId) {
@@ -1332,7 +1559,8 @@ function updateBookingPrice(boatId) {
 async function submitReservation(boatId) {
   const boat = state.boats.find(b => b.id === boatId);
   if (!boat) return;
-  const date = document.getElementById('resDate').value;
+  const dateInput = document.getElementById('resDate');
+  const date = dateInput.value;
   const durId = document.getElementById('resDuration').value;
   const name = document.getElementById('resName').value.trim();
   const email = document.getElementById('resEmail').value.trim();
@@ -1340,6 +1568,28 @@ async function submitReservation(boatId) {
 
   if (!date || !name || !email || !phone) { toast('Merci de remplir tous les champs requis', 'warning'); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Email invalide', 'warning'); return; }
+
+  // Re-vérifie côté serveur que la date est toujours libre (défense en profondeur)
+  try {
+    let booked = [];
+    if (state.mode === 'demo') {
+      booked = state.reservations
+        .filter(r => r.boatId === boat.id && ['confirmed', 'pending'].includes(r.status))
+        .map(r => r.startDate);
+    } else {
+      const res = await syncToBackend('getBoatBookedDates', { boatId: boat.id });
+      if (res?.success) booked = res.data || [];
+    }
+    if (booked.includes(date)) {
+      toast('Cette date vient d\'être réservée par un autre client. Choisissez-en une autre.', 'error');
+      // Rafraîchit le calendrier
+      if (dateInput._flatpickr) {
+        dateInput._flatpickr.set('disable', booked);
+        dateInput._flatpickr.clear();
+      }
+      return;
+    }
+  } catch (e) { log('date recheck fail', e); }
 
   const duration = DURATIONS.find(d => d.id === durId);
   const totalPrice = Math.round(boat.pricePerDay * duration.factor);
@@ -1355,7 +1605,7 @@ async function submitReservation(boatId) {
     startDate: date,
     durationType: durId,
     totalPrice,
-    paymentStatus: boat.paymentLink ? 'pending' : 'pending',
+    paymentStatus: 'pending',
     status: 'pending',
     createdAt: new Date().toISOString()
   };
@@ -1419,12 +1669,20 @@ function openAuthModal() {
 }
 
 function renderAuthModal() {
+  const localHint = LOCAL_MODE ? `
+    <div style="background: var(--info-soft); border: 1px solid #bfdbfe; padding: 12px; border-radius: var(--radius); margin-bottom: 16px; font-size: 13px; color: #1e40af;">
+      <strong>💡 Astuce</strong> — Le backend Google Sheets n'est pas encore configuré, l'app fonctionne sur un <strong>backend local</strong> (vos données restent dans ce navigateur).<br>
+      Compte de test pré-créé : <code style="background: white; padding: 1px 6px; border-radius: 4px;">test@batokreyol.fr</code> / <code style="background: white; padding: 1px 6px; border-radius: 4px;">test1234</code>
+    </div>
+  ` : '';
+
   modal(`
     <div class="modal-header">
       <h3>Espace propriétaire</h3>
       <button class="modal-close" onclick="closeModal()">×</button>
     </div>
     <div class="modal-body">
+      ${localHint}
       <div class="auth-tabs">
         <div class="auth-tab ${authTab === 'login' ? 'active' : ''}" onclick="authTab='login'; renderAuthModal()">Connexion</div>
         <div class="auth-tab ${authTab === 'register' ? 'active' : ''}" onclick="authTab='register'; renderAuthModal()">S'inscrire</div>
@@ -1433,7 +1691,7 @@ function renderAuthModal() {
       ${authTab === 'login' ? `
         <div class="form-group">
           <label>Email <span class="req">*</span></label>
-          <input type="email" id="loginEmail" class="form-control" placeholder="vous@bateau.fr">
+          <input type="email" id="loginEmail" class="form-control" placeholder="vous@bateau.fr" value="${LOCAL_MODE ? 'test@batokreyol.fr' : ''}">
         </div>
         <div class="form-group">
           <label>Mot de passe <span class="req">*</span></label>
@@ -1468,7 +1726,7 @@ function renderAuthModal() {
       `}
 
       <div class="demo-cta">
-        <p>🎭 Vous voulez juste tester l'application ?</p>
+        <p>🎭 Vous voulez juste tester l'application avec des données pré-remplies ?</p>
         <button class="btn btn-block" onclick="activateDemo()">Activer le mode démonstration</button>
       </div>
     </div>
@@ -1511,7 +1769,7 @@ async function doLogin() {
     }
   } catch (e) {
     hideLoader();
-    toast('Erreur de connexion. Activez le mode démo pour tester.', 'error');
+    toast('Erreur de connexion au serveur', 'error');
   }
 }
 
@@ -1541,7 +1799,7 @@ async function doRegister() {
     }
   } catch (e) {
     hideLoader();
-    toast('Erreur de connexion. Activez le mode démo pour tester.', 'error');
+    toast('Erreur de connexion au serveur', 'error');
   }
 }
 
@@ -2091,6 +2349,11 @@ function viewProProfile() {
           <button class="btn btn-secondary btn-sm" onclick="resetDemo()">🔄 Réinitialiser la démo</button>
           <button class="btn btn-secondary btn-sm" onclick="switchDemoUser()">👥 Changer de pro démo</button>
         </div>
+      ` : LOCAL_MODE ? `
+        <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
+        <h3 style="font-size: 15px; margin-bottom: 8px;">💾 Backend local</h3>
+        <p class="small text-muted mb-2">Vos données sont stockées dans ce navigateur (localStorage). Pour passer en production, configurez l'URL Apps Script dans le HTML (constante <code>BACKEND_URL</code>).</p>
+        <button class="btn btn-danger btn-sm" onclick="confirmClearLocal()">🗑️ Effacer toutes les données locales</button>
       ` : ''}
     </div>
   `, 'profile');
@@ -2160,9 +2423,36 @@ function selectDemoUser(pid) {
   render();
 }
 
+function confirmClearLocal() {
+  modal(`
+    <div class="modal-header"><h3>⚠️ Effacer toutes les données locales</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <p class="mb-2">Cette action va supprimer <strong>tous les comptes, bateaux et réservations</strong> stockés localement, puis recréer le compte de test.</p>
+      <p class="small text-muted mb-2">Vous serez déconnecté. Action irréversible.</p>
+      <div class="flex gap-1" style="justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-danger" onclick="doClearLocal()">Tout effacer</button>
+      </div>
+    </div>
+  `);
+}
+
+function doClearLocal() {
+  localBackend.clearAll();
+  state.currentUser = null;
+  state.myBoats = [];
+  state.boats = [];
+  state.reservations = [];
+  audit('local_data_cleared');
+  closeModal();
+  toast('Données locales effacées', 'success');
+  navigate('/');
+}
+
 /* ---------- BOOT ---------- */
 window.addEventListener('DOMContentLoaded', () => {
-  log('Boot', VERSION);
+  log('Boot', VERSION, LOCAL_MODE ? '(backend local)' : '(backend distant)');
+  if (LOCAL_MODE) localBackend.seed();
   const path = (window.location.hash || '#/').slice(1) || '/';
   state.view = path;
   render();
