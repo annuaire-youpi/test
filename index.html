@@ -1321,6 +1321,84 @@
   }
   .demo-plan-banner .picker button.active { background: white; color: var(--demo); }
 
+  /* ====== FOOTER LINKS ====== */
+  .footer-link {
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .footer-link:hover { text-decoration: underline; }
+
+  /* ====== PAGE PRICING (publique) ====== */
+  .pricing-hero {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 48px 24px;
+    text-align: center;
+    border-radius: var(--radius-lg);
+    margin-bottom: 28px;
+  }
+  .pricing-hero h1 { color: white; font-size: 32px; margin-bottom: 10px; }
+  .pricing-hero p { color: rgba(255,255,255,.85); font-size: 16px; max-width: 600px; margin: 0 auto; }
+
+  .pricing-faq {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-top: 24px;
+  }
+  .pricing-faq h3 { font-size: 18px; margin-bottom: 14px; }
+  .faq-item { margin-bottom: 14px; }
+  .faq-item .q { font-weight: 700; margin-bottom: 4px; }
+  .faq-item .a { color: var(--text-2); font-size: 14px; }
+
+  /* ====== ADMIN ====== */
+  .admin-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    margin-bottom: 14px;
+  }
+  .admin-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .admin-card-head .pro-info { font-weight: 700; font-size: 16px; }
+  .admin-card-head .pro-meta { font-size: 12px; color: var(--text-2); }
+  .admin-doc-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 8px; }
+  .admin-doc {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+  }
+  .admin-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+  /* ====== STRIPE STATUS BOX ====== */
+  .stripe-status {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    margin-bottom: 18px;
+  }
+  .stripe-status.active { border-color: var(--success); background: #16a34a10; }
+  .stripe-status .row { display: flex; justify-content: space-between; padding: 6px 0; }
+  .stripe-status .row .label { color: var(--text-2); font-size: 13px; }
+  .stripe-status .row .val { font-weight: 600; font-size: 13px; }
+
   /* ====== PAYMENT LINKS GRID (form bateau) ====== */
   .payment-grid {
     display: flex;
@@ -1613,8 +1691,13 @@
   <main class="main" id="main"></main>
 
   <footer class="footer">
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; align-items: center; margin-bottom: 8px;">
+      <a class="footer-link" onclick="navigate('/')">Catalogue</a>
+      <a class="footer-link" onclick="navigate('/pricing')">Tarifs Pro</a>
+      <a class="footer-link" onclick="navigate('/client')">Mes réservations</a>
+    </div>
     <div>Ti Kanno — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v0.9 — 2026</div>
+    <div class="version">v1.0 — 2026</div>
   </footer>
 </div>
 
@@ -1624,11 +1707,11 @@
 
 <script>
 /* ============================================================
-   Ti Kanno v0.9
+   Ti Kanno v1.0
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v0.9';
+const VERSION = 'v1.0';
 const APP_NAME = 'Ti Kanno';
 const APP_TAGLINE = 'Marketplace nautique 100% Martinique';
 
@@ -2965,6 +3048,8 @@ function render() {
   // Route
   const path = state.view;
   if (path === '/' || path === '') return viewHome();
+  if (path === '/pricing') return viewPricing();
+  if (path === '/admin') return viewAdmin();
   if (path.startsWith('/boat/')) return viewBoatDetail(path.split('/')[2]);
   if (path === '/client') return viewClientReservations();
   if (path.startsWith('/client/r/')) return viewClientReservationByToken(path.split('/')[3]);
@@ -3257,7 +3342,7 @@ function renderBoatGrid() {
     const fav = isFav(b.id);
     const proBadges = `
       ${b.proVerified ? '<span class="pro-badge verified">🛟 Pro Vérifié</span>' : ''}
-      ${b.proPlan === 'premium' ? '<span class="pro-badge featured">🚀 Coup de cœur</span>' : ''}
+      ${b.proPlan === 'premium' ? '<span class="pro-badge featured">🚀 Premium</span>' : ''}
     `;
     return `
     <div class="boat-card" onclick="navigate('/boat/${b.id}')">
@@ -3401,7 +3486,7 @@ async function viewBoatDetail(id) {
           ${(boat.proVerified || boat.proPlan === 'premium') ? `
             <div class="pro-badges mt-1 mb-1">
               ${boat.proVerified ? '<span class="pro-badge verified">🛟 Pro Vérifié par Ti Kanno</span>' : ''}
-              ${boat.proPlan === 'premium' ? '<span class="pro-badge featured">🚀 Coup de cœur</span>' : ''}
+              ${boat.proPlan === 'premium' ? '<span class="pro-badge featured">🚀 Premium</span>' : ''}
             </div>
           ` : ''}
 
@@ -4113,6 +4198,282 @@ async function doRegister() {
   } catch (e) {
     hideLoader();
     toast('Erreur de connexion au serveur', 'error');
+  }
+}
+
+/* ============================================================
+   VIEW: PRICING (page publique)
+   ============================================================ */
+function viewPricing() {
+  const main = document.getElementById('main');
+  const isPro = state.currentUser?.type === 'pro';
+  const currentPlanId = state.currentUser?.plan || 'free';
+
+  main.innerHTML = `
+    <div class="container">
+      <div class="pricing-hero">
+        <h1>Pour les professionnels de la mer 🛟</h1>
+        <p>Développez votre activité de location de bateaux en Martinique. Trois plans clairs, sans engagement, à activer en 2 minutes.</p>
+      </div>
+
+      <div class="plan-grid">
+        ${PLANS.map(p => {
+          const isCurrent = isPro && p.id === currentPlanId;
+          const isPopular = p.id === 'pro';
+          return `
+            <div class="plan-card ${isCurrent ? 'current' : ''} ${isPopular ? 'popular' : ''}">
+              ${isPopular && !isCurrent ? '<span class="ribbon">Le plus choisi</span>' : ''}
+              ${isCurrent ? `<span class="ribbon" style="background:${p.color};">Votre plan</span>` : ''}
+              <div class="plan-head">
+                <span style="font-size: 28px;">${p.badge}</span>
+                <span class="plan-name" style="color:${p.color};">${escapeHtml(p.label)}</span>
+              </div>
+              <div class="plan-desc">${escapeHtml(p.description)}</div>
+              <div class="plan-price" style="color:${p.color};">${escapeHtml(p.priceLabel)}</div>
+              <div class="plan-price-sub">${escapeHtml(p.priceSubtext)}</div>
+              <ul class="plan-bullets">
+                ${p.bullets.map(bu => `
+                  <li class="${bu.ok ? '' : 'nope'}">
+                    <span class="${bu.ok ? 'check' : 'nope'}">${bu.ok ? '✓' : '✗'}</span>
+                    <span>${escapeHtml(bu.txt)}</span>
+                  </li>
+                `).join('')}
+              </ul>
+              ${isCurrent
+                ? `<button class="btn btn-secondary btn-block" disabled>✅ Plan actuel</button>`
+                : isPro
+                  ? `<button class="btn btn-primary btn-block" onclick="navigate('/pro/billing')" style="background:${p.color};border-color:${p.color};">
+                      ${p.price === 0 ? 'Repasser en Gratuit' : 'Choisir ' + p.label}
+                    </button>`
+                  : `<button class="btn btn-primary btn-block" onclick="openAuthModal()" style="background:${p.color};border-color:${p.color};">
+                      ${p.price === 0 ? 'Créer un compte gratuit' : 'Devenir ' + p.label}
+                    </button>`}
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <div class="pricing-faq">
+        <h3>Questions fréquentes</h3>
+        <div class="faq-item">
+          <div class="q">Puis-je changer de plan à tout moment ?</div>
+          <div class="a">Oui, vous pouvez monter ou descendre de plan quand vous voulez depuis votre espace pro. Le prorata est calculé automatiquement.</div>
+        </div>
+        <div class="faq-item">
+          <div class="q">Y a-t-il une commission sur les réservations ?</div>
+          <div class="a">Non. Vous gardez 100% du revenu de vos locations. Vous payez uniquement votre abonnement mensuel.</div>
+        </div>
+        <div class="faq-item">
+          <div class="q">Comment fonctionne le badge « 🛟 Pro Vérifié » ?</div>
+          <div class="a">Réservé au plan Premium. Vous nous transmettez votre pièce d'identité, votre Kbis, votre assurance RC Pro et votre permis bateau. Notre équipe valide manuellement sous 24-48h ouvrées.</div>
+        </div>
+        <div class="faq-item">
+          <div class="q">Le badge « 🚀 Premium » sur les annonces, c'est quoi ?</div>
+          <div class="a">C'est le badge des abonnés Premium. Leurs bateaux remontent automatiquement en tête du catalogue pour une visibilité maximale.</div>
+        </div>
+        <div class="faq-item">
+          <div class="q">Avez-vous un code promo pour les early adopters ?</div>
+          <div class="a">Oui ! Code <strong>BETA50</strong> au moment du paiement : <strong>50% de réduction pendant 6 mois</strong>. Réservé aux pros qui s'inscrivent pendant la phase bêta.</div>
+        </div>
+        <div class="faq-item">
+          <div class="q">Comment annuler mon abonnement ?</div>
+          <div class="a">Depuis votre espace « Mon abonnement », vous pouvez annuler en un clic. Vous gardez l'accès jusqu'à la fin de la période payée.</div>
+        </div>
+      </div>
+
+      ${!isPro ? `
+        <div class="text-center mt-3">
+          <button class="btn btn-primary btn-lg" onclick="openAuthModal()">Créer mon compte pro gratuitement</button>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+/* ============================================================
+   VIEW: ADMIN (accès protégé pour valider les vérifications)
+   ============================================================ */
+const ADMIN_PASSWORD_KEY = 'tk_admin_token';
+
+function viewAdmin() {
+  const main = document.getElementById('main');
+  // Auth simple par mot de passe stocké en sessionStorage
+  let adminOk = false;
+  try { adminOk = sessionStorage.getItem(ADMIN_PASSWORD_KEY) === '1'; } catch {}
+
+  if (!adminOk) {
+    main.innerHTML = `
+      <div class="container" style="max-width: 460px;">
+        <div class="card" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; margin-top: 40px;">
+          <h2 style="margin-bottom: 12px;">🔐 Accès Administration</h2>
+          <p class="small text-muted mb-2">Cette zone est réservée à l'équipe Ti Kanno. Entrez le mot de passe administrateur pour continuer.</p>
+          <div class="form-group">
+            <input type="password" id="adminPwd" class="form-control" placeholder="Mot de passe admin" autofocus onkeydown="if(event.key==='Enter') tryAdminLogin()">
+          </div>
+          <button class="btn btn-primary btn-block" onclick="tryAdminLogin()">Se connecter</button>
+          <p class="small text-muted text-center mt-2">${state.mode === 'demo' ? '💡 En démo, mot de passe : <code>admin</code>' : ''}</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  // Charge les demandes de vérification en attente
+  loadAdminPendingVerifications();
+
+  main.innerHTML = `
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2>🛟 Administration — Vérifications</h2>
+          <p>Validez ou refusez les demandes de Pro Vérifié en attente.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="adminLogout()">Déconnexion admin</button>
+      </div>
+
+      <div id="adminContent"><div class="text-center text-muted">Chargement…</div></div>
+    </div>
+  `;
+}
+
+function tryAdminLogin() {
+  const pwd = document.getElementById('adminPwd')?.value || '';
+  // En démo, mot de passe simple "admin". En réel, on vérifie côté backend.
+  if (state.mode === 'demo') {
+    if (pwd === 'admin') {
+      try { sessionStorage.setItem(ADMIN_PASSWORD_KEY, '1'); } catch {}
+      viewAdmin();
+    } else {
+      toast('Mot de passe incorrect', 'error');
+    }
+    return;
+  }
+  // Mode réel : appel backend
+  syncToBackend('adminLogin', { password: pwd }).then(res => {
+    if (res?.success) {
+      try { sessionStorage.setItem(ADMIN_PASSWORD_KEY, '1'); } catch {}
+      viewAdmin();
+    } else {
+      toast(res?.error || 'Mot de passe incorrect', 'error');
+    }
+  });
+}
+
+function adminLogout() {
+  try { sessionStorage.removeItem(ADMIN_PASSWORD_KEY); } catch {}
+  navigate('/');
+}
+
+async function loadAdminPendingVerifications() {
+  const content = document.getElementById('adminContent');
+  if (!content) return;
+  let pending = [];
+  if (state.mode === 'demo') {
+    pending = (state.demoSnapshot?.pros || []).filter(p => p.verificationStatus === 'in_review');
+  } else {
+    try {
+      const res = await syncToBackend('adminListPendingVerifications', {});
+      if (res?.success) pending = res.data || [];
+    } catch (e) { log('admin list fail', e); }
+  }
+
+  if (pending.length === 0) {
+    content.innerHTML = `
+      <div class="empty-state" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);">
+        <div class="empty-state-icon">✅</div>
+        <h3>Aucune demande en attente</h3>
+        <p>Toutes les vérifications soumises ont été traitées. Bravo !</p>
+      </div>
+    `;
+    return;
+  }
+
+  content.innerHTML = pending.map(pro => {
+    const docs = pro.verificationDocs || {};
+    return `
+      <div class="admin-card">
+        <div class="admin-card-head">
+          <div>
+            <div class="pro-info">${escapeHtml(pro.name)} — ${escapeHtml(pro.company || '')}</div>
+            <div class="pro-meta">📧 ${escapeHtml(pro.email)} · 📱 ${escapeHtml(pro.phone || '—')} · Plan : ${escapeHtml(getPlan(pro.plan || 'free').label)}</div>
+          </div>
+          <span class="pill pill-warning">⏳ En attente</span>
+        </div>
+        <div class="admin-doc-list">
+          ${VERIFICATION_DOCS.map(doc => {
+            const has = !!docs[doc.id];
+            return `
+              <div class="admin-doc">
+                <span style="font-size: 20px;">${doc.icon}</span>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-weight: 600;">${escapeHtml(doc.label)}</div>
+                  <div style="font-size: 11px; color: ${has ? 'var(--success)' : 'var(--danger)'};">${has ? '✓ Fourni' : '✗ Manquant'}</div>
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+        <div class="admin-actions">
+          <button class="btn btn-success" onclick="adminApprove('${pro.id}')">✅ Approuver et certifier</button>
+          <button class="btn btn-danger" onclick="adminReject('${pro.id}')">❌ Refuser</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+async function adminApprove(proId) {
+  if (!confirm('Confirmer la certification de ce pro comme « Pro Vérifié » ?')) return;
+  showLoader();
+  try {
+    if (state.mode === 'demo') {
+      const pro = state.demoSnapshot.pros.find(p => p.id === proId);
+      if (pro) {
+        pro.verificationStatus = 'verified';
+        pro.verifiedAt = new Date().toISOString();
+        // Si c'est le pro actuellement connecté, mettre à jour aussi state.currentUser
+        if (state.currentUser?.id === proId) {
+          state.currentUser.verificationStatus = 'verified';
+          state.currentUser.verifiedAt = pro.verifiedAt;
+        }
+      }
+    } else {
+      await syncToBackend('adminApproveVerification', { proId });
+    }
+    audit('admin_approve_verification', { proId });
+    hideLoader();
+    toast('Pro certifié ! Un email de notification a été envoyé.', 'success');
+    loadAdminPendingVerifications();
+  } catch (e) {
+    hideLoader();
+    toast('Erreur lors de l\'approbation', 'error');
+  }
+}
+
+async function adminReject(proId) {
+  const reason = prompt('Motif du refus (sera envoyé au pro par email) :');
+  if (!reason) return;
+  showLoader();
+  try {
+    if (state.mode === 'demo') {
+      const pro = state.demoSnapshot.pros.find(p => p.id === proId);
+      if (pro) {
+        pro.verificationStatus = 'rejected';
+        pro.verificationRejectReason = reason;
+        if (state.currentUser?.id === proId) {
+          state.currentUser.verificationStatus = 'rejected';
+        }
+      }
+    } else {
+      await syncToBackend('adminRejectVerification', { proId, reason });
+    }
+    audit('admin_reject_verification', { proId });
+    hideLoader();
+    toast('Demande refusée. Le pro a été notifié.', 'info');
+    loadAdminPendingVerifications();
+  } catch (e) {
+    hideLoader();
+    toast('Erreur lors du refus', 'error');
   }
 }
 
@@ -5593,6 +5954,10 @@ function viewProBilling() {
   const currentPlanId = state.currentUser.plan || 'free';
   const current = getPlan(currentPlanId);
   const myBoatsCount = state.myBoats?.length || 0;
+  const sub = state.currentUser.stripeSubscription || null;
+
+  // Gère le retour Stripe (success ou cancel)
+  handleStripeReturn();
 
   renderProLayout(`
     <div class="section-head">
@@ -5612,6 +5977,15 @@ function viewProBilling() {
       </div>
       <div class="stat-trend">${myBoatsCount} bateau${myBoatsCount > 1 ? 'x' : ''} publié${myBoatsCount > 1 ? 's' : ''} (limite : ${current.features.maxBoats === 999 ? 'illimité' : current.features.maxBoats})</div>
     </div>
+
+    ${sub && sub.status === 'active' && currentPlanId !== 'free' ? `
+      <div class="stripe-status active">
+        <div class="row"><span class="label">💳 Abonnement Stripe</span><span class="val" style="color: var(--success);">✅ Actif</span></div>
+        <div class="row"><span class="label">Prochaine facturation</span><span class="val">${fmtDate(sub.currentPeriodEnd)}</span></div>
+        ${sub.discount ? `<div class="row"><span class="label">Remise active</span><span class="val">${escapeHtml(sub.discount)}</span></div>` : ''}
+        <button class="btn btn-ghost btn-sm mt-2" onclick="cancelStripeSubscription()">Annuler mon abonnement</button>
+      </div>
+    ` : ''}
 
     <div class="plan-grid">
       ${PLANS.map(p => {
@@ -5646,10 +6020,16 @@ function viewProBilling() {
       }).join('')}
     </div>
 
+    ${currentPlanId !== 'premium' && state.mode !== 'demo' ? `
+      <div style="background: #fef3c7; border-left: 4px solid #d97706; padding: 12px 16px; border-radius: var(--radius); margin-top: 16px;">
+        🎉 <strong>Offre early adopter</strong> — Utilisez le code <code style="background: white; padding: 2px 6px; border-radius: 4px; font-weight: 700;">BETA50</code> au moment du paiement pour bénéficier de <strong>50% de réduction pendant 6 mois</strong>.
+      </div>
+    ` : ''}
+
     <div class="policy-info">
       💡 ${state.mode === 'demo'
         ? `En mode démo, vous pouvez basculer instantanément entre les 3 plans pour voir ce que chacun débloque.`
-        : `Les paiements seront gérés via Stripe (à activer prochainement). Vous pourrez changer de plan ou annuler à tout moment depuis cette page.`}
+        : `Paiement sécurisé via Stripe. Annulation possible à tout moment depuis cette page. Vous gardez l'accès jusqu'à la fin de la période payée.`}
     </div>
   `, 'billing');
 }
@@ -5666,12 +6046,12 @@ function renderDemoPlanBanner() {
   `;
 }
 
-function switchPlan(planId) {
+async function switchPlan(planId) {
   if (!state.currentUser) return;
-  // En mode démo : changement instantané
+
+  // En mode démo : changement instantané (pas de Stripe)
   if (state.mode === 'demo') {
     state.currentUser.plan = planId;
-    // Met aussi à jour le snapshot pour persister si on relogue
     const snapPro = state.demoSnapshot?.pros?.find(p => p.id === state.currentUser.id);
     if (snapPro) snapPro.plan = planId;
     const p = getPlan(planId);
@@ -5681,15 +6061,118 @@ function switchPlan(planId) {
     else render();
     return;
   }
-  // En mode réel : afficher une explication (paiement à venir)
-  modal(`
-    <div class="modal-header"><h3>💳 Paiement à venir</h3><button class="modal-close" onclick="closeModal()">×</button></div>
-    <div class="modal-body">
-      <p class="mb-2">Le paiement par carte bancaire (via Stripe) sera disponible dans une prochaine version.</p>
-      <p class="small text-muted mb-2">En attendant, vous pouvez tester l'expérience dans le compte de démonstration où tous les plans sont accessibles instantanément.</p>
-      <button class="btn btn-primary btn-block" onclick="closeModal()">D'accord</button>
-    </div>
-  `);
+
+  // Passage au plan gratuit = annulation de l'abonnement
+  if (planId === 'free') {
+    if (!confirm('Repasser au plan Gratuit annulera votre abonnement Stripe. Vous garderez l\'accès Pro/Premium jusqu\'à la fin de la période payée. Confirmer ?')) return;
+    return cancelStripeSubscription();
+  }
+
+  // Demande du code promo (optionnel)
+  const promo = await promptPromoCode();
+  if (promo === null) return; // L'utilisateur a annulé la modale
+
+  // Crée la session Stripe Checkout côté backend
+  showLoader();
+  try {
+    const res = await syncToBackend('createCheckoutSession', {
+      proId: state.currentUser.id,
+      email: state.currentUser.email,
+      plan: planId,
+      promoCode: promo || ''
+    });
+    hideLoader();
+    if (res?.success && res.data?.url) {
+      // Redirection vers Stripe Checkout
+      window.location.href = res.data.url;
+    } else {
+      toast(res?.error || 'Impossible de créer la session de paiement', 'error');
+    }
+  } catch (e) {
+    hideLoader();
+    toast('Erreur de connexion à Stripe', 'error');
+  }
+}
+
+function promptPromoCode() {
+  return new Promise((resolve) => {
+    modal(`
+      <div class="modal-header"><h3>💳 Paiement par carte</h3><button class="modal-close" onclick="closeModal(); window._promoResolve && window._promoResolve(null);">×</button></div>
+      <div class="modal-body">
+        <p class="mb-2">Vous allez être redirigé vers Stripe pour finaliser votre paiement de manière sécurisée.</p>
+        <div class="form-group">
+          <label>Code promotionnel (optionnel)</label>
+          <input type="text" id="promoCode" class="form-control" placeholder="Ex: BETA50" style="text-transform: uppercase;">
+          <div class="help">Si vous avez un code promo, saisissez-le ici. Sinon laissez vide.</div>
+        </div>
+        <div class="flex gap-1">
+          <button class="btn btn-secondary flex-1" onclick="closeModal(); window._promoResolve && window._promoResolve(null);">Annuler</button>
+          <button class="btn btn-primary flex-1" onclick="(function(){var v=document.getElementById('promoCode').value.trim().toUpperCase();closeModal();window._promoResolve && window._promoResolve(v);})();">Continuer vers Stripe →</button>
+        </div>
+      </div>
+    `);
+    window._promoResolve = resolve;
+  });
+}
+
+async function cancelStripeSubscription() {
+  if (!state.currentUser?.stripeSubscription) {
+    toast('Aucun abonnement actif à annuler', 'info');
+    state.currentUser.plan = 'free';
+    return;
+  }
+  showLoader();
+  try {
+    const res = await syncToBackend('cancelStripeSubscription', { proId: state.currentUser.id });
+    hideLoader();
+    if (res?.success) {
+      toast('Abonnement annulé. Vous gardez l\'accès jusqu\'à la fin de la période payée.', 'success');
+      state.currentUser.plan = 'free';
+      state.currentUser.stripeSubscription = null;
+      viewProBilling();
+    } else {
+      toast(res?.error || 'Erreur lors de l\'annulation', 'error');
+    }
+  } catch (e) {
+    hideLoader();
+    toast('Erreur de connexion', 'error');
+  }
+}
+
+/* Gère le retour de Stripe Checkout (success ou cancel) */
+async function handleStripeReturn() {
+  const hash = window.location.hash;
+  if (!hash.includes('stripe_status=')) return;
+  const params = new URLSearchParams(hash.split('?')[1] || '');
+  const status = params.get('stripe_status');
+  const sessionId = params.get('session_id');
+
+  // Nettoie l'URL pour éviter de re-traiter
+  history.replaceState(null, '', '#/pro/billing');
+
+  if (status === 'cancel') {
+    toast('Paiement annulé', 'info');
+    return;
+  }
+  if (status === 'success' && sessionId) {
+    showLoader();
+    try {
+      const res = await syncToBackend('verifyCheckoutSession', { sessionId, proId: state.currentUser.id });
+      hideLoader();
+      if (res?.success) {
+        state.currentUser.plan = res.data.plan;
+        state.currentUser.stripeSubscription = res.data.subscription;
+        toast(`🎉 Abonnement activé ! Bienvenue dans le plan ${getPlan(res.data.plan).label}.`, 'success');
+        audit('plan_upgraded_stripe', { plan: res.data.plan });
+        viewProBilling();
+      } else {
+        toast(res?.error || 'Impossible de vérifier le paiement', 'error');
+      }
+    } catch (e) {
+      hideLoader();
+      toast('Erreur de vérification du paiement', 'error');
+    }
+  }
 }
 
 /* ---------- VIEW: VÉRIFICATION ---------- */
