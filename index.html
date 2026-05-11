@@ -1162,6 +1162,165 @@
     font-size: 13px;
   }
 
+  /* ====== FREEMIUM — PLANS, BADGES, BILLING ====== */
+  .plan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .plan-card {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: all .15s;
+  }
+  .plan-card.current { border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-soft); }
+  .plan-card.popular { transform: scale(1.02); }
+  .plan-card .ribbon {
+    position: absolute;
+    top: -10px;
+    right: 16px;
+    background: var(--primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+  }
+  .plan-card .plan-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .plan-card .plan-name { font-weight: 800; font-size: 20px; }
+  .plan-card .plan-desc { font-size: 13px; color: var(--text-2); margin-bottom: 16px; min-height: 36px; }
+  .plan-card .plan-price { font-size: 36px; font-weight: 800; letter-spacing: -.03em; }
+  .plan-card .plan-price-sub { font-size: 12px; color: var(--text-2); margin-bottom: 18px; }
+  .plan-card .plan-bullets { list-style: none; padding: 0; margin: 0 0 18px; flex: 1; }
+  .plan-card .plan-bullets li {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 5px 0; font-size: 13px;
+  }
+  .plan-card .plan-bullets li .check { color: var(--success); font-weight: 800; flex-shrink: 0; }
+  .plan-card .plan-bullets li .nope { color: var(--text-2); flex-shrink: 0; opacity: .5; }
+  .plan-card .plan-bullets li.nope { color: var(--text-2); opacity: .7; }
+
+  /* ====== BADGES SUR FICHES BATEAUX ====== */
+  .pro-badges { display: inline-flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+  .pro-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .02em;
+  }
+  .pro-badge.verified { background: linear-gradient(135deg, #0e6e6e, #14a3a3); color: white; }
+  .pro-badge.premium  { background: linear-gradient(135deg, #c2410c, #f97316); color: white; }
+  .pro-badge.featured { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+  /* ====== BOUTONS VERROUILLÉS (paywall) ====== */
+  .locked-btn {
+    position: relative;
+    opacity: .85;
+  }
+  .locked-btn::after {
+    content: '🔒';
+    font-size: 11px;
+    margin-left: 6px;
+  }
+  .locked-overlay {
+    position: relative;
+  }
+  .locked-overlay > .locked-content {
+    filter: blur(2px);
+    pointer-events: none;
+    user-select: none;
+  }
+  .locked-overlay > .locked-cta {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 8px;
+    background: rgba(255,255,255,.65);
+    backdrop-filter: blur(2px);
+    border-radius: var(--radius-lg);
+    z-index: 2;
+  }
+
+  /* ====== VÉRIFICATION ====== */
+  .verif-status-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .verif-status-icon {
+    font-size: 32px;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .verif-status-icon.verified  { background: #0e6e6e15; }
+  .verif-status-icon.in_review { background: #d9770615; }
+  .verif-status-icon.rejected  { background: #dc262615; }
+  .verif-status-icon.not_started { background: var(--surface-2); }
+
+  .verif-doc-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 8px;
+  }
+  .verif-doc-row .doc-icon { font-size: 24px; flex-shrink: 0; }
+  .verif-doc-row .doc-info { flex: 1; min-width: 0; }
+  .verif-doc-row .doc-label { font-weight: 700; font-size: 14px; }
+  .verif-doc-row .doc-help { font-size: 12px; color: var(--text-2); }
+  .verif-doc-row .doc-status { font-size: 12px; font-weight: 600; }
+
+  /* ====== SIMULATION DÉMO PLAN ====== */
+  .demo-plan-banner {
+    background: var(--demo);
+    color: white;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .demo-plan-banner .picker { display: inline-flex; gap: 6px; }
+  .demo-plan-banner .picker button {
+    background: rgba(255,255,255,.2);
+    color: white;
+    border: 1px solid rgba(255,255,255,.3);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .demo-plan-banner .picker button.active { background: white; color: var(--demo); }
+
   /* ====== PAYMENT LINKS GRID (form bateau) ====== */
   .payment-grid {
     display: flex;
@@ -1455,7 +1614,7 @@
 
   <footer class="footer">
     <div>Ti Kanno — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v0.8 — 2026</div>
+    <div class="version">v0.9 — 2026</div>
   </footer>
 </div>
 
@@ -1465,11 +1624,11 @@
 
 <script>
 /* ============================================================
-   Ti Kanno v0.8
+   Ti Kanno v0.9
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v0.8';
+const VERSION = 'v0.9';
 const APP_NAME = 'Ti Kanno';
 const APP_TAGLINE = 'Marketplace nautique 100% Martinique';
 
@@ -1786,6 +1945,164 @@ function toggleFav(boatId, ev) {
     el.classList.toggle('active', favs.includes(boatId));
     el.innerHTML = favs.includes(boatId) ? '❤️' : '🤍';
   });
+}
+
+/* ============================================================
+   FREEMIUM (3 plans : Gratuit / Pro / Premium)
+   ============================================================ */
+const PLANS = [
+  {
+    id: 'free',
+    label: 'Gratuit',
+    badge: '🆓',
+    color: '#6b7280',
+    price: 0,
+    priceLabel: '0 €',
+    priceSubtext: 'pour toujours',
+    description: 'Démarrez sans engagement, parfait pour tester la plateforme.',
+    features: {
+      maxBoats: 1,
+      multiDay: false,
+      respondReviews: false,
+      customCancellation: false,
+      charts: false,
+      paymentLinksCount: 1,
+      featuredCatalog: false,
+      verifiedBadgeEligible: false,
+      csvExport: false,
+      prioritySupport: false
+    },
+    bullets: [
+      { ok: true,  txt: '1 bateau publié' },
+      { ok: true,  txt: 'Réservations illimitées' },
+      { ok: true,  txt: 'Consultation des avis' },
+      { ok: true,  txt: 'Tableau de bord basique' },
+      { ok: false, txt: 'Pas de réservations multi-jours' },
+      { ok: false, txt: 'Pas de réponse aux avis' },
+      { ok: false, txt: 'Politique d\'annulation fixe (modérée)' },
+      { ok: false, txt: 'Pas de graphiques détaillés' }
+    ]
+  },
+  {
+    id: 'pro',
+    label: 'Pro',
+    badge: '⭐',
+    color: '#0e6e6e',
+    price: 19,
+    priceLabel: '19 €',
+    priceSubtext: 'par mois (ou 190 €/an)',
+    description: 'Pour les pros qui veulent professionnaliser leur activité.',
+    features: {
+      maxBoats: 5,
+      multiDay: true,
+      respondReviews: true,
+      customCancellation: true,
+      charts: true,
+      paymentLinksCount: 3,
+      featuredCatalog: false,
+      verifiedBadgeEligible: false,
+      csvExport: false,
+      prioritySupport: false
+    },
+    bullets: [
+      { ok: true, txt: 'Jusqu\'à 5 bateaux' },
+      { ok: true, txt: 'Réservations multi-jours (week-ends, semaines)' },
+      { ok: true, txt: 'Réponse publique aux avis clients' },
+      { ok: true, txt: 'Politique d\'annulation personnalisée' },
+      { ok: true, txt: 'Graphiques détaillés (CA, occupation)' },
+      { ok: true, txt: '3 liens de paiement par bateau' },
+      { ok: false, txt: 'Pas de mise en avant catalogue' },
+      { ok: false, txt: 'Pas éligible au badge Pro Vérifié' }
+    ]
+  },
+  {
+    id: 'premium',
+    label: 'Premium',
+    badge: '🚀',
+    color: '#c2410c',
+    price: 49,
+    priceLabel: '49 €',
+    priceSubtext: 'par mois (ou 490 €/an)',
+    description: 'L\'offre complète pour développer votre activité nautique.',
+    features: {
+      maxBoats: 999,
+      multiDay: true,
+      respondReviews: true,
+      customCancellation: true,
+      charts: true,
+      paymentLinksCount: 3,
+      featuredCatalog: true,
+      verifiedBadgeEligible: true,
+      csvExport: true,
+      prioritySupport: true
+    },
+    bullets: [
+      { ok: true, txt: 'Bateaux illimités' },
+      { ok: true, txt: 'Toutes les fonctions Pro incluses' },
+      { ok: true, txt: '🚀 Mise en avant dans le catalogue' },
+      { ok: true, txt: '🛟 Éligible au badge Pro Vérifié' },
+      { ok: true, txt: 'Export CSV des réservations (compta)' },
+      { ok: true, txt: 'Support prioritaire' },
+      { ok: true, txt: 'Stats avancées' }
+    ]
+  }
+];
+
+function getPlan(planId) {
+  return PLANS.find(p => p.id === planId) || PLANS[0];
+}
+function getCurrentUserPlan() {
+  if (!state.currentUser) return getPlan('free');
+  return getPlan(state.currentUser.plan || 'free');
+}
+function hasFeature(featureKey) {
+  const plan = getCurrentUserPlan();
+  return plan.features[featureKey] === true || (typeof plan.features[featureKey] === 'number' && plan.features[featureKey] > 0);
+}
+function getFeatureLimit(featureKey) {
+  return getCurrentUserPlan().features[featureKey];
+}
+
+/* Modale d'upgrade affichée quand on touche une feature verrouillée */
+function showUpgradeModal(reason, requiredPlanId) {
+  const required = getPlan(requiredPlanId || 'pro');
+  const current = getCurrentUserPlan();
+  modal(`
+    <div class="modal-header">
+      <h3>🔒 Fonctionnalité ${escapeHtml(required.label)}</h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="mb-2">${escapeHtml(reason || 'Cette fonctionnalité est réservée aux abonnés ' + required.label + '.')}</p>
+      <div style="background: ${required.color}15; border-left: 4px solid ${required.color}; padding: 14px 16px; border-radius: var(--radius); margin: 16px 0;">
+        <div style="font-weight: 800; color: ${required.color}; font-size: 16px; margin-bottom: 6px;">
+          ${required.badge} Passez ${escapeHtml(required.label)} — ${escapeHtml(required.priceLabel)}/mois
+        </div>
+        <div class="small">${escapeHtml(required.description)}</div>
+      </div>
+      <p class="small text-muted mb-2">Votre plan actuel : <strong>${current.badge} ${escapeHtml(current.label)}</strong></p>
+      <button class="btn btn-primary btn-block btn-lg" onclick="closeModal(); navigate('/pro/billing')">Voir les plans disponibles</button>
+    </div>
+  `);
+}
+
+/* ============================================================
+   PRO VÉRIFIÉ
+   ============================================================ */
+const VERIFICATION_DOCS = [
+  { id: 'id_card',    label: 'Pièce d\'identité', icon: '🪪', help: 'Carte d\'identité ou passeport (recto-verso)' },
+  { id: 'business',   label: 'Justificatif d\'entreprise', icon: '🏢', help: 'Kbis, attestation INSEE ou récépissé URSSAF (auto-entrepreneur)' },
+  { id: 'insurance',  label: 'Assurance RC Pro', icon: '🛡️', help: 'Attestation d\'assurance responsabilité civile professionnelle en cours de validité' },
+  { id: 'permit',     label: 'Permis bateau / Certificat', icon: '⚓', help: 'Permis de conduire des bateaux ou certificat de capacité commerciale' }
+];
+
+function getVerificationStatus(user) {
+  if (!user) return 'not_started';
+  return user.verificationStatus || 'not_started';
+  // Valeurs : 'not_started', 'in_review', 'verified', 'rejected'
+}
+function isVerified(user) {
+  return getVerificationStatus(user) === 'verified';
 }
 
 /* ---------- STATE ---------- */
@@ -2124,7 +2441,7 @@ const localBackend = {
     if (localStorage.getItem('bk_local_seeded') === '1') return;
     // Compte de test pré-créé pour faciliter les essais
     this._write('pros', [
-      { id: 'pro_demo_1', name: 'Compte de test', company: 'Mon entreprise nautique', email: 'test@tikanno.fr', phone: '0696 00 00 00', password: 'test1234', createdAt: new Date().toISOString(), status: 'active' }
+      { id: 'pro_demo_1', name: 'Compte de test', company: 'Mon entreprise nautique', email: 'test@tikanno.fr', phone: '0696 00 00 00', password: 'test1234', createdAt: new Date().toISOString(), status: 'active', plan: 'pro', verificationStatus: 'not_started' }
     ]);
     this._write('boats', []);
     this._write('reservations', []);
@@ -2160,14 +2477,22 @@ const localBackend = {
     if (!pro) return { success: false, error: 'Identifiants incorrects' };
     if (pro.password !== data.password) return { success: false, error: 'Identifiants incorrects' };
     if (pro.status !== 'active') return { success: false, error: 'Compte désactivé' };
-    return { success: true, data: { id: pro.id, name: pro.name, company: pro.company, email: pro.email, phone: pro.phone } };
+    return { success: true, data: {
+      id: pro.id, name: pro.name, company: pro.company, email: pro.email, phone: pro.phone,
+      plan: pro.plan || 'free',
+      verificationStatus: pro.verificationStatus || 'not_started',
+      verifiedAt: pro.verifiedAt || null,
+      verificationDocs: pro.verificationDocs || {}
+    } };
   },
 
   updatePro(data) {
     const pros = this._read('pros');
     const i = pros.findIndex(p => p.id === data.id);
     if (i === -1) return { success: false, error: 'Profil introuvable' };
-    ['name', 'company', 'phone'].forEach(k => { if (data[k] !== undefined) pros[i][k] = data[k]; });
+    ['name', 'company', 'phone', 'plan', 'verificationStatus', 'verifiedAt', 'verificationDocs'].forEach(k => {
+      if (data[k] !== undefined) pros[i][k] = data[k];
+    });
     this._write('pros', pros);
     return { success: true };
   },
@@ -2380,10 +2705,10 @@ window.addEventListener('hashchange', () => {
 /* ---------- DEMO MODE ---------- */
 function loadDemoData() {
   const demoPros = [
-    { id: 'p1', name: 'Jean-Marc Désiré', company: 'Karayib Charter', email: 'jm@karayib.demo', phone: '0696 12 34 56', password: 'demo' },
-    { id: 'p2', name: 'Sophie Lacascade', company: 'Madras Marina', email: 'sophie@madras.demo', phone: '0696 23 45 67', password: 'demo' },
-    { id: 'p3', name: 'Patrick Bélony', company: 'Antilles Boat Tours', email: 'patrick@antilles.demo', phone: '0696 34 56 78', password: 'demo' },
-    { id: 'p4', name: 'Mariana Tessier', company: 'Diamant Bleu Loisirs', email: 'mariana@diamant.demo', phone: '0696 45 67 89', password: 'demo' },
+    { id: 'p1', name: 'Jean-Marc Désiré', company: 'Karayib Charter', email: 'jm@karayib.demo', phone: '0696 12 34 56', password: 'demo', plan: 'premium', verificationStatus: 'verified', verifiedAt: '2026-03-15T10:00:00Z' },
+    { id: 'p2', name: 'Sophie Lacascade', company: 'Madras Marina', email: 'sophie@madras.demo', phone: '0696 23 45 67', password: 'demo', plan: 'pro', verificationStatus: 'in_review' },
+    { id: 'p3', name: 'Patrick Bélony', company: 'Antilles Boat Tours', email: 'patrick@antilles.demo', phone: '0696 34 56 78', password: 'demo', plan: 'free', verificationStatus: 'not_started' },
+    { id: 'p4', name: 'Mariana Tessier', company: 'Diamant Bleu Loisirs', email: 'mariana@diamant.demo', phone: '0696 45 67 89', password: 'demo', plan: 'pro', verificationStatus: 'not_started' },
   ];
   const baseBoat = (extra) => ({
     paymentLinks: extra.paymentLinks || {},
@@ -2436,7 +2761,15 @@ function loadDemoData() {
   ];
 
   state.demoSnapshot = { pros: demoPros, boats: demoBoats, reservations: demoReservations, reviews: demoReviews };
-  state.boats = demoBoats.filter(b => b.status === 'active');
+  // Enrichit chaque bateau avec le plan et le statut vérifié de son propriétaire
+  const proMap = {};
+  demoPros.forEach(p => { proMap[p.id] = p; });
+  const enriched = demoBoats.map(b => ({
+    ...b,
+    proPlan: proMap[b.proId]?.plan || 'free',
+    proVerified: proMap[b.proId]?.verificationStatus === 'verified'
+  }));
+  state.boats = enriched.filter(b => b.status === 'active');
   state.reservations = demoReservations;
   state.reviews = demoReviews;
   state.myBoats = [];
@@ -2447,7 +2780,14 @@ function activateDemo() {
   loadDemoData();
   // Connecte le premier pro fictif pour l'expérience complète
   const firstPro = state.demoSnapshot.pros[0];
-  state.currentUser = { type: 'pro', id: firstPro.id, name: firstPro.name, company: firstPro.company, email: firstPro.email, phone: firstPro.phone };
+  state.currentUser = {
+    type: 'pro', id: firstPro.id, name: firstPro.name, company: firstPro.company,
+    email: firstPro.email, phone: firstPro.phone,
+    plan: firstPro.plan || 'free',
+    verificationStatus: firstPro.verificationStatus || 'not_started',
+    verifiedAt: firstPro.verifiedAt,
+    verificationDocs: firstPro.verificationDocs || {}
+  };
   state.myBoats = state.demoSnapshot.boats.filter(b => b.proId === firstPro.id);
   closeModal();
   audit('demo_activated');
@@ -2635,6 +2975,8 @@ function render() {
   if (path === '/pro/reservations') return viewProReservations();
   if (path === '/pro/calendar') return viewProCalendar();
   if (path === '/pro/reviews') return viewProReviews();
+  if (path === '/pro/billing') return viewProBilling();
+  if (path === '/pro/verify') return viewProVerification();
   if (path === '/pro/profile') return viewProProfile();
   viewHome();
 }
@@ -2896,12 +3238,27 @@ function renderBoatGrid() {
     return;
   }
 
+  // Tri : Premium d'abord, Pro ensuite, Free à la fin (mise en avant payante)
+  list.sort((a, b) => {
+    const planRank = { premium: 0, pro: 1, free: 2 };
+    const ra = planRank[a.proPlan] ?? 2;
+    const rb = planRank[b.proPlan] ?? 2;
+    if (ra !== rb) return ra - rb;
+    // En cas d'égalité, les pros vérifiés passent devant
+    if ((b.proVerified ? 1 : 0) !== (a.proVerified ? 1 : 0)) return (b.proVerified ? 1 : 0) - (a.proVerified ? 1 : 0);
+    return 0;
+  });
+
   grid.innerHTML = `<div class="grid">${list.map(b => {
     const startPrice = getBoatStartingPrice(b);
     const dayPrice = getBoatSlotPrice(b, 'day');
     const showFrom = startPrice < dayPrice;
     const reviews = getBoatReviewsSummary(b.id);
     const fav = isFav(b.id);
+    const proBadges = `
+      ${b.proVerified ? '<span class="pro-badge verified">🛟 Pro Vérifié</span>' : ''}
+      ${b.proPlan === 'premium' ? '<span class="pro-badge featured">🚀 Coup de cœur</span>' : ''}
+    `;
     return `
     <div class="boat-card" onclick="navigate('/boat/${b.id}')">
       <div class="boat-img" ${b.images?.[0] ? `style="background-image: url('${escapeHtml(b.images[0])}')"` : ''}>
@@ -2910,6 +3267,7 @@ function renderBoatGrid() {
         <button class="fav-btn ${fav ? 'active' : ''}" data-fav="${b.id}" onclick="toggleFav('${b.id}', event)" aria-label="Favori">${fav ? '❤️' : '🤍'}</button>
       </div>
       <div class="boat-body">
+        ${b.proVerified || b.proPlan === 'premium' ? `<div class="pro-badges mb-1">${proBadges}</div>` : ''}
         <div class="boat-title">${escapeHtml(b.name)}</div>
         <div class="boat-location">📍 ${escapeHtml(b.location)}</div>
         <div class="boat-meta">
@@ -3040,6 +3398,13 @@ async function viewBoatDetail(id) {
           <h1>${escapeHtml(boat.name)}</h1>
           <div class="boat-location">📍 ${escapeHtml(boat.location)} · ${escapeHtml(boat.type)}</div>
 
+          ${(boat.proVerified || boat.proPlan === 'premium') ? `
+            <div class="pro-badges mt-1 mb-1">
+              ${boat.proVerified ? '<span class="pro-badge verified">🛟 Pro Vérifié par Ti Kanno</span>' : ''}
+              ${boat.proPlan === 'premium' ? '<span class="pro-badge featured">🚀 Coup de cœur</span>' : ''}
+            </div>
+          ` : ''}
+
           ${reviewsSummary.count > 0 ? `
             <div class="rating-summary mb-2 mt-1">
               <span class="big-score">${reviewsSummary.avg.toFixed(1)}</span>
@@ -3052,7 +3417,7 @@ async function viewBoatDetail(id) {
             <div class="info-item"><div class="info-label">Capacité</div><div class="info-value">${boat.capacity} pers.</div></div>
             <div class="info-item"><div class="info-label">Type</div><div class="info-value">${escapeHtml(boat.type)}</div></div>
             <div class="info-item"><div class="info-label">Skipper</div><div class="info-value">${boat.withSkipper ? 'Inclus' : 'Non inclus'}</div></div>
-            <div class="info-item"><div class="info-label">Propriétaire</div><div class="info-value">${escapeHtml(boat.proName || '—')}</div></div>
+            <div class="info-item"><div class="info-label">Propriétaire</div><div class="info-value">${escapeHtml(boat.proName || '—')}${boat.proVerified ? ' 🛟' : ''}</div></div>
           </div>
 
           <div class="description">
@@ -4007,7 +4372,14 @@ async function viewProDashboard() {
         <h2>Bonjour, ${escapeHtml(state.currentUser.name?.split(' ')[0] || '')} 👋</h2>
         <p>Voici un aperçu de votre activité</p>
       </div>
-      <button class="btn btn-primary" onclick="navigate('/pro/boats/new')">+ Ajouter un bateau</button>
+      ${(() => {
+        const plan = getCurrentUserPlan();
+        const max = plan.features.maxBoats;
+        const reached = state.myBoats.length >= max;
+        return reached
+          ? `<button class="btn btn-primary locked-btn" onclick="showUpgradeModal('Votre plan ${plan.label} est limité à ${max} bateau${max>1?'x':''}.', '${plan.id === 'free' ? 'pro' : 'premium'}')">🔒 Limite atteinte</button>`
+          : `<button class="btn btn-primary" onclick="navigate('/pro/boats/new')">+ Ajouter un bateau</button>`;
+      })()}
     </div>
 
     <div class="stats-grid">
@@ -4041,20 +4413,29 @@ async function viewProDashboard() {
       </div>
     </div>
 
-    <div class="charts-grid">
-      <div class="chart-card">
-        <h3>📈 Revenus des 6 derniers mois</h3>
-        <div class="chart-wrap"><canvas id="chartRevenue"></canvas></div>
+    ${hasFeature('charts') ? `
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3>📈 Revenus des 6 derniers mois</h3>
+          <div class="chart-wrap"><canvas id="chartRevenue"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>🥧 Statuts des réservations</h3>
+          <div class="chart-wrap"><canvas id="chartStatus"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <h3>⛵ Réservations par bateau</h3>
+          <div class="chart-wrap"><canvas id="chartBoats"></canvas></div>
+        </div>
       </div>
-      <div class="chart-card">
-        <h3>🥧 Statuts des réservations</h3>
-        <div class="chart-wrap"><canvas id="chartStatus"></canvas></div>
+    ` : `
+      <div class="chart-card" style="text-align: center; padding: 36px 24px; margin-bottom: 20px;">
+        <div style="font-size: 40px; margin-bottom: 8px;">📊</div>
+        <h3 style="font-size: 16px; margin-bottom: 6px; text-transform: none; letter-spacing: 0; color: var(--text);">Graphiques détaillés verrouillés</h3>
+        <p class="small text-muted mb-2">Suivez vos revenus, l'occupation de vos bateaux et la répartition des statuts avec le plan Pro.</p>
+        <button class="btn btn-primary" onclick="showUpgradeModal('Les graphiques détaillés (revenus, occupation, statuts) sont disponibles à partir du plan Pro.', 'pro')">🔒 Débloquer les graphiques</button>
       </div>
-      <div class="chart-card">
-        <h3>⛵ Réservations par bateau</h3>
-        <div class="chart-wrap"><canvas id="chartBoats"></canvas></div>
-      </div>
-    </div>
+    `}
 
     <div class="section-head">
       <div><h2 style="font-size: 18px;">Réservations récentes</h2></div>
@@ -4064,7 +4445,9 @@ async function viewProDashboard() {
   `, 'dashboard');
 
   // Initialise les graphiques après que le DOM soit en place
-  setTimeout(() => renderDashboardCharts(myReservations, state.myBoats), 100);
+  if (hasFeature('charts')) {
+    setTimeout(() => renderDashboardCharts(myReservations, state.myBoats), 100);
+  }
 }
 
 async function fetchMyReviews() {
@@ -4165,6 +4548,8 @@ function renderProLayout(content, active) {
     { id: 'reservations', label: 'Réservations', icon: '📅', path: '/pro/reservations' },
     { id: 'calendar', label: 'Calendrier', icon: '🗓️', path: '/pro/calendar' },
     { id: 'reviews', label: 'Avis', icon: '⭐', path: '/pro/reviews' },
+    { id: 'billing', label: 'Mon abonnement', icon: '💳', path: '/pro/billing' },
+    { id: 'verify', label: 'Vérification', icon: '🛟', path: '/pro/verify' },
     { id: 'profile', label: 'Profil', icon: '👤', path: '/pro/profile' },
   ];
   main.innerHTML = `
@@ -4218,10 +4603,18 @@ function renderReservationsTable(list) {
 async function viewProBoats() {
   if (!state.currentUser) { openAuthModal(); return; }
   await fetchMyBoats();
+  const plan = getCurrentUserPlan();
+  const maxBoats = plan.features.maxBoats;
+  const limitReached = state.myBoats.length >= maxBoats;
+  const addBtnLabel = limitReached ? `🔒 Ajouter (limite ${maxBoats} atteinte)` : '+ Ajouter un bateau';
+  const onClick = limitReached
+    ? `showUpgradeModal('Votre plan ${plan.label} est limité à ${maxBoats} bateau${maxBoats > 1 ? 'x' : ''}. Passez Pro pour publier jusqu\\'à 5 bateaux, ou Premium pour un nombre illimité.', '${plan.id === 'free' ? 'pro' : 'premium'}')`
+    : `navigate('/pro/boats/new')`;
+
   renderProLayout(`
     <div class="section-head">
-      <div><h2>Mes bateaux</h2><p>${state.myBoats.length} bateau${state.myBoats.length > 1 ? 'x' : ''} dans votre flotte</p></div>
-      <button class="btn btn-primary" onclick="navigate('/pro/boats/new')">+ Ajouter un bateau</button>
+      <div><h2>Mes bateaux</h2><p>${state.myBoats.length} / ${maxBoats === 999 ? '∞' : maxBoats} bateau${state.myBoats.length > 1 ? 'x' : ''} (plan ${plan.badge} ${plan.label})</p></div>
+      <button class="btn btn-primary ${limitReached ? 'locked-btn' : ''}" onclick="${onClick}">${addBtnLabel}</button>
     </div>
     ${state.myBoats.length === 0 ? `
       <div class="empty-state" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);">
@@ -4456,10 +4849,24 @@ function renderBoatForm(editing) {
       <p class="small text-muted mb-2">Vous pouvez fournir un lien de paiement (Stripe, PayPal, HelloAsso…) <strong>différent pour chaque créneau</strong>, car les montants sont différents. Si vous laissez un champ vide pour un créneau, vous contacterez manuellement le client pour ce créneau (par téléphone, virement…).</p>
 
       <div class="payment-grid">
-        ${DURATIONS.map(d => {
+        ${DURATIONS.map((d, idx) => {
           const enabled = b.availableSlots.includes(d.id);
           const icon = d.id === 'halfday' ? '🌅' : d.id === 'sunset' ? '🌇' : '☀️';
           const val = b.paymentLinks?.[d.id] || '';
+          // Limitation freemium : seuls les N premiers liens sont disponibles
+          const maxLinks = getFeatureLimit('paymentLinksCount') || 1;
+          const locked = idx >= maxLinks;
+          if (locked) {
+            return `
+            <div class="payment-row" style="opacity: .6; position: relative;">
+              <span class="slot-name">${icon} ${escapeHtml(d.shortLabel)}<br><span class="small text-muted">${fmtEUR(b.prices[d.id] || 0)}</span></span>
+              <div style="display:flex; align-items:center; gap:8px;">
+                <input type="url" disabled placeholder="🔒 Lien réservé au plan Pro" style="flex:1;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="showUpgradeModal('Avoir 3 liens de paiement distincts (un par créneau) nécessite le plan Pro.', 'pro')">Débloquer</button>
+              </div>
+            </div>
+            `;
+          }
           return `
           <div class="payment-row ${enabled ? '' : 'disabled'}">
             <span class="slot-name">${icon} ${escapeHtml(d.shortLabel)}<br><span class="small text-muted">${fmtEUR(b.prices[d.id] || 0)}</span></span>
@@ -4473,49 +4880,82 @@ function renderBoatForm(editing) {
       <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
 
       <h3 style="font-size: 16px; margin-bottom: 8px;">📅 Réservation multi-jours (optionnel)</h3>
-      <p class="small text-muted mb-2">Activez si vous proposez la location pour plusieurs jours consécutifs (week-end, semaine…). Les remises s'appliquent automatiquement.</p>
-      <div class="multiday-toggle">
-        <input type="checkbox" id="bfMultiDay" ${b.multiDay?.enabled ? 'checked' : ''} onchange="onMultiDayToggle(${!!editing})">
-        <label for="bfMultiDay">Activer la réservation multi-jours pour ce bateau</label>
-      </div>
-      <div class="multiday-fields ${b.multiDay?.enabled ? 'open' : ''}" id="bfMultiDayFields">
-        <div class="discount-grid">
-          <span class="small">Durée min.</span>
-          <input type="number" id="bfMdMin" min="2" max="30" value="${b.multiDay?.minDays || 2}" placeholder="2"> 
-          <span class="small">jours</span>
+      ${!hasFeature('multiDay') ? `
+        <div class="locked-overlay" style="border: 2px dashed var(--border-strong); border-radius: var(--radius-lg); padding: 12px;">
+          <div class="locked-content">
+            <p class="small text-muted mb-2">Activez si vous proposez la location pour plusieurs jours consécutifs avec remises dégressives.</p>
+            <div class="multiday-toggle"><input type="checkbox" disabled><label>Activer la réservation multi-jours</label></div>
+          </div>
+          <div class="locked-cta">
+            <div>🔒 Fonction réservée au plan <strong>${getPlan('pro').badge} Pro</strong></div>
+            <button class="btn btn-primary btn-sm" onclick="showUpgradeModal('Les réservations multi-jours (week-ends, semaines avec remises dégressives) sont disponibles à partir du plan Pro.', 'pro')">Débloquer →</button>
+          </div>
         </div>
-        <div class="discount-grid">
-          <span class="small">Durée max.</span>
-          <input type="number" id="bfMdMax" min="2" max="30" value="${b.multiDay?.maxDays || 14}" placeholder="14">
-          <span class="small">jours</span>
+      ` : `
+        <p class="small text-muted mb-2">Activez si vous proposez la location pour plusieurs jours consécutifs (week-end, semaine…). Les remises s'appliquent automatiquement.</p>
+        <div class="multiday-toggle">
+          <input type="checkbox" id="bfMultiDay" ${b.multiDay?.enabled ? 'checked' : ''} onchange="onMultiDayToggle(${!!editing})">
+          <label for="bfMultiDay">Activer la réservation multi-jours pour ce bateau</label>
         </div>
-        <div class="discount-grid">
-          <span class="small">Remise 3+ jours</span>
-          <input type="number" id="bfMdDisc3" min="0" max="50" value="${b.multiDay?.discount3plus ?? 10}" placeholder="10">
-          <span class="small">%</span>
+        <div class="multiday-fields ${b.multiDay?.enabled ? 'open' : ''}" id="bfMultiDayFields">
+          <div class="discount-grid">
+            <span class="small">Durée min.</span>
+            <input type="number" id="bfMdMin" min="2" max="30" value="${b.multiDay?.minDays || 2}" placeholder="2"> 
+            <span class="small">jours</span>
+          </div>
+          <div class="discount-grid">
+            <span class="small">Durée max.</span>
+            <input type="number" id="bfMdMax" min="2" max="30" value="${b.multiDay?.maxDays || 14}" placeholder="14">
+            <span class="small">jours</span>
+          </div>
+          <div class="discount-grid">
+            <span class="small">Remise 3+ jours</span>
+            <input type="number" id="bfMdDisc3" min="0" max="50" value="${b.multiDay?.discount3plus ?? 10}" placeholder="10">
+            <span class="small">%</span>
+          </div>
+          <div class="discount-grid">
+            <span class="small">Remise 7+ jours</span>
+            <input type="number" id="bfMdDisc7" min="0" max="50" value="${b.multiDay?.discount7plus ?? 20}" placeholder="20">
+            <span class="small">%</span>
+          </div>
+          <div class="discount-summary">
+            💡 Exemple : <strong>${fmtEUR(getBoatSlotPrice(b, 'day'))}</strong>/jour × 7 jours = ${fmtEUR(getBoatSlotPrice(b, 'day') * 7)} − ${b.multiDay?.discount7plus ?? 20}% = <strong style="color: var(--primary);">${fmtEUR(Math.round(getBoatSlotPrice(b, 'day') * 7 * (1 - (b.multiDay?.discount7plus ?? 20) / 100)))}</strong>
+          </div>
         </div>
-        <div class="discount-grid">
-          <span class="small">Remise 7+ jours</span>
-          <input type="number" id="bfMdDisc7" min="0" max="50" value="${b.multiDay?.discount7plus ?? 20}" placeholder="20">
-          <span class="small">%</span>
-        </div>
-        <div class="discount-summary">
-          💡 Exemple : <strong>${fmtEUR(getBoatSlotPrice(b, 'day'))}</strong>/jour × 7 jours = ${fmtEUR(getBoatSlotPrice(b, 'day') * 7)} − ${b.multiDay?.discount7plus ?? 20}% = <strong style="color: var(--primary);">${fmtEUR(Math.round(getBoatSlotPrice(b, 'day') * 7 * (1 - (b.multiDay?.discount7plus ?? 20) / 100)))}</strong>
-        </div>
-      </div>
+      `}
 
       <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
 
       <h3 style="font-size: 16px; margin-bottom: 8px;">📋 Politique d'annulation</h3>
-      <p class="small text-muted mb-2">Choisissez la politique appliquée à vos clients en cas d'annulation. Elle sera affichée sur la fiche publique du bateau.</p>
-      <div class="policy-cards">
-        ${CANCELLATION_POLICIES.map(p => `
-          <div class="policy-card ${b.cancellationPolicy === p.id ? 'selected' : ''}" onclick="selectCancellationPolicy('${p.id}', ${!!editing})">
-            <div class="policy-name">${escapeHtml(p.label)}</div>
-            <div class="policy-desc">${escapeHtml(p.short)}</div>
+      ${!hasFeature('customCancellation') ? `
+        <p class="small text-muted mb-2">Votre plan ${getCurrentUserPlan().label} utilise la politique <strong>Modérée</strong> par défaut.</p>
+        <div class="locked-overlay" style="border: 2px dashed var(--border-strong); border-radius: var(--radius-lg); padding: 12px;">
+          <div class="locked-content">
+            <div class="policy-cards">
+              ${CANCELLATION_POLICIES.map(p => `
+                <div class="policy-card ${p.id === 'moderate' ? 'selected' : ''}">
+                  <div class="policy-name">${escapeHtml(p.label)}</div>
+                  <div class="policy-desc">${escapeHtml(p.short)}</div>
+                </div>
+              `).join('')}
+            </div>
           </div>
-        `).join('')}
-      </div>
+          <div class="locked-cta">
+            <div>🔒 Choix réservé au plan <strong>${getPlan('pro').badge} Pro</strong></div>
+            <button class="btn btn-primary btn-sm" onclick="showUpgradeModal('Personnaliser votre politique d\\'annulation (Flexible / Modérée / Stricte) nécessite le plan Pro.', 'pro')">Débloquer →</button>
+          </div>
+        </div>
+      ` : `
+        <p class="small text-muted mb-2">Choisissez la politique appliquée à vos clients en cas d'annulation. Elle sera affichée sur la fiche publique du bateau.</p>
+        <div class="policy-cards">
+          ${CANCELLATION_POLICIES.map(p => `
+            <div class="policy-card ${b.cancellationPolicy === p.id ? 'selected' : ''}" onclick="selectCancellationPolicy('${p.id}', ${!!editing})">
+              <div class="policy-name">${escapeHtml(p.label)}</div>
+              <div class="policy-desc">${escapeHtml(p.short)}</div>
+            </div>
+          `).join('')}
+        </div>
+      `}
 
       <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
 
@@ -4930,11 +5370,11 @@ async function viewProReviews() {
               <div class="review-response">
                 <strong>Votre réponse</strong><br>
                 ${escapeHtml(r.response)}
-                <div class="mt-1"><button class="btn btn-ghost btn-sm" onclick="openRespondReview('${r.id}')">✏️ Modifier</button></div>
+                ${hasFeature('respondReviews') ? `<div class="mt-1"><button class="btn btn-ghost btn-sm" onclick="openRespondReview('${r.id}')">✏️ Modifier</button></div>` : ''}
               </div>
-            ` : `
-              <button class="btn btn-secondary btn-sm mt-1" onclick="openRespondReview('${r.id}')">↪️ Répondre</button>
-            `}
+            ` : (hasFeature('respondReviews')
+              ? `<button class="btn btn-secondary btn-sm mt-1" onclick="openRespondReview('${r.id}')">↪️ Répondre</button>`
+              : `<button class="btn btn-secondary btn-sm mt-1 locked-btn" onclick="showUpgradeModal('Répondre publiquement aux avis clients est une fonctionnalité Pro. Cela double votre taux de fidélisation.', 'pro')">↪️ Répondre</button>`)}
           </div>
         `;
       }).join('')}
@@ -5144,6 +5584,243 @@ function sendMockEmail(rid) {
   } else {
     syncToBackend('sendClientEmail', { reservationId: rid }).then(() => toast('Email envoyé', 'success')).catch(() => toast('Erreur d\'envoi', 'error'));
   }
+}
+
+/* ---------- VIEW: PROFILE ---------- */
+/* ---------- VIEW: BILLING (Mon abonnement) ---------- */
+function viewProBilling() {
+  if (!state.currentUser) { openAuthModal(); return; }
+  const currentPlanId = state.currentUser.plan || 'free';
+  const current = getPlan(currentPlanId);
+  const myBoatsCount = state.myBoats?.length || 0;
+
+  renderProLayout(`
+    <div class="section-head">
+      <div>
+        <h2>Mon abonnement</h2>
+        <p>Choisissez le plan qui correspond à votre activité.</p>
+      </div>
+    </div>
+
+    ${state.mode === 'demo' ? renderDemoPlanBanner() : ''}
+
+    <div class="stat-card mb-2">
+      <div class="stat-label">Plan actuel</div>
+      <div class="stat-value" style="display:flex;align-items:center;gap:10px;">
+        ${current.badge} ${escapeHtml(current.label)}
+        <span class="small text-muted" style="font-weight:500;">${current.priceLabel}/mois</span>
+      </div>
+      <div class="stat-trend">${myBoatsCount} bateau${myBoatsCount > 1 ? 'x' : ''} publié${myBoatsCount > 1 ? 's' : ''} (limite : ${current.features.maxBoats === 999 ? 'illimité' : current.features.maxBoats})</div>
+    </div>
+
+    <div class="plan-grid">
+      ${PLANS.map(p => {
+        const isCurrent = p.id === currentPlanId;
+        const isPopular = p.id === 'pro';
+        return `
+          <div class="plan-card ${isCurrent ? 'current' : ''} ${isPopular ? 'popular' : ''}">
+            ${isPopular ? '<span class="ribbon">Le plus choisi</span>' : ''}
+            ${isCurrent ? `<span class="ribbon" style="background:${p.color};">Votre plan</span>` : ''}
+            <div class="plan-head">
+              <span style="font-size: 28px;">${p.badge}</span>
+              <span class="plan-name" style="color:${p.color};">${escapeHtml(p.label)}</span>
+            </div>
+            <div class="plan-desc">${escapeHtml(p.description)}</div>
+            <div class="plan-price" style="color:${p.color};">${escapeHtml(p.priceLabel)}</div>
+            <div class="plan-price-sub">${escapeHtml(p.priceSubtext)}</div>
+            <ul class="plan-bullets">
+              ${p.bullets.map(bu => `
+                <li class="${bu.ok ? '' : 'nope'}">
+                  <span class="${bu.ok ? 'check' : 'nope'}">${bu.ok ? '✓' : '✗'}</span>
+                  <span>${escapeHtml(bu.txt)}</span>
+                </li>
+              `).join('')}
+            </ul>
+            ${isCurrent
+              ? `<button class="btn btn-secondary btn-block" disabled>✅ Plan actuel</button>`
+              : `<button class="btn btn-primary btn-block" onclick="switchPlan('${p.id}')" style="background:${p.color};border-color:${p.color};">
+                  ${p.price === 0 ? 'Repasser en Gratuit' : (current.price < p.price ? 'Passer en ' + p.label + ' →' : 'Choisir ' + p.label)}
+                </button>`}
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    <div class="policy-info">
+      💡 ${state.mode === 'demo'
+        ? `En mode démo, vous pouvez basculer instantanément entre les 3 plans pour voir ce que chacun débloque.`
+        : `Les paiements seront gérés via Stripe (à activer prochainement). Vous pourrez changer de plan ou annuler à tout moment depuis cette page.`}
+    </div>
+  `, 'billing');
+}
+
+function renderDemoPlanBanner() {
+  const current = state.currentUser?.plan || 'free';
+  return `
+    <div class="demo-plan-banner">
+      <span>🎭 <strong>Mode démo</strong> — basculer instantanément entre les plans :</span>
+      <div class="picker">
+        ${PLANS.map(p => `<button class="${current === p.id ? 'active' : ''}" onclick="switchPlan('${p.id}')">${p.badge} ${p.label}</button>`).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function switchPlan(planId) {
+  if (!state.currentUser) return;
+  // En mode démo : changement instantané
+  if (state.mode === 'demo') {
+    state.currentUser.plan = planId;
+    // Met aussi à jour le snapshot pour persister si on relogue
+    const snapPro = state.demoSnapshot?.pros?.find(p => p.id === state.currentUser.id);
+    if (snapPro) snapPro.plan = planId;
+    const p = getPlan(planId);
+    toast(`Plan basculé sur ${p.badge} ${p.label}`, 'success');
+    audit('plan_switched_demo', { plan: planId });
+    if (state.view === '/pro/billing') viewProBilling();
+    else render();
+    return;
+  }
+  // En mode réel : afficher une explication (paiement à venir)
+  modal(`
+    <div class="modal-header"><h3>💳 Paiement à venir</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <p class="mb-2">Le paiement par carte bancaire (via Stripe) sera disponible dans une prochaine version.</p>
+      <p class="small text-muted mb-2">En attendant, vous pouvez tester l'expérience dans le compte de démonstration où tous les plans sont accessibles instantanément.</p>
+      <button class="btn btn-primary btn-block" onclick="closeModal()">D'accord</button>
+    </div>
+  `);
+}
+
+/* ---------- VIEW: VÉRIFICATION ---------- */
+function viewProVerification() {
+  if (!state.currentUser) { openAuthModal(); return; }
+  const user = state.currentUser;
+  const plan = getCurrentUserPlan();
+  const status = getVerificationStatus(user);
+  const eligible = plan.features.verifiedBadgeEligible;
+
+  const statusInfo = {
+    not_started: { icon: '📝', label: 'Non démarré', color: 'var(--text-2)',
+      desc: 'Vous n\'avez pas encore soumis de documents pour la vérification.' },
+    in_review:   { icon: '⏳', label: 'En cours de vérification', color: 'var(--warning)',
+      desc: 'Vos documents sont en cours d\'examen par notre équipe. Délai habituel : 24-48h ouvrées.' },
+    verified:    { icon: '✅', label: 'Pro vérifié', color: 'var(--success)',
+      desc: 'Félicitations ! Vous êtes Pro Vérifié. Le badge 🛟 apparaît sur vos fiches bateaux.' },
+    rejected:    { icon: '❌', label: 'Documents refusés', color: 'var(--danger)',
+      desc: 'Certains documents n\'ont pas pu être validés. Contactez le support pour plus de détails.' }
+  }[status];
+
+  const docs = user.verificationDocs || {};
+
+  renderProLayout(`
+    <div class="section-head">
+      <div>
+        <h2>🛟 Pro Vérifié</h2>
+        <p>Obtenez le badge qui rassure vos clients et booste vos réservations.</p>
+      </div>
+    </div>
+
+    ${!eligible ? `
+      <div class="policy-info" style="background: #fef3c7; border-left-color: #d97706;">
+        <strong>🔒 Réservé au plan Premium.</strong> Le badge Pro Vérifié n'est disponible qu'avec le plan ${getPlan('premium').badge} Premium.
+        <div class="mt-1"><button class="btn btn-primary btn-sm" onclick="navigate('/pro/billing')">Passer Premium →</button></div>
+      </div>
+    ` : ''}
+
+    <div class="verif-status-card">
+      <div class="verif-status-icon ${status}">${statusInfo.icon}</div>
+      <div style="flex: 1;">
+        <div style="font-weight: 800; font-size: 16px; color: ${statusInfo.color};">${statusInfo.label}</div>
+        <div class="small text-muted mt-1">${escapeHtml(statusInfo.desc)}</div>
+      </div>
+    </div>
+
+    <h3 style="font-size: 16px; margin-bottom: 12px;">Pourquoi devenir Pro Vérifié&nbsp;?</h3>
+    <ul style="padding-left: 20px; line-height: 1.7; color: var(--text); margin-bottom: 24px;">
+      <li><strong>🛟 Badge visible</strong> sur la fiche de chaque bateau (rassure le client avant de payer)</li>
+      <li><strong>📈 Mise en avant</strong> dans le catalogue (les pros vérifiés apparaissent en premier)</li>
+      <li><strong>💳 Confiance pour les paiements en ligne</strong> : 2-3× plus de conversion sur les paiements en avance</li>
+      <li><strong>💼 Argument commercial</strong> pour les groupes, entreprises, mariages, touristes étrangers</li>
+      <li><strong>🌟 Différenciation</strong> face aux concurrents non-certifiés</li>
+    </ul>
+
+    ${eligible ? `
+      <h3 style="font-size: 16px; margin-bottom: 12px;">Documents à fournir</h3>
+      <p class="small text-muted mb-2">Tous les documents doivent être en cours de validité. Formats acceptés : PDF, JPG, PNG (max 5 Mo par document).</p>
+
+      ${VERIFICATION_DOCS.map(doc => {
+        const uploaded = !!docs[doc.id];
+        return `
+          <div class="verif-doc-row">
+            <span class="doc-icon">${doc.icon}</span>
+            <div class="doc-info">
+              <div class="doc-label">${escapeHtml(doc.label)}</div>
+              <div class="doc-help">${escapeHtml(doc.help)}</div>
+            </div>
+            <div class="doc-status">
+              ${uploaded
+                ? '<span style="color: var(--success);">✓ Fourni</span>'
+                : `<button class="btn btn-secondary btn-sm" onclick="simulateUploadDoc('${doc.id}')">📎 Téléverser</button>`}
+            </div>
+          </div>
+        `;
+      }).join('')}
+
+      ${Object.keys(docs).length === VERIFICATION_DOCS.length && status === 'not_started' ? `
+        <button class="btn btn-primary btn-block btn-lg mt-2" onclick="submitVerification()">📨 Soumettre ma demande de vérification</button>
+      ` : ''}
+
+      ${state.mode === 'demo' && status === 'in_review' ? `
+        <div class="mt-2 text-center">
+          <button class="btn btn-success" onclick="simulateValidateVerification()">🎭 Simuler la validation par l'admin</button>
+          <div class="small text-muted mt-1">En réel, c'est l'équipe Ti Kanno qui valide manuellement les documents (24-48h).</div>
+        </div>
+      ` : ''}
+
+      ${state.mode === 'demo' && status === 'verified' ? `
+        <div class="mt-2 text-center">
+          <button class="btn btn-ghost btn-sm" onclick="simulateResetVerification()">↺ Réinitialiser la vérification (démo)</button>
+        </div>
+      ` : ''}
+    ` : ''}
+  `, 'verify');
+}
+
+function simulateUploadDoc(docId) {
+  if (!state.currentUser.verificationDocs) state.currentUser.verificationDocs = {};
+  state.currentUser.verificationDocs[docId] = { uploadedAt: new Date().toISOString(), filename: 'document.pdf' };
+  toast('Document téléversé (simulation démo)', 'success');
+  viewProVerification();
+}
+
+async function submitVerification() {
+  state.currentUser.verificationStatus = 'in_review';
+  if (state.mode !== 'demo') {
+    try { await syncToBackend('updatePro', { id: state.currentUser.id, verificationStatus: 'in_review', verificationDocs: state.currentUser.verificationDocs }); } catch {}
+  }
+  toast('Demande envoyée à l\'équipe Ti Kanno ! Délai : 24-48h.', 'success');
+  audit('verification_submitted');
+  viewProVerification();
+}
+
+function simulateValidateVerification() {
+  state.currentUser.verificationStatus = 'verified';
+  state.currentUser.verifiedAt = new Date().toISOString();
+  const snapPro = state.demoSnapshot?.pros?.find(p => p.id === state.currentUser.id);
+  if (snapPro) { snapPro.verificationStatus = 'verified'; snapPro.verifiedAt = state.currentUser.verifiedAt; }
+  toast('🎉 Félicitations, vous êtes maintenant Pro Vérifié !', 'success');
+  viewProVerification();
+}
+
+function simulateResetVerification() {
+  state.currentUser.verificationStatus = 'not_started';
+  state.currentUser.verificationDocs = {};
+  delete state.currentUser.verifiedAt;
+  const snapPro = state.demoSnapshot?.pros?.find(p => p.id === state.currentUser.id);
+  if (snapPro) { snapPro.verificationStatus = 'not_started'; snapPro.verificationDocs = {}; delete snapPro.verifiedAt; }
+  toast('Vérification réinitialisée', 'info');
+  viewProVerification();
 }
 
 /* ---------- VIEW: PROFILE ---------- */
