@@ -6,8 +6,8 @@
 <meta name="theme-color" content="#0e6e6e">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="description" content="BatoKreyòl — Louez un bateau avec skipper en Martinique. Plateforme de réservation en ligne pour particuliers et professionnels.">
-<title>BatoKreyòl — Louez votre bateau en Martinique</title>
+<meta name="description" content="Ti Kanno — Louez un bateau avec skipper en Martinique. Plateforme de réservation en ligne pour particuliers et professionnels.">
+<title>Ti Kanno — Louez votre bateau en Martinique</title>
 <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230e6e6e'/%3E%3Ctext x='50' y='62' font-size='52' text-anchor='middle' fill='white' font-family='system-ui'%3E⛵%3C/text%3E%3C/svg%3E">
 <link rel="icon" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%230e6e6e'/%3E%3Ctext x='50' y='62' font-size='52' text-anchor='middle' fill='white' font-family='system-ui'%3E⛵%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -917,6 +917,251 @@
   .res-list-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
   @media (max-width: 580px) { .res-list-actions { justify-content: flex-start; } }
 
+  /* ====== HEADER NAV — RESPONSIVE BURGER ====== */
+  .burger-btn {
+    display: none;
+    background: var(--surface-2);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+    font-size: 18px;
+  }
+  .burger-btn:hover { background: var(--primary-soft); border-color: var(--primary); }
+  .nav-drawer {
+    position: fixed;
+    top: 60px;
+    right: 0;
+    width: 260px;
+    max-width: calc(100vw - 24px);
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 12px 36px rgba(0,0,0,.15);
+    padding: 12px;
+    z-index: 70;
+    transform: translateX(120%);
+    transition: transform .22s ease-out;
+  }
+  .nav-drawer.open { transform: translateX(-12px); }
+  .nav-drawer .nav-drawer-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .nav-drawer .nav-drawer-item:hover { background: var(--surface-2); }
+  .nav-drawer .nav-drawer-item.active { background: var(--primary-soft); color: var(--primary); }
+  .nav-drawer hr { border: none; border-top: 1px solid var(--border); margin: 6px 0; }
+  .nav-drawer .nav-drawer-cta {
+    background: var(--primary);
+    color: white;
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    text-align: center;
+    font-weight: 700;
+    margin-top: 6px;
+    cursor: pointer;
+  }
+  .nav-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.25);
+    z-index: 65;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s;
+  }
+  .nav-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  @media (max-width: 720px) {
+    .header-nav .header-link,
+    .header-nav .btn-secondary,
+    .header-nav #installBtn { display: none; }
+    .burger-btn { display: inline-flex; }
+  }
+
+  /* ====== LANGUAGE SWITCHER ====== */
+  .lang-switcher {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-right: 6px;
+  }
+  .lang-btn {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-2);
+    transition: all .12s;
+  }
+  .lang-btn:hover { border-color: var(--primary-light); color: var(--primary); }
+  .lang-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+  /* ====== FAVORIS (cœur sur cartes) ====== */
+  .fav-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.95);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #999;
+    transition: all .15s;
+    box-shadow: 0 2px 8px rgba(0,0,0,.12);
+    z-index: 2;
+  }
+  .fav-btn:hover { transform: scale(1.1); color: #dc2626; }
+  .fav-btn.active { color: #dc2626; }
+  .fav-btn.active:hover { color: #b91c1c; }
+  .boat-img { position: relative; }
+
+  /* ====== STATS PUBLIQUES HOME ====== */
+  .public-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+    margin: 28px 0;
+  }
+  .public-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    text-align: center;
+  }
+  .public-stat .stat-icon { font-size: 28px; margin-bottom: 6px; }
+  .public-stat .stat-big { font-size: 28px; font-weight: 800; color: var(--primary); letter-spacing: -.02em; }
+  .public-stat .stat-label { font-size: 13px; color: var(--text-2); margin-top: 4px; }
+
+  /* ====== GALERIE CAROUSEL ====== */
+  .gallery-v2 {
+    background: var(--surface-2);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .gallery-v2-main {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .gallery-v2-main .placeholder { font-size: 90px; color: var(--text-2); }
+  .gallery-v2-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,.92);
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .12s;
+  }
+  .gallery-v2-nav:hover { background: white; transform: translateY(-50%) scale(1.08); }
+  .gallery-v2-nav.prev { left: 12px; }
+  .gallery-v2-nav.next { right: 12px; }
+  .gallery-v2-count {
+    position: absolute;
+    bottom: 12px;
+    right: 12px;
+    background: rgba(0,0,0,.65);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .gallery-v2-thumbs {
+    display: flex;
+    gap: 6px;
+    padding: 8px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .gallery-v2-thumb {
+    flex: 0 0 80px;
+    height: 60px;
+    background-size: cover;
+    background-position: center;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    border: 2px solid transparent;
+    background-color: var(--surface);
+    transition: border-color .12s, opacity .12s;
+    opacity: .7;
+  }
+  .gallery-v2-thumb:hover { opacity: 1; }
+  .gallery-v2-thumb.active { border-color: var(--primary); opacity: 1; }
+
+  /* ====== MULTI-DAY BOOKING ====== */
+  .multiday-toggle {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .multiday-toggle input[type=checkbox] { width: 18px; height: 18px; }
+  .multiday-toggle label { font-weight: 600; font-size: 14px; cursor: pointer; flex: 1; }
+  .multiday-fields { display: none; }
+  .multiday-fields.open { display: block; }
+  .discount-grid {
+    display: grid;
+    grid-template-columns: 80px 1fr 80px;
+    gap: 8px;
+    align-items: center;
+    padding: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 6px;
+  }
+  .discount-grid input { padding: 6px 8px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 13px; outline: none; }
+  .discount-grid input:focus { border-color: var(--primary); }
+  .discount-summary {
+    background: var(--info-soft);
+    border-left: 3px solid var(--info);
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+    margin: 8px 0;
+    font-size: 13px;
+  }
+
   /* ====== PAYMENT LINKS GRID (form bateau) ====== */
   .payment-grid {
     display: flex;
@@ -1200,7 +1445,7 @@
     <div class="header-inner">
       <a class="logo" onclick="navigate('/')">
         <span class="logo-icon">⛵</span>
-        <span>BatoKreyòl</span>
+        <span>Ti Kanno</span>
       </a>
       <nav class="header-nav" id="headerNav"></nav>
     </div>
@@ -1209,8 +1454,8 @@
   <main class="main" id="main"></main>
 
   <footer class="footer">
-    <div>BatoKreyòl — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v0.7 — 2026</div>
+    <div>Ti Kanno — Louez votre bateau en Martinique 🌴</div>
+    <div class="version">v0.8 — 2026</div>
   </footer>
 </div>
 
@@ -1220,12 +1465,13 @@
 
 <script>
 /* ============================================================
-   BatoKreyòl v0.7
+   Ti Kanno v0.8
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v0.7';
-const APP_NAME = 'BatoKreyol';
+const VERSION = 'v0.8';
+const APP_NAME = 'Ti Kanno';
+const APP_TAGLINE = 'Marketplace nautique 100% Martinique';
 
 // CONFIG : remplacer par votre URL Apps Script déployée en Web App
 // Si laissée vide ou non configurée, l'app bascule automatiquement sur un
@@ -1233,7 +1479,314 @@ const APP_NAME = 'BatoKreyol';
 const BACKEND_URL = 'https://script.google.com/macros/s/REPLACE_WITH_YOUR_DEPLOYMENT_ID/exec';
 const LOCAL_MODE = !BACKEND_URL || BACKEND_URL.includes('REPLACE_WITH_YOUR_DEPLOYMENT_ID');
 
-const log = (...args) => console.log('[BatoKreyol]', ...args);
+const log = (...args) => console.log('[TiKanno]', ...args);
+
+/* ============================================================
+   INTERNATIONALISATION (FR / EN / CR créole martiniquais)
+   Pour ajouter une langue : compléter I18N avec les mêmes clés.
+   Seules les zones publiques sont traduites. L'espace pro
+   reste en français (les pros sont locaux).
+   ============================================================ */
+const I18N = {
+  fr: {
+    nav_catalog: 'Catalogue',
+    nav_reservations: 'Mes réservations',
+    nav_pro: 'Espace pro',
+    nav_disconnect: 'Déconnexion',
+    nav_install: '📱 Installer',
+
+    hero_badge: '🌴 Première marketplace nautique 100% Martinique',
+    hero_title: 'Louez votre bateau avec skipper en Martinique',
+    hero_subtitle: 'Fonds blancs, coucher de soleil au Diamant, balade vers les Anses-d\'Arlet… Réservez en ligne auprès de pros locaux certifiés.',
+    hero_all_locations: '📍 Toute l\'île',
+    hero_all_types: '⛵ Tous les types',
+    hero_search: 'Rechercher',
+
+    stats_boats: 'bateaux disponibles',
+    stats_reviews: 'avis publiés',
+    stats_avg: 'note moyenne',
+
+    section_fleet: 'Découvrez notre flotte',
+    section_fleet_sub: 'bateaux disponibles avec leurs skippers',
+
+    filter_location: 'Lieu',
+    filter_type: 'Type de bateau',
+    filter_capacity: 'Passagers min.',
+    filter_all: 'Tous',
+    filter_reset: 'Réinitialiser',
+    filter_advanced: '🎯 Filtres avancés',
+    filter_price_range: 'Fourchette de prix (€ par sortie)',
+    filter_min_rating: 'Note minimale',
+    filter_slots: 'Créneaux disponibles',
+    filter_equipment: 'Équipement',
+    filter_favorites: '❤️ Mes favoris uniquement',
+    filter_clear: 'Effacer',
+    filter_result_count: 'bateaux correspondent',
+    filter_no_match: 'Aucun bateau ne correspond',
+    filter_no_match_sub: 'Essayez d\'élargir vos critères ou de réinitialiser les filtres.',
+
+    card_from: 'à partir de',
+    card_per_outing: 'par sortie',
+    card_see: 'Voir →',
+    card_persons: 'pers.',
+    card_skipper: 'Skipper inclus',
+
+    detail_back: '← Retour au catalogue',
+    detail_about: 'À propos de ce bateau',
+    detail_pricing: 'Tarifs et formules proposées',
+    detail_cancellation: 'Conditions d\'annulation',
+    detail_equipment: 'Équipement à bord',
+    detail_reviews: 'Avis clients',
+    detail_no_reviews: 'Aucun avis pour le moment. Soyez le premier à partager votre expérience !',
+    detail_leave_review: '✍️ Laisser un avis',
+    detail_capacity: 'Capacité',
+    detail_type: 'Type',
+    detail_skipper: 'Skipper',
+    detail_owner: 'Propriétaire',
+    detail_skipper_included: 'Inclus',
+    detail_skipper_not_included: 'Non inclus',
+
+    booking_date: 'Date souhaitée',
+    booking_slot: 'Créneau',
+    booking_multiday: 'Réservation multi-jours',
+    booking_multiday_end: 'Date de fin',
+    booking_name: 'Votre nom',
+    booking_email: 'Email',
+    booking_phone: 'Téléphone',
+    booking_total: 'Total estimé',
+    booking_select_slot: 'Sélectionnez un créneau pour voir le mode de paiement',
+    booking_book: '📩 Demander cette sortie',
+    booking_book_pay: '💳 Réserver & Payer',
+    booking_calendar_free: 'Libre',
+    booking_calendar_partial: 'Partiel',
+    booking_calendar_full: 'Complet',
+
+    client_title: '🎫 Mes réservations',
+    client_subtitle: 'Retrouvez ici toutes vos sorties en bateau, annulez si besoin et laissez un avis après votre journée.',
+    client_email_prompt: 'Saisissez votre email',
+    client_email_hint: 'Nous afficherons toutes les réservations associées à cette adresse.',
+    client_email_btn: 'Afficher mes réservations',
+    client_logged_as: 'connecté en tant que client',
+    client_change_email: 'Changer d\'email',
+    client_upcoming: 'À venir',
+    client_history: 'Historique',
+    client_no_res: 'Aucune réservation trouvée',
+    client_cancel: '✕ Annuler',
+    client_review: '⭐ Laisser un avis',
+    client_review_done: '✅ Avis publié',
+  },
+  en: {
+    nav_catalog: 'Catalog',
+    nav_reservations: 'My bookings',
+    nav_pro: 'Pro area',
+    nav_disconnect: 'Logout',
+    nav_install: '📱 Install',
+
+    hero_badge: '🌴 First 100% Martinique boating marketplace',
+    hero_title: 'Rent a boat with skipper in Martinique',
+    hero_subtitle: 'Crystal-clear shallows, sunset at Le Diamant, trips to Anses-d\'Arlet… Book online with certified local pros.',
+    hero_all_locations: '📍 All locations',
+    hero_all_types: '⛵ All boat types',
+    hero_search: 'Search',
+
+    stats_boats: 'boats available',
+    stats_reviews: 'reviews posted',
+    stats_avg: 'average rating',
+
+    section_fleet: 'Discover our fleet',
+    section_fleet_sub: 'boats available with their skippers',
+
+    filter_location: 'Location',
+    filter_type: 'Boat type',
+    filter_capacity: 'Min. passengers',
+    filter_all: 'All',
+    filter_reset: 'Reset',
+    filter_advanced: '🎯 Advanced filters',
+    filter_price_range: 'Price range (€ per outing)',
+    filter_min_rating: 'Minimum rating',
+    filter_slots: 'Available time slots',
+    filter_equipment: 'Equipment',
+    filter_favorites: '❤️ Favorites only',
+    filter_clear: 'Clear',
+    filter_result_count: 'matching boats',
+    filter_no_match: 'No boat matches',
+    filter_no_match_sub: 'Try widening your criteria or resetting filters.',
+
+    card_from: 'from',
+    card_per_outing: 'per outing',
+    card_see: 'View →',
+    card_persons: 'pers.',
+    card_skipper: 'Skipper included',
+
+    detail_back: '← Back to catalog',
+    detail_about: 'About this boat',
+    detail_pricing: 'Rates and packages',
+    detail_cancellation: 'Cancellation policy',
+    detail_equipment: 'On-board equipment',
+    detail_reviews: 'Customer reviews',
+    detail_no_reviews: 'No reviews yet. Be the first to share your experience!',
+    detail_leave_review: '✍️ Leave a review',
+    detail_capacity: 'Capacity',
+    detail_type: 'Type',
+    detail_skipper: 'Skipper',
+    detail_owner: 'Owner',
+    detail_skipper_included: 'Included',
+    detail_skipper_not_included: 'Not included',
+
+    booking_date: 'Preferred date',
+    booking_slot: 'Time slot',
+    booking_multiday: 'Multi-day booking',
+    booking_multiday_end: 'End date',
+    booking_name: 'Your name',
+    booking_email: 'Email',
+    booking_phone: 'Phone',
+    booking_total: 'Estimated total',
+    booking_select_slot: 'Select a slot to see the payment method',
+    booking_book: '📩 Request this outing',
+    booking_book_pay: '💳 Book & Pay',
+    booking_calendar_free: 'Available',
+    booking_calendar_partial: 'Partial',
+    booking_calendar_full: 'Booked',
+
+    client_title: '🎫 My bookings',
+    client_subtitle: 'Find all your boat outings here, cancel if needed and leave a review after your trip.',
+    client_email_prompt: 'Enter your email',
+    client_email_hint: 'We will display all bookings linked to this address.',
+    client_email_btn: 'Show my bookings',
+    client_logged_as: 'logged in as a client',
+    client_change_email: 'Change email',
+    client_upcoming: 'Upcoming',
+    client_history: 'History',
+    client_no_res: 'No booking found',
+    client_cancel: '✕ Cancel',
+    client_review: '⭐ Leave a review',
+    client_review_done: '✅ Review published',
+  },
+  cr: {
+    nav_catalog: 'Katalòg',
+    nav_reservations: 'Rézèvasyon mwen',
+    nav_pro: 'Espas pwofésyonèl',
+    nav_disconnect: 'Dékonèkté',
+    nav_install: '📱 Enstalé',
+
+    hero_badge: '🌴 Premié maché bato 100% Matinik',
+    hero_title: 'Lwé bato-ou épi skipè-a an Matinik',
+    hero_subtitle: 'Fon blan, kouché soley Diaman, balad Lansé d\'Arlé… Rézèvé an liyn épi pwofésyonèl lokal sètifyé.',
+    hero_all_locations: '📍 Tout lilèt',
+    hero_all_types: '⛵ Tout bato',
+    hero_search: 'Chèché',
+
+    stats_boats: 'bato disponib',
+    stats_reviews: 'avi piblié',
+    stats_avg: 'nòt mwayèn',
+
+    section_fleet: 'Dékouvè flòt-nou',
+    section_fleet_sub: 'bato disponib épi skipè-yo',
+
+    filter_location: 'Koté',
+    filter_type: 'Kalité bato',
+    filter_capacity: 'Pasajè minimòm',
+    filter_all: 'Tout',
+    filter_reset: 'Rékomansé',
+    filter_advanced: '🎯 Filt avansé',
+    filter_price_range: 'Pri (€ pou chak sòti)',
+    filter_min_rating: 'Nòt minimòm',
+    filter_slots: 'Lè disponib',
+    filter_equipment: 'Matèryèl',
+    filter_favorites: '❤️ Favori-mwen sèlman',
+    filter_clear: 'Vidé',
+    filter_result_count: 'bato koresponn',
+    filter_no_match: 'Pa ni bato ki koresponn',
+    filter_no_match_sub: 'Eséyé chanjé kritè-ou oben rékomansé filt-yo.',
+
+    card_from: 'apatè',
+    card_per_outing: 'pou chak sòti',
+    card_see: 'Wè →',
+    card_persons: 'pèsòn',
+    card_skipper: 'Skipè enkli',
+
+    detail_back: '← Tounen katalòg',
+    detail_about: 'Asou bato-tala',
+    detail_pricing: 'Pri épi fòmil',
+    detail_cancellation: 'Kondisyon pou anilé',
+    detail_equipment: 'Matèryèl an bò bato-a',
+    detail_reviews: 'Avi kliyan',
+    detail_no_reviews: 'Pa ni avi pou lè-a. Ou pé sé prèmié-a ki ka palé!',
+    detail_leave_review: '✍️ Mété an avi',
+    detail_capacity: 'Kapasité',
+    detail_type: 'Kalité',
+    detail_skipper: 'Skipè',
+    detail_owner: 'Mèt-bato',
+    detail_skipper_included: 'Enkli',
+    detail_skipper_not_included: 'Pa enkli',
+
+    booking_date: 'Dat ou lé',
+    booking_slot: 'Lè',
+    booking_multiday: 'Rézèvé plizyè jou',
+    booking_multiday_end: 'Dat fini',
+    booking_name: 'Non-ou',
+    booking_email: 'Imel',
+    booking_phone: 'Téléfòn',
+    booking_total: 'Total estimé',
+    booking_select_slot: 'Chwazi an lè pou wè mwayen péyé-a',
+    booking_book: '📩 Mandé sòti-tala',
+    booking_book_pay: '💳 Rézèvé & Péyé',
+    booking_calendar_free: 'Lib',
+    booking_calendar_partial: 'Mwatié',
+    booking_calendar_full: 'Pwen',
+
+    client_title: '🎫 Rézèvasyon mwen',
+    client_subtitle: 'Touvé tout sòti-bato-ou la, anilé si fòk épi mété an avi apré sòti-ou.',
+    client_email_prompt: 'Mété imel-ou',
+    client_email_hint: 'Nou ké montré tout rézèvasyon ki an non-ou.',
+    client_email_btn: 'Montré rézèvasyon mwen',
+    client_logged_as: 'kliyan konèkté',
+    client_change_email: 'Chanjé imel',
+    client_upcoming: 'Ka vini',
+    client_history: 'Istwa',
+    client_no_res: 'Pa touvé rézèvasyon',
+    client_cancel: '✕ Anilé',
+    client_review: '⭐ Mété an avi',
+    client_review_done: '✅ Avi piblié',
+  }
+};
+
+function getLang() {
+  try { return localStorage.getItem('tk_lang') || 'fr'; } catch { return 'fr'; }
+}
+function setLang(l) {
+  try { localStorage.setItem('tk_lang', l); } catch {}
+  render();
+}
+function t(key) {
+  const lang = getLang();
+  return (I18N[lang] && I18N[lang][key]) || I18N.fr[key] || key;
+}
+
+/* ============================================================
+   FAVORIS (stockés en localStorage côté client, pas de backend)
+   ============================================================ */
+function getFavorites() {
+  try { return JSON.parse(localStorage.getItem('tk_favorites') || '[]'); } catch { return []; }
+}
+function isFav(boatId) { return getFavorites().includes(boatId); }
+function toggleFav(boatId, ev) {
+  if (ev) { ev.stopPropagation(); ev.preventDefault(); }
+  const favs = getFavorites();
+  const idx = favs.indexOf(boatId);
+  if (idx === -1) {
+    favs.push(boatId);
+    toast(getLang() === 'fr' ? 'Ajouté à vos favoris ❤️' : getLang() === 'en' ? 'Added to favorites ❤️' : 'Ajouté an favori ❤️', 'success');
+  } else {
+    favs.splice(idx, 1);
+  }
+  try { localStorage.setItem('tk_favorites', JSON.stringify(favs)); } catch {}
+  // Met à jour le cœur visuellement sans re-render complet
+  document.querySelectorAll(`[data-fav="${boatId}"]`).forEach(el => {
+    el.classList.toggle('active', favs.includes(boatId));
+    el.innerHTML = favs.includes(boatId) ? '❤️' : '🤍';
+  });
+}
 
 /* ---------- STATE ---------- */
 const state = {
@@ -1423,6 +1976,74 @@ function boatHasAnyPaymentLink(boat) {
   if (boat.paymentLinks) return Object.values(boat.paymentLinks).some(v => v && v.length > 0);
   return !!boat.paymentLink;
 }
+
+/* ---------- MULTI-JOUR ---------- */
+function getBoatMultiDay(boat) {
+  // Retourne la config multi-jour avec valeurs par défaut
+  const m = boat?.multiDay || {};
+  return {
+    enabled: !!m.enabled,
+    minDays: Math.max(2, Number(m.minDays) || 2),
+    maxDays: Math.min(30, Number(m.maxDays) || 14),
+    discount3plus: Math.max(0, Math.min(50, Number(m.discount3plus) || 10)), // % pour 3+ jours
+    discount7plus: Math.max(0, Math.min(50, Number(m.discount7plus) || 20))  // % pour 7+ jours
+  };
+}
+
+function calcMultiDayPrice(boat, days) {
+  // Calcul du prix total pour `days` jours avec remises dégressives
+  const dailyPrice = getBoatSlotPrice(boat, 'day');
+  const md = getBoatMultiDay(boat);
+  let discountPct = 0;
+  if (days >= 7) discountPct = md.discount7plus;
+  else if (days >= 3) discountPct = md.discount3plus;
+  const subtotal = dailyPrice * days;
+  const discount = Math.round(subtotal * discountPct / 100);
+  return {
+    dailyPrice,
+    days,
+    subtotal,
+    discountPct,
+    discount,
+    total: subtotal - discount
+  };
+}
+
+function daysBetween(start, end) {
+  const s = new Date(start + 'T00:00:00');
+  const e = new Date(end + 'T00:00:00');
+  return Math.round((e - s) / 86400000) + 1; // inclusif
+}
+
+/* ---------- CARROUSEL GALERIE ---------- */
+let _galleryIdx = 0;
+let _galleryImages = [];
+
+function galleryNext() {
+  if (!_galleryImages.length) return;
+  _galleryIdx = (_galleryIdx + 1) % _galleryImages.length;
+  refreshGallery();
+}
+function galleryPrev() {
+  if (!_galleryImages.length) return;
+  _galleryIdx = (_galleryIdx - 1 + _galleryImages.length) % _galleryImages.length;
+  refreshGallery();
+}
+function galleryGoTo(idx) {
+  _galleryIdx = idx;
+  refreshGallery();
+}
+function refreshGallery() {
+  const main = document.querySelector('.gallery-v2-main');
+  if (!main) return;
+  const url = _galleryImages[_galleryIdx];
+  if (url) main.style.backgroundImage = `url('${url}')`;
+  document.querySelectorAll('.gallery-v2-thumb').forEach((el, i) => {
+    el.classList.toggle('active', i === _galleryIdx);
+  });
+  const counter = document.querySelector('.gallery-v2-count');
+  if (counter) counter.textContent = `${_galleryIdx + 1} / ${_galleryImages.length}`;
+}
 const EQUIPMENT_PRESETS = ['GPS', 'Sondeur', 'Glacière', 'Douche de pont', 'Snorkeling', 'Bain de soleil', 'Toilettes', 'Cuisine', 'Bluetooth', 'Échelle de bain', 'Bouées', 'Punch maison 🍹'];
 
 /* ---------- STORAGE ---------- */
@@ -1503,7 +2124,7 @@ const localBackend = {
     if (localStorage.getItem('bk_local_seeded') === '1') return;
     // Compte de test pré-créé pour faciliter les essais
     this._write('pros', [
-      { id: 'pro_demo_1', name: 'Compte de test', company: 'Mon entreprise nautique', email: 'test@batokreyol.fr', phone: '0696 00 00 00', password: 'test1234', createdAt: new Date().toISOString(), status: 'active' }
+      { id: 'pro_demo_1', name: 'Compte de test', company: 'Mon entreprise nautique', email: 'test@tikanno.fr', phone: '0696 00 00 00', password: 'test1234', createdAt: new Date().toISOString(), status: 'active' }
     ]);
     this._write('boats', []);
     this._write('reservations', []);
@@ -1772,7 +2393,7 @@ function loadDemoData() {
     ...extra
   });
   const demoBoats = [
-    baseBoat({ id: 'b1', proId: 'p1', proName: 'Karayib Charter', name: 'Lagon Bleu', type: 'Catamaran', capacity: 12, location: 'Le Marin', description: 'Catamaran spacieux idéal pour découvrir les fonds blancs et la baie du Robert. Skipper local expérimenté inclus.', pricePerDay: 850, images: ['https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=900'], paymentLinks: { halfday: 'https://buy.stripe.com/demo-lagon-half', day: 'https://buy.stripe.com/demo-lagon-day', sunset: 'https://buy.stripe.com/demo-lagon-sunset' }, cancellationPolicy: 'flexible', equipment: ['GPS', 'Snorkeling', 'Glacière', 'Douche de pont', 'Bluetooth'] }),
+    baseBoat({ id: 'b1', proId: 'p1', proName: 'Karayib Charter', name: 'Lagon Bleu', type: 'Catamaran', capacity: 12, location: 'Le Marin', description: 'Catamaran spacieux idéal pour découvrir les fonds blancs et la baie du Robert. Skipper local expérimenté inclus.', pricePerDay: 850, images: ['https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=900'], paymentLinks: { halfday: 'https://buy.stripe.com/demo-lagon-half', day: 'https://buy.stripe.com/demo-lagon-day', sunset: 'https://buy.stripe.com/demo-lagon-sunset' }, cancellationPolicy: 'flexible', multiDay: { enabled: true, minDays: 2, maxDays: 14, discount3plus: 10, discount7plus: 20 }, equipment: ['GPS', 'Snorkeling', 'Glacière', 'Douche de pont', 'Bluetooth'] }),
     baseBoat({ id: 'b2', proId: 'p1', proName: 'Karayib Charter', name: 'Soleil Caraïbe', type: 'Voilier', capacity: 8, location: 'Le Marin', description: 'Voilier élégant pour une journée entre amis. Apéro punch offert à bord !', pricePerDay: 620, images: ['https://images.unsplash.com/photo-1540946485063-a40da27545f8?w=900'], cancellationPolicy: 'moderate', equipment: ['GPS', 'Snorkeling', 'Punch maison 🍹', 'Bluetooth'] }),
     baseBoat({ id: 'b3', proId: 'p2', proName: 'Madras Marina', name: 'Yacht Manikou', type: 'Yacht', capacity: 10, location: 'Fort-de-France', description: 'Yacht haut de gamme avec cabines climatisées. Idéal coucher de soleil ou week-end.', pricePerDay: 1450, images: ['https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=900', 'https://images.unsplash.com/photo-1540946485063-a40da27545f8?w=900'], paymentLinks: { day: 'https://buy.stripe.com/demo-manikou-day', sunset: 'https://buy.stripe.com/demo-manikou-sunset' }, cancellationPolicy: 'strict', equipment: ['GPS', 'Sondeur', 'Cuisine', 'Toilettes', 'Bain de soleil', 'Bluetooth'] }),
     baseBoat({ id: 'b4', proId: 'p2', proName: 'Madras Marina', name: 'Belle des Îles', type: 'Catamaran', capacity: 14, location: 'Les Trois-Îlets', description: 'Notre plus grand catamaran pour groupes et événements privés. Équipé pour le snorkeling.', pricePerDay: 980, images: ['https://images.unsplash.com/photo-1540946485063-a40da27545f8?w=900'], cancellationPolicy: 'moderate', equipment: ['GPS', 'Snorkeling', 'Échelle de bain', 'Cuisine', 'Toilettes', 'Bouées'] }),
@@ -1801,6 +2422,8 @@ function loadDemoData() {
     { id: 'r13', boatId: 'b3', boatName: 'Yacht Manikou', proId: 'p2', clientName: 'Soirée Entreprise', clientEmail: 'cse@demo.fr', clientPhone: '0596 33 33 33', startDate: '2026-01-15', durationType: 'sunset', totalPrice: 653, paymentStatus: 'paid', status: 'completed', createdAt: '2025-12-20T10:00:00Z' },
     { id: 'r14', boatId: 'b5', boatName: 'Ti Sucrier', proId: 'p3', clientName: 'Famille Petit', clientEmail: 'petit@demo.fr', clientPhone: '0696 55 55 55', startDate: '2026-01-28', durationType: 'day', totalPrice: 380, paymentStatus: 'paid', status: 'completed', createdAt: '2026-01-10T09:00:00Z' },
     { id: 'r15', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Anniversaire Jules', clientEmail: 'jules@demo.fr', clientPhone: '0696 66 66 66', startDate: '2026-02-14', durationType: 'day', totalPrice: 850, paymentStatus: 'paid', status: 'completed', createdAt: '2026-01-25T10:00:00Z' },
+    { id: 'r16', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Week-end Famille Boucher', clientEmail: 'boucher@demo.fr', clientPhone: '0696 67 67 67', startDate: '2026-06-05', endDate: '2026-06-07', durationType: 'multiday', isMultiDay: true, daysCount: 3, totalPrice: 2295, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-08T15:00:00Z' },
+    { id: 'r17', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Croisière 7 jours Henri', clientEmail: 'henri@demo.fr', clientPhone: '0696 70 70 70', startDate: '2026-07-13', endDate: '2026-07-19', durationType: 'multiday', isMultiDay: true, daysCount: 7, totalPrice: 4760, paymentStatus: 'pending', status: 'pending', createdAt: '2026-05-10T09:30:00Z' },
   ];
   const demoReviews = [
     { id: 'rev1', boatId: 'b1', reservationId: 'r3', clientName: 'Famille Mercier', rating: 5, comment: 'Journée magnifique ! Le skipper Jean-Marc connaît tous les meilleurs coins. Eaux turquoise, snorkeling top, on a vu des tortues 🐢. À refaire absolument !', response: 'Merci beaucoup ! C\'était un plaisir de vous accueillir. À très bientôt 🌴', createdAt: '2026-02-22T18:00:00Z' },
@@ -1899,6 +2522,48 @@ async function fetchMyReservations() {
    RENDERING
    ============================================================ */
 
+function renderNavDrawer(links, isPro, langSwitcher) {
+  // Crée le drawer s'il n'existe pas déjà
+  let drawer = document.getElementById('navDrawer');
+  let backdrop = document.getElementById('navBackdrop');
+  if (!drawer) {
+    drawer = document.createElement('div');
+    drawer.id = 'navDrawer';
+    drawer.className = 'nav-drawer';
+    document.body.appendChild(drawer);
+  }
+  if (!backdrop) {
+    backdrop = document.createElement('div');
+    backdrop.id = 'navBackdrop';
+    backdrop.className = 'nav-backdrop';
+    backdrop.onclick = () => toggleNavDrawer(false);
+    document.body.appendChild(backdrop);
+  }
+  drawer.innerHTML = `
+    <div style="padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-size: 12px; color: var(--text-2); font-weight: 600;">${getLang() === 'fr' ? 'Langue' : getLang() === 'en' ? 'Language' : 'Lang'}</span>
+      ${langSwitcher}
+    </div>
+    <hr>
+    ${links.map(l => `<a class="nav-drawer-item ${(l.active ?? (state.view === l.path)) ? 'active' : ''}" onclick="toggleNavDrawer(false); navigate('${l.path}')"><span>${l.icon}</span><span>${l.label}</span></a>`).join('')}
+    <hr>
+    <div class="nav-drawer-item" onclick="toggleNavDrawer(false); installPWA()"><span>📱</span><span>${t('nav_install')}</span></div>
+    <div class="nav-drawer-cta" onclick="toggleNavDrawer(false); ${isPro ? 'logout()' : 'openAuthModal()'}">
+      ${isPro ? t('nav_disconnect') : t('nav_pro')}
+    </div>
+  `;
+}
+
+function toggleNavDrawer(force) {
+  const drawer = document.getElementById('navDrawer');
+  const backdrop = document.getElementById('navBackdrop');
+  if (!drawer || !backdrop) return;
+  const isOpen = drawer.classList.contains('open');
+  const open = typeof force === 'boolean' ? force : !isOpen;
+  drawer.classList.toggle('open', open);
+  backdrop.classList.toggle('open', open);
+}
+
 function render() {
   const main = document.getElementById('main');
   const nav = document.getElementById('headerNav');
@@ -1920,21 +2585,41 @@ function render() {
   }
 
   // Nav
-  if (state.currentUser?.type === 'pro') {
-    nav.innerHTML = `
-      <button class="btn btn-ghost btn-sm" id="installBtn" onclick="installPWA()">📱 Installer</button>
-      <a class="header-link ${state.view === '/' ? 'active' : ''}" onclick="navigate('/')">Catalogue</a>
-      <a class="header-link ${state.view.startsWith('/pro/') ? 'active' : ''}" onclick="navigate('/pro/dashboard')">Espace pro</a>
-      <button class="btn btn-secondary btn-sm" onclick="logout()">Déconnexion</button>
-    `;
-  } else {
-    nav.innerHTML = `
-      <button class="btn btn-ghost btn-sm" id="installBtn" onclick="installPWA()">📱 Installer</button>
-      <a class="header-link ${state.view === '/' ? 'active' : ''}" onclick="navigate('/')">Catalogue</a>
-      <a class="header-link ${state.view.startsWith('/client') ? 'active' : ''}" onclick="navigate('/client')">Mes réservations</a>
-      <button class="btn btn-secondary btn-sm" onclick="openAuthModal()">Espace pro</button>
-    `;
-  }
+  const isPro = state.currentUser?.type === 'pro';
+  const lang = getLang();
+
+  // Liens principaux (mêmes pour desktop et drawer mobile)
+  const links = isPro ? [
+    { label: t('nav_catalog'), path: '/', icon: '⛵' },
+    { label: t('nav_pro'), path: '/pro/dashboard', icon: '📊', active: state.view.startsWith('/pro/') },
+  ] : [
+    { label: t('nav_catalog'), path: '/', icon: '⛵' },
+    { label: t('nav_reservations'), path: '/client', icon: '🎫', active: state.view.startsWith('/client') },
+  ];
+
+  // Sélecteur de langue (compact)
+  const langSwitcher = `
+    <span class="lang-switcher">
+      <button class="lang-btn ${lang === 'fr' ? 'active' : ''}" onclick="setLang('fr')" title="Français">FR</button>
+      <button class="lang-btn ${lang === 'en' ? 'active' : ''}" onclick="setLang('en')" title="English">EN</button>
+      <button class="lang-btn ${lang === 'cr' ? 'active' : ''}" onclick="setLang('cr')" title="Kréyòl">CR</button>
+    </span>
+  `;
+
+  // Nav desktop (cachée en CSS sous 720px)
+  nav.innerHTML = `
+    ${langSwitcher}
+    <button class="btn btn-ghost btn-sm" id="installBtn" onclick="installPWA()">${t('nav_install')}</button>
+    ${links.map(l => `<a class="header-link ${(l.active ?? (state.view === l.path)) ? 'active' : ''}" onclick="navigate('${l.path}')">${l.label}</a>`).join('')}
+    ${isPro
+      ? `<button class="btn btn-secondary btn-sm" onclick="logout()">${t('nav_disconnect')}</button>`
+      : `<button class="btn btn-secondary btn-sm" onclick="openAuthModal()">${t('nav_pro')}</button>`}
+    <button class="burger-btn" onclick="toggleNavDrawer()" aria-label="Menu">☰</button>
+  `;
+
+  // Drawer mobile (overlay glissant)
+  renderNavDrawer(links, isPro, langSwitcher);
+
   if (_pwaDeferredPrompt) document.getElementById('installBtn')?.classList.add('visible');
 
   // Route
@@ -1960,67 +2645,69 @@ async function viewHome() {
   main.innerHTML = `
     <section class="hero">
       <div class="hero-inner">
-        <div class="hero-badge">🌴 Première marketplace nautique 100% Martinique</div>
-        <h1>Louez votre bateau avec skipper en Martinique</h1>
-        <p>Fonds blancs, coucher de soleil au Diamant, balade vers les Anses-d'Arlet… Réservez en ligne auprès de pros locaux certifiés.</p>
+        <div class="hero-badge">${t('hero_badge')}</div>
+        <h1>${t('hero_title')}</h1>
+        <p>${t('hero_subtitle')}</p>
         <div class="hero-search">
-          <select id="searchLoc"><option value="">📍 Toute l'île</option>${LOCATIONS_MQ.map(l => `<option value="${l}">${l}</option>`).join('')}</select>
-          <select id="searchType"><option value="">⛵ Tous les types</option>${BOAT_TYPES.map(t => `<option value="${t}">${t}</option>`).join('')}</select>
-          <button class="btn btn-primary" onclick="applyFiltersFromHero()">Rechercher</button>
+          <select id="searchLoc"><option value="">${t('hero_all_locations')}</option>${LOCATIONS_MQ.map(l => `<option value="${l}">${l}</option>`).join('')}</select>
+          <select id="searchType"><option value="">${t('hero_all_types')}</option>${BOAT_TYPES.map(b => `<option value="${b}">${b}</option>`).join('')}</select>
+          <button class="btn btn-primary" onclick="applyFiltersFromHero()">${t('hero_search')}</button>
         </div>
       </div>
     </section>
 
     <div class="container">
+      <div id="publicStats"></div>
+
       <div class="section-head">
         <div>
-          <h2>Découvrez notre flotte</h2>
-          <p>Plus de ${state.mode === 'demo' ? state.boats.length : '50'} bateaux disponibles avec leurs skippers</p>
+          <h2>${t('section_fleet')}</h2>
+          <p id="fleetSub">${t('section_fleet_sub')}</p>
         </div>
       </div>
 
       <div class="filters">
         <div class="filter-group">
-          <label>Lieu</label>
+          <label>${t('filter_location')}</label>
           <select id="filterLoc" onchange="onFilterChange()">
-            <option value="">Tous</option>
+            <option value="">${t('filter_all')}</option>
             ${LOCATIONS_MQ.map(l => `<option value="${l}" ${state.filters.location === l ? 'selected' : ''}>${l}</option>`).join('')}
           </select>
         </div>
         <div class="filter-group">
-          <label>Type de bateau</label>
+          <label>${t('filter_type')}</label>
           <select id="filterType" onchange="onFilterChange()">
-            <option value="">Tous</option>
-            ${BOAT_TYPES.map(t => `<option value="${t}" ${state.filters.type === t ? 'selected' : ''}>${t}</option>`).join('')}
+            <option value="">${t('filter_all')}</option>
+            ${BOAT_TYPES.map(bt => `<option value="${bt}" ${state.filters.type === bt ? 'selected' : ''}>${bt}</option>`).join('')}
           </select>
         </div>
         <div class="filter-group">
-          <label>Passagers min.</label>
+          <label>${t('filter_capacity')}</label>
           <input type="number" id="filterCap" min="1" max="30" value="${state.filters.capacity}" oninput="onFilterChange()" placeholder="Ex: 6">
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="resetFilters()" style="align-self: flex-end;">Réinitialiser</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetFilters()" style="align-self: flex-end;">${t('filter_reset')}</button>
       </div>
 
       <div class="filters-advanced">
         <button class="filters-toggle ${state.filters.showAdvanced ? 'open' : ''}" onclick="toggleAdvancedFilters()">
-          <span>🎯 Filtres avancés ${countActiveAdvancedFilters() > 0 ? `<span class="active-filters-count">${countActiveAdvancedFilters()}</span>` : ''}</span>
+          <span>${t('filter_advanced')} ${countActiveAdvancedFilters() > 0 ? `<span class="active-filters-count">${countActiveAdvancedFilters()}</span>` : ''}</span>
           <span class="arrow">▼</span>
         </button>
         <div class="filters-body ${state.filters.showAdvanced ? 'open' : ''}" id="advancedFiltersBody">
-          <div class="filter-label">Fourchette de prix (€ par sortie)</div>
+          <div class="filter-label">${t('filter_price_range')}</div>
           <div class="price-range-inputs">
             <input type="number" id="filterPriceMin" min="0" placeholder="Min" value="${state.filters.priceMin}" oninput="onAdvancedFilterChange()">
             <span class="dash">—</span>
             <input type="number" id="filterPriceMax" min="0" placeholder="Max" value="${state.filters.priceMax}" oninput="onAdvancedFilterChange()">
           </div>
 
-          <div class="filter-label">Note minimale</div>
+          <div class="filter-label">${t('filter_min_rating')}</div>
           <div class="star-filter" id="filterStars">
             ${[1,2,3,4,5].map(n => `<span class="star ${n <= state.filters.minRating ? 'filled' : ''}" onclick="setMinRating(${n})">★</span>`).join('')}
-            ${state.filters.minRating > 0 ? `<button class="btn btn-ghost btn-sm" onclick="setMinRating(0)" style="margin-left:8px;">Effacer</button>` : ''}
+            ${state.filters.minRating > 0 ? `<button class="btn btn-ghost btn-sm" onclick="setMinRating(0)" style="margin-left:8px;">${t('filter_clear')}</button>` : ''}
           </div>
 
-          <div class="filter-label">Créneaux disponibles</div>
+          <div class="filter-label">${t('filter_slots')}</div>
           <div class="chips-row">
             ${DURATIONS.map(d => `
               <span class="chip-filter ${state.filters.slots.includes(d.id) ? 'active' : ''}" onclick="toggleSlotFilter('${d.id}')">
@@ -2029,7 +2716,7 @@ async function viewHome() {
             `).join('')}
           </div>
 
-          <div class="filter-label">Équipement</div>
+          <div class="filter-label">${t('filter_equipment')}</div>
           <div class="chips-row">
             ${EQUIPMENT_OPTIONS.map(e => `
               <span class="chip-filter ${state.filters.equipment.includes(e) ? 'active' : ''}" onclick="toggleEquipFilter('${escapeHtml(e).replace(/'/g, '&#39;')}')">
@@ -2038,9 +2725,15 @@ async function viewHome() {
             `).join('')}
           </div>
 
+          <div class="mt-2">
+            <span class="chip-filter ${state.filters.favoritesOnly ? 'active' : ''}" onclick="toggleFavoritesFilter()">
+              ${t('filter_favorites')}
+            </span>
+          </div>
+
           <div class="mt-2" style="display: flex; justify-content: space-between; align-items: center;">
             <span class="small text-muted" id="filterResultCount"></span>
-            <button class="btn btn-ghost btn-sm" onclick="resetFilters()">Tout réinitialiser</button>
+            <button class="btn btn-ghost btn-sm" onclick="resetFilters()">${t('filter_reset')}</button>
           </div>
         </div>
       </div>
@@ -2050,7 +2743,44 @@ async function viewHome() {
   `;
 
   await fetchPublicBoats();
+  renderPublicStats();
   renderBoatGrid();
+}
+
+function renderPublicStats() {
+  const wrap = document.getElementById('publicStats');
+  if (!wrap) return;
+  const boats = state.boats.filter(b => b.status === 'active');
+  const reviews = state.reviews || [];
+  const avg = reviews.length ? reviews.reduce((s, r) => s + (r.rating || 0), 0) / reviews.length : 0;
+  // Met à jour le sous-titre flotte
+  const sub = document.getElementById('fleetSub');
+  if (sub) sub.textContent = `${boats.length} ${t('section_fleet_sub')}`;
+
+  wrap.innerHTML = `
+    <div class="public-stats">
+      <div class="public-stat">
+        <div class="stat-icon">⛵</div>
+        <div class="stat-big">${boats.length}</div>
+        <div class="stat-label">${t('stats_boats')}</div>
+      </div>
+      <div class="public-stat">
+        <div class="stat-icon">💬</div>
+        <div class="stat-big">${reviews.length}</div>
+        <div class="stat-label">${t('stats_reviews')}</div>
+      </div>
+      <div class="public-stat">
+        <div class="stat-icon">⭐</div>
+        <div class="stat-big">${reviews.length ? avg.toFixed(1) : '—'}</div>
+        <div class="stat-label">${t('stats_avg')}</div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleFavoritesFilter() {
+  state.filters.favoritesOnly = !state.filters.favoritesOnly;
+  render();
 }
 
 function toggleAdvancedFilters() {
@@ -2147,19 +2877,22 @@ function renderBoatGrid() {
     return f.slots.some(s => nb.availableSlots.includes(s));
   });
   if (f.equipment.length) list = list.filter(b => {
-    // "Skipper inclus" est traité comme b.withSkipper === true
     return f.equipment.every(e => {
       if (e === 'Skipper inclus') return !!b.withSkipper;
       return (b.equipment || []).indexOf(e) !== -1;
     });
   });
+  if (f.favoritesOnly) {
+    const favs = getFavorites();
+    list = list.filter(b => favs.includes(b.id));
+  }
 
   // Affiche le compteur de résultats
   const counter = document.getElementById('filterResultCount');
-  if (counter) counter.textContent = `${list.length} bateau${list.length > 1 ? 'x' : ''} correspondent`;
+  if (counter) counter.textContent = `${list.length} ${t('filter_result_count')}`;
 
   if (list.length === 0) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⛵</div><h3>Aucun bateau ne correspond</h3><p>Essayez d'élargir vos critères de recherche ou de réinitialiser les filtres.</p></div>`;
+    grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⛵</div><h3>${t('filter_no_match')}</h3><p>${t('filter_no_match_sub')}</p></div>`;
     return;
   }
 
@@ -2168,27 +2901,29 @@ function renderBoatGrid() {
     const dayPrice = getBoatSlotPrice(b, 'day');
     const showFrom = startPrice < dayPrice;
     const reviews = getBoatReviewsSummary(b.id);
+    const fav = isFav(b.id);
     return `
     <div class="boat-card" onclick="navigate('/boat/${b.id}')">
       <div class="boat-img" ${b.images?.[0] ? `style="background-image: url('${escapeHtml(b.images[0])}')"` : ''}>
         ${!b.images?.[0] ? `<div class="boat-img-placeholder">⛵</div>` : ''}
         <span class="boat-badge">${escapeHtml(b.type)}</span>
+        <button class="fav-btn ${fav ? 'active' : ''}" data-fav="${b.id}" onclick="toggleFav('${b.id}', event)" aria-label="Favori">${fav ? '❤️' : '🤍'}</button>
       </div>
       <div class="boat-body">
         <div class="boat-title">${escapeHtml(b.name)}</div>
         <div class="boat-location">📍 ${escapeHtml(b.location)}</div>
         <div class="boat-meta">
-          <span>👥 ${b.capacity} pers.</span>
-          ${b.withSkipper ? `<span>👨‍✈️ Skipper inclus</span>` : ''}
+          <span>👥 ${b.capacity} ${t('card_persons')}</span>
+          ${b.withSkipper ? `<span>👨‍✈️ ${t('card_skipper')}</span>` : ''}
           ${reviews.count > 0 ? `<span>${renderStars(reviews.avg, 12)} <span style="color: var(--text-2);">(${reviews.count})</span></span>` : ''}
         </div>
         <div class="boat-price">
           <div class="boat-price-stack">
-            ${showFrom ? '<span class="boat-price-label-top">à partir de</span>' : ''}
+            ${showFrom ? `<span class="boat-price-label-top">${t('card_from')}</span>` : ''}
             <span class="boat-price-amount">${fmtEUR(startPrice)}</span>
-            <span class="boat-price-unit">par sortie</span>
+            <span class="boat-price-unit">${t('card_per_outing')}</span>
           </div>
-          <span class="pill pill-info">Voir →</span>
+          <span class="pill pill-info">${t('card_see')}</span>
         </div>
       </div>
     </div>
@@ -2273,21 +3008,31 @@ async function viewBoatDetail(id) {
   const partiallyBookedDates = Object.keys(datesGrouped).filter(d => !fullyBookedDates.includes(d));
 
   const imgs = boat.images?.length ? boat.images : [];
-  const mainImg = imgs[0];
-  const thumbs = imgs.slice(1, 3);
   const startPrice = getBoatStartingPrice(boat);
   const policy = getBoatCancellationPolicy(boat);
 
+  // Initialise la galerie carrousel
+  _galleryImages = imgs.length ? imgs : [];
+  _galleryIdx = 0;
+
   main.innerHTML = `
     <div class="container">
-      <a class="back-link" onclick="navigate('/')">← Retour au catalogue</a>
+      <a class="back-link" onclick="navigate('/')">${t('detail_back')}</a>
 
-      <div class="gallery">
-        <div class="gallery-main" ${mainImg ? `style="background-image: url('${escapeHtml(mainImg)}')"` : ''}>
-          ${!mainImg ? `<div class="boat-img-placeholder">⛵</div>` : ''}
+      <div class="gallery-v2">
+        <div class="gallery-v2-main" ${imgs[0] ? `style="background-image: url('${escapeHtml(imgs[0])}')"` : ''}>
+          ${!imgs.length ? `<div class="placeholder">⛵</div>` : ''}
+          ${imgs.length > 1 ? `
+            <button class="gallery-v2-nav prev" onclick="galleryPrev()" aria-label="Image précédente">‹</button>
+            <button class="gallery-v2-nav next" onclick="galleryNext()" aria-label="Image suivante">›</button>
+            <span class="gallery-v2-count">1 / ${imgs.length}</span>
+          ` : ''}
         </div>
-        ${thumbs[0] ? `<div class="gallery-thumb" style="background-image: url('${escapeHtml(thumbs[0])}')"></div>` : `<div class="gallery-thumb"><div class="boat-img-placeholder">🌊</div></div>`}
-        ${thumbs[1] ? `<div class="gallery-thumb" style="background-image: url('${escapeHtml(thumbs[1])}')"></div>` : `<div class="gallery-thumb"><div class="boat-img-placeholder">🏝️</div></div>`}
+        ${imgs.length > 1 ? `
+          <div class="gallery-v2-thumbs">
+            ${imgs.map((url, i) => `<div class="gallery-v2-thumb ${i === 0 ? 'active' : ''}" style="background-image: url('${escapeHtml(url)}')" onclick="galleryGoTo(${i})"></div>`).join('')}
+          </div>
+        ` : ''}
       </div>
 
       <div class="detail-grid">
@@ -2362,51 +3107,70 @@ async function viewBoatDetail(id) {
           <div class="booking-card">
             <div class="booking-price">
               <span class="booking-price-amount">${fmtEUR(startPrice)}</span>
-              <span class="booking-price-unit">${startPrice < getBoatSlotPrice(boat, 'day') ? '· à partir de' : '/ journée'}</span>
+              <span class="booking-price-unit">${startPrice < getBoatSlotPrice(boat, 'day') ? '· ' + t('card_from') : '/ ' + t('card_per_outing')}</span>
             </div>
 
             ${renderAvailabilityHint(fullyBookedDates.length, partiallyBookedDates.length)}
 
+            ${getBoatMultiDay(boat).enabled ? `
+              <div class="multiday-toggle">
+                <input type="checkbox" id="resMultiDay" onchange="toggleMultiDayBooking('${boat.id}')">
+                <label for="resMultiDay">📅 ${t('booking_multiday')}</label>
+              </div>
+            ` : ''}
+
             <div class="form-group">
-              <label>Date souhaitée <span class="req">*</span></label>
-              <input type="text" id="resDate" class="form-control" placeholder="Sélectionnez une date">
+              <label>${t('booking_date')} <span class="req">*</span></label>
+              <input type="text" id="resDate" class="form-control" placeholder="${t('booking_date')}">
               <div id="dateInfoLine"></div>
               <div class="calendar-legend">
-                <span class="legend-item"><span class="legend-dot green"></span>Libre</span>
-                <span class="legend-item"><span class="legend-dot orange"></span>Partiel</span>
-                <span class="legend-item"><span class="legend-dot red"></span>Complet</span>
+                <span class="legend-item"><span class="legend-dot green"></span>${t('booking_calendar_free')}</span>
+                <span class="legend-item"><span class="legend-dot orange"></span>${t('booking_calendar_partial')}</span>
+                <span class="legend-item"><span class="legend-dot red"></span>${t('booking_calendar_full')}</span>
               </div>
             </div>
-            <div class="form-group">
-              <label>Créneau <span class="req">*</span></label>
+
+            <div class="multiday-fields" id="multidayFields">
+              <div class="form-group">
+                <label>${t('booking_multiday_end')} <span class="req">*</span></label>
+                <input type="text" id="resEndDate" class="form-control" placeholder="${t('booking_multiday_end')}">
+              </div>
+            </div>
+
+            <div class="form-group" id="durationGroup">
+              <label>${t('booking_slot')} <span class="req">*</span></label>
               <select id="resDuration" class="form-control" onchange="updateBookingPriceV2()"></select>
             </div>
+
             <div class="form-group">
-              <label>Votre nom <span class="req">*</span></label>
+              <label>${t('booking_name')} <span class="req">*</span></label>
               <input type="text" id="resName" class="form-control" placeholder="Prénom Nom">
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Email <span class="req">*</span></label>
+                <label>${t('booking_email')} <span class="req">*</span></label>
                 <input type="email" id="resEmail" class="form-control" placeholder="vous@email.fr">
               </div>
               <div class="form-group">
-                <label>Téléphone <span class="req">*</span></label>
+                <label>${t('booking_phone')} <span class="req">*</span></label>
                 <input type="tel" id="resPhone" class="form-control" placeholder="0696 ..">
               </div>
             </div>
 
-            <div id="bookingTotal" style="background: var(--primary-soft); padding: 12px 14px; border-radius: var(--radius); margin-bottom: 16px; display: flex; justify-content: space-between; align-items: baseline;">
-              <span style="color: var(--text-2); font-size: 13px;">Total estimé</span>
-              <strong id="bookingTotalAmount" style="color: var(--primary); font-size: 20px;">—</strong>
+            <div id="bookingTotal" style="background: var(--primary-soft); padding: 12px 14px; border-radius: var(--radius); margin-bottom: 16px;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <span style="color: var(--text-2); font-size: 13px;">${t('booking_total')}</span>
+                <strong id="bookingTotalAmount" style="color: var(--primary); font-size: 20px;">—</strong>
+              </div>
+              <div id="bookingDetail" class="small text-muted mt-1"></div>
             </div>
 
             <button class="btn btn-primary btn-block btn-lg" id="submitResBtn" onclick="submitReservation('${boat.id}')">
-              📩 Demander cette sortie
+              ${t('booking_book')}
             </button>
 
             <p class="small text-muted text-center mt-2" id="submitResHint">
-              Sélectionnez un créneau pour voir le mode de paiement
+              ${t('booking_select_slot')}
             </p>
           </div>
         </aside>
@@ -2543,24 +3307,95 @@ async function submitReview(boatId) {
   }
 }
 
+function toggleMultiDayBooking(boatId) {
+  const cb = document.getElementById('resMultiDay');
+  const multidayFields = document.getElementById('multidayFields');
+  const durationGroup = document.getElementById('durationGroup');
+  const boat = state.boats.find(b => b.id === boatId);
+  if (!cb || !multidayFields || !durationGroup || !boat) return;
+
+  const isMulti = cb.checked;
+  multidayFields.classList.toggle('open', isMulti);
+  durationGroup.style.display = isMulti ? 'none' : '';
+
+  // Initialise le datepicker de fin si nécessaire
+  if (isMulti) {
+    const endInput = document.getElementById('resEndDate');
+    if (endInput && !endInput._fp && typeof flatpickr !== 'undefined') {
+      endInput._fp = flatpickr(endInput, {
+        locale: 'fr',
+        minDate: 'today',
+        maxDate: new Date().fp_incr(365),
+        dateFormat: 'Y-m-d',
+        altInput: true,
+        altFormat: 'l j F Y',
+        onChange: () => updateBookingPriceV2()
+      });
+    }
+  }
+  updateBookingPriceV2();
+}
+
 function updateBookingPriceV2() {
   const boat = state.boats.find(b => b.id === _currentBoatId);
   if (!boat) return;
-  const sel = document.getElementById('resDuration');
-  const slotId = sel.value;
   const btn = document.getElementById('submitResBtn');
   const hint = document.getElementById('submitResHint');
+  const detail = document.getElementById('bookingDetail');
+  const totalEl = document.getElementById('bookingTotalAmount');
+
+  const multiCb = document.getElementById('resMultiDay');
+  const isMulti = multiCb?.checked;
+
+  if (isMulti) {
+    const start = document.getElementById('resDate')?.value;
+    const end = document.getElementById('resEndDate')?.value;
+    if (!start || !end) {
+      totalEl.textContent = '—';
+      if (detail) detail.textContent = '';
+      if (btn) btn.innerHTML = t('booking_book');
+      if (hint) hint.textContent = t('booking_select_slot');
+      return;
+    }
+    const days = daysBetween(start, end);
+    if (days < 2) {
+      totalEl.textContent = '—';
+      if (detail) detail.textContent = 'La date de fin doit être après la date de début.';
+      return;
+    }
+    const md = getBoatMultiDay(boat);
+    if (days < md.minDays || days > md.maxDays) {
+      totalEl.textContent = '—';
+      if (detail) detail.textContent = `Réservation multi-jours de ${md.minDays} à ${md.maxDays} jours.`;
+      return;
+    }
+    const calc = calcMultiDayPrice(boat, days);
+    totalEl.textContent = fmtEUR(calc.total);
+    if (detail) {
+      detail.innerHTML = `${days} jours × ${fmtEUR(calc.dailyPrice)} = ${fmtEUR(calc.subtotal)}` +
+        (calc.discountPct > 0 ? ` <br>− ${calc.discountPct}% remise multi-jours (${fmtEUR(calc.discount)})` : '');
+    }
+    // Pour multi-jours, pas de lien de paiement direct (le pro doit calculer manuellement)
+    if (btn) btn.innerHTML = t('booking_book');
+    if (hint) hint.textContent = 'Le propriétaire validera la disponibilité sur toute la plage';
+    return;
+  }
+
+  // Mode classique : un seul créneau
+  const sel = document.getElementById('resDuration');
+  const slotId = sel?.value;
   if (!slotId) {
-    document.getElementById('bookingTotalAmount').textContent = '—';
-    if (btn) btn.innerHTML = '📩 Demander cette sortie';
-    if (hint) hint.textContent = 'Sélectionnez un créneau pour voir le mode de paiement';
+    totalEl.textContent = '—';
+    if (detail) detail.textContent = '';
+    if (btn) btn.innerHTML = t('booking_book');
+    if (hint) hint.textContent = t('booking_select_slot');
     return;
   }
   const price = getBoatSlotPrice(boat, slotId);
-  document.getElementById('bookingTotalAmount').textContent = fmtEUR(price);
-  // Met à jour le label/hint selon présence d'un lien de paiement POUR CE CRÉNEAU
+  totalEl.textContent = fmtEUR(price);
+  if (detail) detail.textContent = '';
   const hasPay = !!getBoatPaymentLink(boat, slotId);
-  if (btn) btn.innerHTML = hasPay ? '💳 Réserver & Payer' : '📩 Demander cette sortie';
+  if (btn) btn.innerHTML = hasPay ? t('booking_book_pay') : t('booking_book');
   if (hint) hint.textContent = hasPay ? 'Paiement sécurisé en ligne après confirmation' : 'Le propriétaire vous contactera pour le paiement';
 }
 
@@ -2631,42 +3466,62 @@ async function submitReservation(boatId) {
   if (!boat) return;
   const dateInput = document.getElementById('resDate');
   const date = dateInput.value;
-  const durSelect = document.getElementById('resDuration');
-  const durId = durSelect.value;
   const name = document.getElementById('resName').value.trim();
   const email = document.getElementById('resEmail').value.trim();
   const phone = document.getElementById('resPhone').value.trim();
 
-  if (!date || !durId || !name || !email || !phone) { toast('Merci de remplir tous les champs requis', 'warning'); return; }
+  if (!date || !name || !email || !phone) { toast('Merci de remplir tous les champs requis', 'warning'); return; }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast('Email invalide', 'warning'); return; }
 
-  // Re-vérifie côté serveur que ce créneau est toujours libre
-  try {
-    let bookings = [];
-    if (state.mode === 'demo') {
-      bookings = state.reservations
-        .filter(r => r.boatId === boat.id && ['confirmed', 'pending'].includes(r.status))
-        .map(r => ({ startDate: r.startDate, durationType: r.durationType }));
-    } else {
-      const res = await syncToBackend('getBoatBookings', { boatId: boat.id });
-      if (res?.success) bookings = res.data || [];
-    }
-    _currentBookings = bookings;
-    if (!isSlotOfferedByBoat(boat, durId)) {
-      toast('Ce créneau n\'est pas proposé par ce bateau.', 'error');
-      return;
-    }
-    const takenOnDate = getTakenSlotsOnDate(date, bookings);
-    if (!isSlotCompatible(takenOnDate, durId)) {
-      const dur = DURATIONS.find(d => d.id === durId);
-      toast(`Le créneau "${dur?.shortLabel}" vient d'être pris pour cette date. Réessayez avec un autre.`, 'error');
-      refreshDurationOptions(boatId, date);
-      renderDateInfoLine(date);
-      return;
-    }
-  } catch (e) { log('slot recheck fail', e); }
+  // Mode multi-jours ?
+  const multiCb = document.getElementById('resMultiDay');
+  const isMulti = multiCb?.checked;
 
-  const totalPrice = getBoatSlotPrice(boat, durId);
+  let durId, endDate, totalPrice, days;
+  if (isMulti) {
+    endDate = document.getElementById('resEndDate')?.value;
+    if (!endDate) { toast('Sélectionnez une date de fin', 'warning'); return; }
+    days = daysBetween(date, endDate);
+    const md = getBoatMultiDay(boat);
+    if (days < md.minDays || days > md.maxDays) {
+      toast(`Le séjour doit faire entre ${md.minDays} et ${md.maxDays} jours.`, 'warning');
+      return;
+    }
+    durId = 'multiday';
+    totalPrice = calcMultiDayPrice(boat, days).total;
+  } else {
+    const durSelect = document.getElementById('resDuration');
+    durId = durSelect.value;
+    if (!durId) { toast('Sélectionnez un créneau', 'warning'); return; }
+
+    // Re-vérifie côté serveur que ce créneau est toujours libre
+    try {
+      let bookings = [];
+      if (state.mode === 'demo') {
+        bookings = state.reservations
+          .filter(r => r.boatId === boat.id && ['confirmed', 'pending'].includes(r.status))
+          .map(r => ({ startDate: r.startDate, durationType: r.durationType }));
+      } else {
+        const res = await syncToBackend('getBoatBookings', { boatId: boat.id });
+        if (res?.success) bookings = res.data || [];
+      }
+      _currentBookings = bookings;
+      if (!isSlotOfferedByBoat(boat, durId)) {
+        toast('Ce créneau n\'est pas proposé par ce bateau.', 'error');
+        return;
+      }
+      const takenOnDate = getTakenSlotsOnDate(date, bookings);
+      if (!isSlotCompatible(takenOnDate, durId)) {
+        const dur = DURATIONS.find(d => d.id === durId);
+        toast(`Le créneau "${dur?.shortLabel}" vient d'être pris pour cette date. Réessayez avec un autre.`, 'error');
+        refreshDurationOptions(boatId, date);
+        renderDateInfoLine(date);
+        return;
+      }
+    } catch (e) { log('slot recheck fail', e); }
+
+    totalPrice = getBoatSlotPrice(boat, durId);
+  }
 
   const reservation = {
     id: uid(),
@@ -2677,15 +3532,17 @@ async function submitReservation(boatId) {
     clientEmail: email,
     clientPhone: phone,
     startDate: date,
+    endDate: endDate || '',
     durationType: durId,
     totalPrice,
+    isMultiDay: !!isMulti,
+    daysCount: days || 1,
     paymentStatus: 'pending',
     status: 'pending',
-    clientToken: uid() + uid(),  // token long pour accès direct par lien
+    clientToken: uid() + uid(),
     createdAt: new Date().toISOString()
   };
 
-  // Mémorise l'email pour permettre à "Mes réservations" de la retrouver
   setClientEmail(email);
 
   showLoader();
@@ -2712,8 +3569,16 @@ async function submitReservation(boatId) {
 }
 
 function showReservationConfirmation(boat, reservation) {
-  const paymentLink = getBoatPaymentLink(boat, reservation.durationType);
+  const isMulti = reservation.isMultiDay || reservation.durationType === 'multiday';
+  const paymentLink = isMulti ? '' : getBoatPaymentLink(boat, reservation.durationType);
   const hasPayment = !!paymentLink;
+  const slotLabel = isMulti
+    ? `Séjour de ${reservation.daysCount || daysBetween(reservation.startDate, reservation.endDate)} jours`
+    : (DURATIONS.find(d => d.id === reservation.durationType)?.label || reservation.durationType);
+  const dateLabel = isMulti
+    ? `du ${fmtDate(reservation.startDate)} au ${fmtDate(reservation.endDate)}`
+    : fmtDate(reservation.startDate);
+
   modal(`
     <div class="modal-header">
       <h3>✅ Demande envoyée</h3>
@@ -2723,8 +3588,8 @@ function showReservationConfirmation(boat, reservation) {
       <p class="mb-2">Votre demande de réservation pour <strong>${escapeHtml(boat.name)}</strong> a bien été enregistrée.</p>
       <div style="background: var(--surface-2); padding: 16px; border-radius: var(--radius); margin-bottom: 16px;">
         <div class="small text-muted mb-1">Détails</div>
-        <div><strong>Date :</strong> ${fmtDate(reservation.startDate)}</div>
-        <div><strong>Créneau :</strong> ${DURATIONS.find(d => d.id === reservation.durationType).label}</div>
+        <div><strong>${isMulti ? 'Période' : 'Date'} :</strong> ${dateLabel}</div>
+        <div><strong>Formule :</strong> ${escapeHtml(slotLabel)}</div>
         <div><strong>Total :</strong> ${fmtEUR(reservation.totalPrice)}</div>
       </div>
       <p class="small text-muted mb-2">📧 Une confirmation a été envoyée à <strong>${escapeHtml(reservation.clientEmail)}</strong>. Vous pouvez retrouver toutes vos réservations à tout moment dans la rubrique « Mes réservations ».</p>
@@ -2755,7 +3620,7 @@ function renderAuthModal() {
   const localHint = LOCAL_MODE ? `
     <div style="background: var(--info-soft); border: 1px solid #bfdbfe; padding: 12px; border-radius: var(--radius); margin-bottom: 16px; font-size: 13px; color: #1e40af;">
       <strong>💡 Astuce</strong> — Le backend Google Sheets n'est pas encore configuré, l'app fonctionne sur un <strong>backend local</strong> (vos données restent dans ce navigateur).<br>
-      Compte de test pré-créé : <code style="background: white; padding: 1px 6px; border-radius: 4px;">test@batokreyol.fr</code> / <code style="background: white; padding: 1px 6px; border-radius: 4px;">test1234</code>
+      Compte de test pré-créé : <code style="background: white; padding: 1px 6px; border-radius: 4px;">test@tikanno.fr</code> / <code style="background: white; padding: 1px 6px; border-radius: 4px;">test1234</code>
     </div>
   ` : '';
 
@@ -2774,7 +3639,7 @@ function renderAuthModal() {
       ${authTab === 'login' ? `
         <div class="form-group">
           <label>Email <span class="req">*</span></label>
-          <input type="email" id="loginEmail" class="form-control" placeholder="vous@bateau.fr" value="${LOCAL_MODE ? 'test@batokreyol.fr' : ''}">
+          <input type="email" id="loginEmail" class="form-control" placeholder="vous@bateau.fr" value="${LOCAL_MODE ? 'test@tikanno.fr' : ''}">
         </div>
         <div class="form-group">
           <label>Mot de passe <span class="req">*</span></label>
@@ -2875,7 +3740,7 @@ async function doRegister() {
       state.currentUser = { type: 'pro', ...res.data };
       audit('register_success');
       closeModal();
-      toast('Compte créé ! Bienvenue sur BatoKreyòl.', 'success');
+      toast('Compte créé ! Bienvenue sur Ti Kanno.', 'success');
       navigate('/pro/dashboard');
     } else {
       toast(res?.error || 'Erreur lors de l\'inscription', 'error');
@@ -2905,28 +3770,28 @@ async function viewClientReservations() {
   main.innerHTML = `
     <div class="container">
       <div class="client-banner">
-        <h2>🎫 Mes réservations</h2>
-        <p>Retrouvez ici toutes vos sorties en bateau, annulez si besoin et laissez un avis après votre journée.</p>
+        <h2>${t('client_title')}</h2>
+        <p>${t('client_subtitle')}</p>
       </div>
 
       ${!email ? `
         <div style="max-width: 500px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px;">
-          <h3 style="font-size: 18px; margin-bottom: 12px;">Saisissez votre email</h3>
-          <p class="small text-muted mb-2">Nous afficherons toutes les réservations associées à cette adresse.</p>
+          <h3 style="font-size: 18px; margin-bottom: 12px;">${t('client_email_prompt')}</h3>
+          <p class="small text-muted mb-2">${t('client_email_hint')}</p>
           <div class="form-group">
             <input type="email" id="clientEmailInput" class="form-control" placeholder="vous@email.fr" autofocus>
           </div>
-          <button class="btn btn-primary btn-block" onclick="lookupClientReservations()">Afficher mes réservations</button>
+          <button class="btn btn-primary btn-block" onclick="lookupClientReservations()">${t('client_email_btn')}</button>
         </div>
       ` : `
         <div class="flex between center mb-2" style="flex-wrap: wrap; gap: 8px;">
           <div>
             <strong>${escapeHtml(email)}</strong>
-            <span class="small text-muted">· connecté en tant que client</span>
+            <span class="small text-muted">· ${t('client_logged_as')}</span>
           </div>
-          <button class="btn btn-ghost btn-sm" onclick="changeClientEmail()">Changer d'email</button>
+          <button class="btn btn-ghost btn-sm" onclick="changeClientEmail()">${t('client_change_email')}</button>
         </div>
-        <div id="clientResList"><div class="text-center text-muted">Chargement...</div></div>
+        <div id="clientResList"><div class="text-center text-muted">…</div></div>
       `}
     </div>
   `;
@@ -2977,11 +3842,11 @@ async function loadClientReservations(email) {
 
   wrap.innerHTML = `
     ${upcoming.length ? `
-      <h3 style="font-size: 16px; margin-bottom: 12px;">À venir (${upcoming.length})</h3>
+      <h3 style="font-size: 16px; margin-bottom: 12px;">${t('client_upcoming')} (${upcoming.length})</h3>
       ${upcoming.map(r => renderClientResItem(r)).join('')}
     ` : ''}
     ${past.length ? `
-      <h3 style="font-size: 16px; margin: 20px 0 12px;">Historique (${past.length})</h3>
+      <h3 style="font-size: 16px; margin: 20px 0 12px;">${t('client_history')} (${past.length})</h3>
       ${past.map(r => renderClientResItem(r)).join('')}
     ` : ''}
   `;
@@ -2991,6 +3856,7 @@ function renderClientResItem(r) {
   const boat = state.boats.find(b => b.id === r.boatId);
   const policy = boat ? getBoatCancellationPolicy(boat) : null;
   const duration = DURATIONS.find(d => d.id === r.durationType);
+  const isMulti = r.isMultiDay || r.durationType === 'multiday';
   const statusPill = {
     pending: { label: 'En attente', cls: 'pill-warning' },
     confirmed: { label: 'Confirmée', cls: 'pill-success' },
@@ -3000,8 +3866,11 @@ function renderClientResItem(r) {
 
   const canCancel = ['pending', 'confirmed'].includes(r.status);
   const canReview = r.status === 'completed';
-  // A déjà laissé un avis ?
   const hasReview = state.reviews.some(rev => rev.reservationId === r.id);
+
+  const dateBlock = isMulti
+    ? `🏖️ du ${fmtDate(r.startDate)} au ${fmtDate(r.endDate)} (${r.daysCount || daysBetween(r.startDate, r.endDate)} jours)`
+    : `📅 ${fmtDate(r.startDate)} · ${duration ? escapeHtml(duration.shortLabel) : r.durationType}`;
 
   return `
     <div class="res-list-item">
@@ -3011,15 +3880,15 @@ function renderClientResItem(r) {
           <span class="pill ${statusPill.cls}">${statusPill.label}</span>
         </div>
         <div class="small text-muted">
-          📅 ${fmtDate(r.startDate)} · ${duration ? escapeHtml(duration.shortLabel) : r.durationType} · ${fmtEUR(r.totalPrice)}
+          ${dateBlock} · ${fmtEUR(r.totalPrice)}
           ${r.refundAmount > 0 ? ` · 💸 Remboursé ${fmtEUR(r.refundAmount)}` : ''}
         </div>
         ${policy && canCancel ? `<div class="small text-muted mt-1">📋 Annulation : ${escapeHtml(policy.short)}</div>` : ''}
       </div>
       <div class="res-list-actions">
-        ${canCancel ? `<button class="btn btn-ghost btn-sm" onclick="clientCancelReservation('${r.id}')">✕ Annuler</button>` : ''}
-        ${canReview && !hasReview ? `<button class="btn btn-secondary btn-sm" onclick="clientReviewReservation('${r.id}')">⭐ Laisser un avis</button>` : ''}
-        ${canReview && hasReview ? `<span class="small text-muted">✅ Avis publié</span>` : ''}
+        ${canCancel ? `<button class="btn btn-ghost btn-sm" onclick="clientCancelReservation('${r.id}')">${t('client_cancel')}</button>` : ''}
+        ${canReview && !hasReview ? `<button class="btn btn-secondary btn-sm" onclick="clientReviewReservation('${r.id}')">${t('client_review')}</button>` : ''}
+        ${canReview && hasReview ? `<span class="small text-muted">${t('client_review_done')}</span>` : ''}
       </div>
     </div>
   `;
@@ -3440,7 +4309,8 @@ function viewBoatForm(editId) {
       prices: { ...normalized.prices },
       availableSlots: [...normalized.availableSlots],
       paymentLinks,
-      cancellationPolicy: normalized.cancellationPolicy || 'moderate'
+      cancellationPolicy: normalized.cancellationPolicy || 'moderate',
+      multiDay: normalized.multiDay || { enabled: false, minDays: 2, maxDays: 14, discount3plus: 10, discount7plus: 20 }
     };
   } else {
     const basePrice = 500;
@@ -3462,6 +4332,7 @@ function viewBoatForm(editId) {
       availableSlots: ['halfday', 'day', 'sunset'],
       paymentLinks: { halfday: '', day: '', sunset: '' },
       cancellationPolicy: 'moderate',
+      multiDay: { enabled: false, minDays: 2, maxDays: 14, discount3plus: 10, discount7plus: 20 },
       images: [],
       withSkipper: true,
       equipment: [],
@@ -3601,6 +4472,40 @@ function renderBoatForm(editing) {
 
       <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
 
+      <h3 style="font-size: 16px; margin-bottom: 8px;">📅 Réservation multi-jours (optionnel)</h3>
+      <p class="small text-muted mb-2">Activez si vous proposez la location pour plusieurs jours consécutifs (week-end, semaine…). Les remises s'appliquent automatiquement.</p>
+      <div class="multiday-toggle">
+        <input type="checkbox" id="bfMultiDay" ${b.multiDay?.enabled ? 'checked' : ''} onchange="onMultiDayToggle(${!!editing})">
+        <label for="bfMultiDay">Activer la réservation multi-jours pour ce bateau</label>
+      </div>
+      <div class="multiday-fields ${b.multiDay?.enabled ? 'open' : ''}" id="bfMultiDayFields">
+        <div class="discount-grid">
+          <span class="small">Durée min.</span>
+          <input type="number" id="bfMdMin" min="2" max="30" value="${b.multiDay?.minDays || 2}" placeholder="2"> 
+          <span class="small">jours</span>
+        </div>
+        <div class="discount-grid">
+          <span class="small">Durée max.</span>
+          <input type="number" id="bfMdMax" min="2" max="30" value="${b.multiDay?.maxDays || 14}" placeholder="14">
+          <span class="small">jours</span>
+        </div>
+        <div class="discount-grid">
+          <span class="small">Remise 3+ jours</span>
+          <input type="number" id="bfMdDisc3" min="0" max="50" value="${b.multiDay?.discount3plus ?? 10}" placeholder="10">
+          <span class="small">%</span>
+        </div>
+        <div class="discount-grid">
+          <span class="small">Remise 7+ jours</span>
+          <input type="number" id="bfMdDisc7" min="0" max="50" value="${b.multiDay?.discount7plus ?? 20}" placeholder="20">
+          <span class="small">%</span>
+        </div>
+        <div class="discount-summary">
+          💡 Exemple : <strong>${fmtEUR(getBoatSlotPrice(b, 'day'))}</strong>/jour × 7 jours = ${fmtEUR(getBoatSlotPrice(b, 'day') * 7)} − ${b.multiDay?.discount7plus ?? 20}% = <strong style="color: var(--primary);">${fmtEUR(Math.round(getBoatSlotPrice(b, 'day') * 7 * (1 - (b.multiDay?.discount7plus ?? 20) / 100)))}</strong>
+        </div>
+      </div>
+
+      <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
+
       <h3 style="font-size: 16px; margin-bottom: 8px;">📋 Politique d'annulation</h3>
       <p class="small text-muted mb-2">Choisissez la politique appliquée à vos clients en cas d'annulation. Elle sera affichée sur la fiche publique du bateau.</p>
       <div class="policy-cards">
@@ -3656,6 +4561,24 @@ function syncBoatFormFromDOM() {
     const pi = document.getElementById('pay-' + d.id);
     if (pi) b.paymentLinks[d.id] = pi.value.trim();
   });
+
+  // Multi-jours
+  if (!b.multiDay) b.multiDay = {};
+  const mdCb = document.getElementById('bfMultiDay');
+  if (mdCb) b.multiDay.enabled = mdCb.checked;
+  const mdMin = document.getElementById('bfMdMin');
+  const mdMax = document.getElementById('bfMdMax');
+  const mdD3 = document.getElementById('bfMdDisc3');
+  const mdD7 = document.getElementById('bfMdDisc7');
+  if (mdMin) b.multiDay.minDays = Number(mdMin.value) || 2;
+  if (mdMax) b.multiDay.maxDays = Number(mdMax.value) || 14;
+  if (mdD3) b.multiDay.discount3plus = Number(mdD3.value) || 0;
+  if (mdD7) b.multiDay.discount7plus = Number(mdD7.value) || 0;
+}
+
+function onMultiDayToggle(editing) {
+  syncBoatFormFromDOM();
+  renderBoatForm(editing);
 }
 
 function selectCancellationPolicy(policyId, editing) {
@@ -3824,12 +4747,26 @@ function renderCalendarHTML() {
     return true;
   });
 
-  // Mappe par date
+  // Mappe par date — les réservations multi-jours sont répétées sur chaque date de leur plage
   const eventsByDate = {};
   filtered.forEach(r => {
     if (!r.startDate) return;
-    if (!eventsByDate[r.startDate]) eventsByDate[r.startDate] = [];
-    eventsByDate[r.startDate].push(r);
+    const isMulti = r.isMultiDay || r.durationType === 'multiday' || (r.endDate && r.endDate !== r.startDate);
+    if (!isMulti) {
+      if (!eventsByDate[r.startDate]) eventsByDate[r.startDate] = [];
+      eventsByDate[r.startDate].push({ ...r, _isMultiSpan: false });
+    } else {
+      // Étend sur toute la plage
+      const start = new Date(r.startDate + 'T00:00:00');
+      const end = new Date((r.endDate || r.startDate) + 'T00:00:00');
+      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+        const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        if (!eventsByDate[iso]) eventsByDate[iso] = [];
+        const isFirst = iso === r.startDate;
+        const isLast = iso === (r.endDate || r.startDate);
+        eventsByDate[iso].push({ ...r, _isMultiSpan: true, _isFirstDay: isFirst, _isLastDay: isLast });
+      }
+    }
   });
 
   // Construit la grille (commence lundi)
@@ -3894,7 +4831,9 @@ function renderCalendarHTML() {
           <div class="cal-day ${isToday ? 'today' : ''}">
             <div class="cal-day-number">${c.day}</div>
             ${events.slice(0, 3).map(r => {
-              const slotIcon = r.durationType === 'halfday' ? '🌅' : r.durationType === 'sunset' ? '🌇' : '☀️';
+              const slotIcon = r._isMultiSpan
+                ? (r._isFirstDay ? '🏖️▶' : r._isLastDay ? '◀🏖️' : '🏖️')
+                : (r.durationType === 'halfday' ? '🌅' : r.durationType === 'sunset' ? '🌇' : '☀️');
               const color = getBoatColor(r.boatId);
               const statusClass = r.status === 'cancelled' ? 'cancelled' : r.status === 'pending' ? 'pending' : r.status === 'completed' ? 'completed' : '';
               const style = statusClass ? '' : `style="background:${color};"`;
@@ -4356,8 +5295,8 @@ function setupPWA() {
   const iconSVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><rect width="512" height="512" rx="110" fill="#0e6e6e"/><text x="256" y="340" font-size="280" text-anchor="middle" fill="white" font-family="system-ui">⛵</text></svg>';
   const iconURL = 'data:image/svg+xml;utf8,' + encodeURIComponent(iconSVG);
   const manifest = {
-    name: 'BatoKreyòl — Louer un bateau en Martinique',
-    short_name: 'BatoKreyòl',
+    name: 'Ti Kanno — Louer un bateau en Martinique',
+    short_name: 'Ti Kanno',
     description: 'Louez votre bateau avec skipper en Martinique. Marketplace nautique 100% locale.',
     start_url: './',
     scope: './',
@@ -4419,7 +5358,7 @@ async function installPWA() {
   const isiOS = /iPad|iPhone|iPod/.test(ua);
   const isAndroid = /Android/.test(ua);
   modal(`
-    <div class="modal-header"><h3>📱 Installer BatoKreyòl</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-header"><h3>📱 Installer Ti Kanno</h3><button class="modal-close" onclick="closeModal()">×</button></div>
     <div class="modal-body">
       ${isiOS ? `
         <p class="mb-2">Sur iPhone / iPad :</p>
@@ -4440,7 +5379,7 @@ async function installPWA() {
         <p class="mb-2">Sur ordinateur (Chrome, Edge) :</p>
         <ol style="padding-left: 18px; line-height: 1.8;">
           <li>Ouvrez le menu <strong>⋮</strong> en haut à droite</li>
-          <li>Cliquez sur <strong>« Installer BatoKreyòl »</strong> ou <strong>« Plus d'outils → Créer un raccourci »</strong></li>
+          <li>Cliquez sur <strong>« Installer Ti Kanno »</strong> ou <strong>« Plus d'outils → Créer un raccourci »</strong></li>
           <li>Cochez « Ouvrir comme une fenêtre » et validez</li>
         </ol>
         <p class="small text-muted mt-2">Sur Firefox, vous pouvez épingler l'onglet pour un accès rapide.</p>
