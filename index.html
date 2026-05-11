@@ -1665,6 +1665,14 @@
   .footer a { color: var(--text-2); }
   .footer .version { color: var(--text-3); font-size: 12px; margin-top: 6px; font-family: var(--font-mono); }
 
+  /* En mobile, dans l'espace pro/admin, le footer doit éviter d'être masqué
+     par la bottom navigation bar (hauteur ~70-80px + safe-area-inset). */
+  @media (max-width: 900px) {
+    body.in-pro .footer {
+      padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
   /* ====== UTILS ====== */
   .hidden { display: none !important; }
   .text-center { text-align: center; }
@@ -1861,7 +1869,7 @@
       <a class="footer-link" onclick="navigate('/client')">Mes réservations</a>
     </div>
     <div>Ti Kanno — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v1.0.5 — 2026</div>
+    <div class="version">v1.0.6 — 2026</div>
   </footer>
 </div>
 
@@ -1871,11 +1879,11 @@
 
 <script>
 /* ============================================================
-   Ti Kanno v1.0.5
+   Ti Kanno v1.0.6
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v1.0.5';
+const VERSION = 'v1.0.6';
 const APP_NAME = 'Ti Kanno';
 const APP_TAGLINE = 'Marketplace nautique 100% Martinique';
 
@@ -3240,7 +3248,9 @@ function toggleNavDrawer(force) {
 function render() {
   const main = document.getElementById('main');
   const nav = document.getElementById('headerNav');
-  document.body.classList.toggle('in-pro', state.view.startsWith('/pro/') && state.currentUser);
+  const inProArea = (state.view.startsWith('/pro/') && state.currentUser) ||
+                    (state.view === '/admin' && isAdmin(state.currentUser));
+  document.body.classList.toggle('in-pro', inProArea);
 
   // Pill démo intégré au header (à côté du logo)
   const existingPill = document.getElementById('demoPillHeader');
