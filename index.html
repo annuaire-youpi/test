@@ -1697,7 +1697,7 @@
       <a class="footer-link" onclick="navigate('/client')">Mes réservations</a>
     </div>
     <div>Ti Kanno — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v1.0 — 2026</div>
+    <div class="version">v1.0.1 — 2026</div>
   </footer>
 </div>
 
@@ -1707,11 +1707,11 @@
 
 <script>
 /* ============================================================
-   Ti Kanno v1.0
+   Ti Kanno v1.0.1
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v1.0';
+const VERSION = 'v1.0.1';
 const APP_NAME = 'Ti Kanno';
 const APP_TAGLINE = 'Marketplace nautique 100% Martinique';
 
@@ -2083,7 +2083,7 @@ const PLANS = [
       charts: true,
       paymentLinksCount: 3,
       featuredCatalog: false,
-      verifiedBadgeEligible: false,
+      verifiedBadgeEligible: true,
       csvExport: false,
       prioritySupport: false
     },
@@ -2094,8 +2094,8 @@ const PLANS = [
       { ok: true, txt: 'Politique d\'annulation personnalisée' },
       { ok: true, txt: 'Graphiques détaillés (CA, occupation)' },
       { ok: true, txt: '3 liens de paiement par bateau' },
-      { ok: false, txt: 'Pas de mise en avant catalogue' },
-      { ok: false, txt: 'Pas éligible au badge Pro Vérifié' }
+      { ok: true, txt: '🛟 Éligible au badge Pro Vérifié' },
+      { ok: false, txt: 'Pas de mise en avant catalogue (🚀 Premium)' }
     ]
   },
   {
@@ -2122,7 +2122,7 @@ const PLANS = [
     bullets: [
       { ok: true, txt: 'Bateaux illimités' },
       { ok: true, txt: 'Toutes les fonctions Pro incluses' },
-      { ok: true, txt: '🚀 Mise en avant dans le catalogue' },
+      { ok: true, txt: '🚀 Badge Premium automatique (mise en avant catalogue)' },
       { ok: true, txt: '🛟 Éligible au badge Pro Vérifié' },
       { ok: true, txt: 'Export CSV des réservations (compta)' },
       { ok: true, txt: 'Support prioritaire' },
@@ -4265,11 +4265,15 @@ function viewPricing() {
         </div>
         <div class="faq-item">
           <div class="q">Comment fonctionne le badge « 🛟 Pro Vérifié » ?</div>
-          <div class="a">Réservé au plan Premium. Vous nous transmettez votre pièce d'identité, votre Kbis, votre assurance RC Pro et votre permis bateau. Notre équipe valide manuellement sous 24-48h ouvrées.</div>
+          <div class="a">Réservé aux abonnés payants (à partir du plan Pro à 19 €/mois). Vous nous transmettez votre pièce d'identité, votre Kbis, votre assurance RC Pro et votre permis bateau. Notre équipe valide manuellement sous 24-48h ouvrées.</div>
         </div>
         <div class="faq-item">
-          <div class="q">Le badge « 🚀 Premium » sur les annonces, c'est quoi ?</div>
-          <div class="a">C'est le badge des abonnés Premium. Leurs bateaux remontent automatiquement en tête du catalogue pour une visibilité maximale.</div>
+          <div class="q">Quelle est la différence entre les badges « 🛟 Pro Vérifié » et « 🚀 Premium » ?</div>
+          <div class="a">Ils répondent à des besoins différents. <strong>🛟 Pro Vérifié</strong> est un badge <em>administratif</em> : il prouve que vous êtes une entreprise réelle avec assurance et permis valides (gage de confiance pour le client). <strong>🚀 Premium</strong> est un badge <em>commercial</em> : il signifie que vous êtes abonné Premium et que vos bateaux sont mis en avant dans le catalogue (gage de visibilité). Vous pouvez avoir l'un, l'autre, ou les deux.</div>
+        </div>
+        <div class="faq-item">
+          <div class="q">Le badge « 🚀 Premium » sur les annonces, comment je l'obtiens ?</div>
+          <div class="a">Automatiquement, dès que vous activez le plan Premium à 49 €/mois. Vos bateaux remontent en tête du catalogue et portent ce badge en permanence pendant toute la durée de votre abonnement.</div>
         </div>
         <div class="faq-item">
           <div class="q">Avez-vous un code promo pour les early adopters ?</div>
@@ -6206,8 +6210,8 @@ function viewProVerification() {
 
     ${!eligible ? `
       <div class="policy-info" style="background: #fef3c7; border-left-color: #d97706;">
-        <strong>🔒 Réservé au plan Premium.</strong> Le badge Pro Vérifié n'est disponible qu'avec le plan ${getPlan('premium').badge} Premium.
-        <div class="mt-1"><button class="btn btn-primary btn-sm" onclick="navigate('/pro/billing')">Passer Premium →</button></div>
+        <strong>🔒 Réservé aux abonnés payants.</strong> La certification Pro Vérifié est disponible à partir du plan ${getPlan('pro').badge} <strong>Pro (19 €/mois)</strong>. La vérification manuelle de vos documents demande du travail à notre équipe, c'est pourquoi nous la réservons aux comptes engagés.
+        <div class="mt-1"><button class="btn btn-primary btn-sm" onclick="navigate('/pro/billing')">Passer Pro →</button></div>
       </div>
     ` : ''}
 
