@@ -451,15 +451,22 @@
       top: auto;
       border-right: none;
       border-top: 1px solid var(--border);
-      display: flex;
-      padding: 8px;
-      gap: 4px;
+      padding: 4px 4px calc(4px + env(safe-area-inset-bottom));
+      gap: 0;
       z-index: 40;
+      box-shadow: 0 -2px 8px rgba(0,0,0,.06);
     }
     .dash-content { padding-bottom: 80px !important; }
   }
   .dash-nav { display: flex; flex-direction: column; gap: 2px; }
-  @media (max-width: 900px) { .dash-nav { flex-direction: row; flex: 1; justify-content: space-around; } }
+  @media (max-width: 900px) {
+    .dash-nav {
+      flex-direction: row;
+      flex: 1;
+      justify-content: space-around;
+      align-items: stretch;
+    }
+  }
   .dash-nav-item {
     display: flex;
     align-items: center;
@@ -471,13 +478,114 @@
     font-size: 14px;
     cursor: pointer;
     transition: all .15s;
+    text-decoration: none;
   }
   .dash-nav-item:hover { background: var(--surface-2); color: var(--text); }
   .dash-nav-item.active { background: var(--primary-soft); color: var(--primary); }
   @media (max-width: 900px) {
-    .dash-nav-item { flex-direction: column; gap: 2px; font-size: 11px; padding: 6px 8px; }
-    .dash-nav-item .nav-icon { font-size: 18px; }
+    /* Bottom nav mobile : 5 items max (4 + bouton Plus), icônes au-dessus */
+    .dash-nav-item {
+      flex: 1;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      font-size: 10px;
+      padding: 8px 4px;
+      min-width: 0;
+      max-width: 80px;
+      border-radius: 10px;
+    }
+    .dash-nav-item .nav-icon { font-size: 22px; line-height: 1; }
+    .dash-nav-item .nav-label {
+      display: block;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    /* Item "Plus" : styling spécial */
+    .dash-nav-item.more-btn {
+      color: var(--text-2);
+    }
+    .dash-nav-item.more-btn.has-active {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+    /* Cache les items hors top-5 sur mobile */
+    .dash-nav-item.mobile-hidden { display: none; }
+    /* Affiche le bouton "Plus" sur mobile */
+    .dash-nav-item.more-btn { display: flex !important; }
   }
+  /* Sur desktop, le bouton Plus reste caché */
+  @media (min-width: 901px) {
+    .dash-nav-item.more-btn { display: none !important; }
+  }
+
+  /* Switch desktop/mobile sur les labels de navigation pro */
+  .nav-label-mobile { display: none; }
+  @media (max-width: 900px) {
+    .nav-label-desktop { display: none; }
+    .nav-label-mobile { display: block; }
+  }
+
+  /* ====== BOTTOM SHEET (drawer "Plus" sur mobile) ====== */
+  .bottom-sheet-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 50;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+  }
+  .bottom-sheet-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .bottom-sheet {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    background: var(--surface);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 8px 12px calc(20px + env(safe-area-inset-bottom));
+    z-index: 51;
+    transform: translateY(100%);
+    transition: transform .25s cubic-bezier(.2,.8,.2,1);
+    box-shadow: 0 -8px 32px rgba(0,0,0,.15);
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+  .bottom-sheet.open { transform: translateY(0); }
+  .bottom-sheet-handle {
+    width: 40px; height: 4px;
+    background: var(--border-strong);
+    border-radius: 2px;
+    margin: 8px auto 16px;
+  }
+  .bottom-sheet-title {
+    font-weight: 800;
+    font-size: 16px;
+    padding: 0 8px 12px;
+    color: var(--text);
+  }
+  .bottom-sheet-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 12px;
+    border-radius: var(--radius);
+    color: var(--text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+    text-decoration: none;
+  }
+  .bottom-sheet-item:hover, .bottom-sheet-item:active { background: var(--surface-2); }
+  .bottom-sheet-item.active { background: var(--primary-soft); color: var(--primary); }
+  .bottom-sheet-item .bs-icon { font-size: 22px; }
+  .bottom-sheet-item .bs-label { font-size: 15px; }
+
   .dash-content { padding: 32px; }
   @media (max-width: 640px) { .dash-content { padding: 20px 16px; } }
 
@@ -1697,7 +1805,7 @@
       <a class="footer-link" onclick="navigate('/client')">Mes réservations</a>
     </div>
     <div>Ti Kanno — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v1.0.1 — 2026</div>
+    <div class="version">v1.0.3 — 2026</div>
   </footer>
 </div>
 
@@ -1707,11 +1815,11 @@
 
 <script>
 /* ============================================================
-   Ti Kanno v1.0.1
+   Ti Kanno v1.0.3
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v1.0.1';
+const VERSION = 'v1.0.3';
 const APP_NAME = 'Ti Kanno';
 const APP_TAGLINE = 'Marketplace nautique 100% Martinique';
 
@@ -2186,6 +2294,28 @@ function getVerificationStatus(user) {
 }
 function isVerified(user) {
   return getVerificationStatus(user) === 'verified';
+}
+
+/* ============================================================
+   ADMINISTRATEURS — Whitelist d'emails
+   ============================================================
+   Ajoutez ici votre adresse email pro pour voir apparaître l'onglet
+   « 🛟 Admin » dans le menu pro lorsque vous êtes connecté. Les autres
+   pros ne le verront pas. Les emails sont comparés en minuscules.
+
+   Exemple en production :
+     'olivier@tikanno.fr',
+     'contact@votre-domaine.fr'
+*/
+const ADMIN_EMAILS = [
+  'test@tikanno.fr',          // Compte de test démo (vous pouvez le retirer en prod)
+  'jm@karayib.demo',          // Pro démo Karayib Charter — pour tester en démo
+  // 'votre.email@domaine.fr'  // ← ajoutez votre email réel ici
+];
+
+function isAdmin(user) {
+  if (!user || !user.email) return false;
+  return ADMIN_EMAILS.indexOf(String(user.email).toLowerCase()) !== -1;
 }
 
 /* ---------- STATE ---------- */
@@ -3043,7 +3173,18 @@ function render() {
   // Drawer mobile (overlay glissant)
   renderNavDrawer(links, isPro, langSwitcher);
 
-  if (_pwaDeferredPrompt) document.getElementById('installBtn')?.classList.add('visible');
+  // Affiche le bouton "Installer" UNIQUEMENT si la PWA n'est pas déjà installée
+  try {
+    const installed =
+      (window.matchMedia && (window.matchMedia('(display-mode: standalone)').matches || window.matchMedia('(display-mode: minimal-ui)').matches))
+      || window.navigator.standalone === true
+      || localStorage.getItem('tk_pwa_installed') === '1';
+    const btn = document.getElementById('installBtn');
+    if (btn) {
+      if (installed) btn.classList.remove('visible');
+      else if (_pwaDeferredPrompt) btn.classList.add('visible');
+    }
+  } catch {}
 
   // Route
   const path = state.view;
@@ -4301,20 +4442,28 @@ const ADMIN_PASSWORD_KEY = 'tk_admin_token';
 
 function viewAdmin() {
   const main = document.getElementById('main');
-  // Auth simple par mot de passe stocké en sessionStorage
-  let adminOk = false;
-  try { adminOk = sessionStorage.getItem(ADMIN_PASSWORD_KEY) === '1'; } catch {}
+
+  // Accès AUTOMATIQUE si l'utilisateur connecté est dans la whitelist ADMIN_EMAILS
+  // (pas besoin de saisir un mot de passe puisqu'il s'est déjà authentifié comme pro)
+  const autoAdmin = isAdmin(state.currentUser);
+
+  // Sinon, fallback : auth par mot de passe stocké en sessionStorage
+  let adminOk = autoAdmin;
+  if (!autoAdmin) {
+    try { adminOk = sessionStorage.getItem(ADMIN_PASSWORD_KEY) === '1'; } catch {}
+  }
 
   if (!adminOk) {
     main.innerHTML = `
       <div class="container" style="max-width: 460px;">
         <div class="card" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; margin-top: 40px;">
           <h2 style="margin-bottom: 12px;">🔐 Accès Administration</h2>
-          <p class="small text-muted mb-2">Cette zone est réservée à l'équipe Ti Kanno. Entrez le mot de passe administrateur pour continuer.</p>
+          <p class="small text-muted mb-2">Cette zone est réservée à l'équipe Ti Kanno. ${state.currentUser ? 'Votre email n\'est pas dans la liste des administrateurs.' : 'Connectez-vous d\'abord avec un compte administrateur, ou entrez le mot de passe ci-dessous.'}</p>
           <div class="form-group">
             <input type="password" id="adminPwd" class="form-control" placeholder="Mot de passe admin" autofocus onkeydown="if(event.key==='Enter') tryAdminLogin()">
           </div>
           <button class="btn btn-primary btn-block" onclick="tryAdminLogin()">Se connecter</button>
+          ${!state.currentUser ? `<button class="btn btn-ghost btn-block mt-1" onclick="openAuthModal()">Ou connectez-vous comme pro admin</button>` : ''}
           <p class="small text-muted text-center mt-2">${state.mode === 'demo' ? '💡 En démo, mot de passe : <code>admin</code>' : ''}</p>
         </div>
       </div>
@@ -4330,9 +4479,11 @@ function viewAdmin() {
       <div class="section-head">
         <div>
           <h2>🛟 Administration — Vérifications</h2>
-          <p>Validez ou refusez les demandes de Pro Vérifié en attente.</p>
+          <p>Validez ou refusez les demandes de Pro Vérifié en attente.${autoAdmin ? ` Connecté en tant que <strong>${escapeHtml(state.currentUser.name)}</strong>.` : ''}</p>
         </div>
-        <button class="btn btn-ghost btn-sm" onclick="adminLogout()">Déconnexion admin</button>
+        ${autoAdmin
+          ? `<button class="btn btn-ghost btn-sm" onclick="navigate('/pro/dashboard')">← Retour à mon espace pro</button>`
+          : `<button class="btn btn-ghost btn-sm" onclick="adminLogout()">Déconnexion admin</button>`}
       </div>
 
       <div id="adminContent"><div class="text-center text-muted">Chargement…</div></div>
@@ -4908,6 +5059,66 @@ function renderDashboardCharts(reservations, boats) {
 function renderProLayout(content, active) {
   const main = document.getElementById('main');
   const nav = [
+    { id: 'dashboard', label: 'Tableau de bord', shortLabel: 'Accueil', icon: '📊', path: '/pro/dashboard' },
+    { id: 'boats', label: 'Mes bateaux', shortLabel: 'Bateaux', icon: '⛵', path: '/pro/boats' },
+    { id: 'reservations', label: 'Réservations', shortLabel: 'Résa', icon: '📅', path: '/pro/reservations' },
+    { id: 'calendar', label: 'Calendrier', shortLabel: 'Calendrier', icon: '🗓️', path: '/pro/calendar' },
+    { id: 'reviews', label: 'Avis', shortLabel: 'Avis', icon: '⭐', path: '/pro/reviews' },
+    { id: 'billing', label: 'Mon abonnement', shortLabel: 'Abo', icon: '💳', path: '/pro/billing' },
+    { id: 'verify', label: 'Vérification', shortLabel: 'Vérif', icon: '🛟', path: '/pro/verify' },
+    { id: 'profile', label: 'Profil', shortLabel: 'Profil', icon: '👤', path: '/pro/profile' },
+  ];
+  // Onglet Admin uniquement pour les emails de la whitelist ADMIN_EMAILS
+  if (isAdmin(state.currentUser)) {
+    nav.push({ id: 'admin', label: 'Admin', shortLabel: 'Admin', icon: '🛟', path: '/admin', highlight: true });
+  }
+  main.innerHTML = `
+    <div class="dash-layout">
+      <aside class="dash-sidebar">
+        <nav class="dash-nav">
+          ${renderProNavItems(nav, active)}
+        </nav>
+      </aside>
+      <div class="dash-content">${content}</div>
+    </div>
+  `;
+}
+
+/* Détermine les 4 entrées principales (toujours visibles sur mobile)
+   + un bouton "Plus" qui ouvre une bottom-sheet pour le reste. */
+const PRO_NAV_PRIMARY_IDS = ['dashboard', 'boats', 'reservations', 'reviews'];
+
+function renderProNavItems(nav, active) {
+  const primary = nav.filter(n => PRO_NAV_PRIMARY_IDS.indexOf(n.id) !== -1);
+  const secondary = nav.filter(n => PRO_NAV_PRIMARY_IDS.indexOf(n.id) === -1);
+  const isSecondaryActive = secondary.some(n => n.id === active);
+
+  return `
+    ${nav.map(n => {
+      const isPrimary = PRO_NAV_PRIMARY_IDS.indexOf(n.id) !== -1;
+      const mobileClass = isPrimary ? '' : 'mobile-hidden';
+      // Sur desktop : label complet ; sur mobile : shortLabel (via deux <span>)
+      return `
+        <a class="dash-nav-item ${active === n.id ? 'active' : ''} ${mobileClass}" onclick="navigate('${n.path}')">
+          <span class="nav-icon">${n.icon}</span>
+          <span class="nav-label nav-label-desktop">${escapeHtml(n.label)}</span>
+          <span class="nav-label nav-label-mobile">${escapeHtml(n.shortLabel || n.label)}</span>
+        </a>
+      `;
+    }).join('')}
+    <!-- Bouton "Plus" visible UNIQUEMENT sur mobile (CSS) -->
+    <a class="dash-nav-item more-btn ${isSecondaryActive ? 'has-active' : ''}" onclick="openProMoreSheet('${active}')" id="proMoreBtn">
+      <span class="nav-icon">☰</span>
+      <span class="nav-label nav-label-mobile">Plus</span>
+    </a>
+  `;
+}
+
+/* CSS-driven : sur mobile (<=900px), on affiche aussi le bouton "Plus".
+   Sur desktop il reste masqué (la sidebar montre tout). */
+function openProMoreSheet(activeId) {
+  // Reconstruit la liste des items secondaires (basée sur le statut admin)
+  const baseNav = [
     { id: 'dashboard', label: 'Tableau de bord', icon: '📊', path: '/pro/dashboard' },
     { id: 'boats', label: 'Mes bateaux', icon: '⛵', path: '/pro/boats' },
     { id: 'reservations', label: 'Réservations', icon: '📅', path: '/pro/reservations' },
@@ -4917,20 +5128,54 @@ function renderProLayout(content, active) {
     { id: 'verify', label: 'Vérification', icon: '🛟', path: '/pro/verify' },
     { id: 'profile', label: 'Profil', icon: '👤', path: '/pro/profile' },
   ];
-  main.innerHTML = `
-    <div class="dash-layout">
-      <aside class="dash-sidebar">
-        <nav class="dash-nav">
-          ${nav.map(n => `
-            <a class="dash-nav-item ${active === n.id ? 'active' : ''}" onclick="navigate('${n.path}')">
-              <span class="nav-icon">${n.icon}</span><span>${n.label}</span>
-            </a>
-          `).join('')}
-        </nav>
-      </aside>
-      <div class="dash-content">${content}</div>
-    </div>
+  if (isAdmin(state.currentUser)) {
+    baseNav.push({ id: 'admin', label: 'Administration', icon: '🛟', path: '/admin' });
+  }
+  const secondary = baseNav.filter(n => PRO_NAV_PRIMARY_IDS.indexOf(n.id) === -1);
+
+  // Crée le DOM de la bottom-sheet
+  const existing = document.getElementById('proMoreSheet');
+  if (existing) existing.remove();
+  const existingBd = document.getElementById('proMoreBackdrop');
+  if (existingBd) existingBd.remove();
+
+  const backdrop = document.createElement('div');
+  backdrop.id = 'proMoreBackdrop';
+  backdrop.className = 'bottom-sheet-backdrop';
+  backdrop.onclick = closeProMoreSheet;
+  document.body.appendChild(backdrop);
+
+  const sheet = document.createElement('div');
+  sheet.id = 'proMoreSheet';
+  sheet.className = 'bottom-sheet';
+  sheet.innerHTML = `
+    <div class="bottom-sheet-handle"></div>
+    <div class="bottom-sheet-title">Plus d'options</div>
+    ${secondary.map(n => `
+      <a class="bottom-sheet-item ${activeId === n.id ? 'active' : ''}" onclick="closeProMoreSheet(); navigate('${n.path}');">
+        <span class="bs-icon">${n.icon}</span>
+        <span class="bs-label">${escapeHtml(n.label)}</span>
+      </a>
+    `).join('')}
   `;
+  document.body.appendChild(sheet);
+
+  // Animation d'ouverture (frame suivante pour que la transition CSS marche)
+  requestAnimationFrame(() => {
+    backdrop.classList.add('open');
+    sheet.classList.add('open');
+  });
+}
+
+function closeProMoreSheet() {
+  const sheet = document.getElementById('proMoreSheet');
+  const backdrop = document.getElementById('proMoreBackdrop');
+  if (sheet) sheet.classList.remove('open');
+  if (backdrop) backdrop.classList.remove('open');
+  setTimeout(() => {
+    sheet?.remove();
+    backdrop?.remove();
+  }, 250);
 }
 
 function renderReservationsTable(list) {
@@ -6484,26 +6729,46 @@ function setupPWA() {
     log('manifest injected');
   } catch (e) { log('manifest fail', e); }
 
+  // Détection : la PWA est-elle déjà installée ?
+  // - display-mode: standalone → ouverte depuis l'icône (Chrome/Android, Edge, Safari iOS récent)
+  // - navigator.standalone → fallback iOS Safari ancien
+  // - flag tk_pwa_installed dans localStorage → mémoire de l'install
+  function isPWAInstalled() {
+    try {
+      if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) return true;
+      if (window.matchMedia && window.matchMedia('(display-mode: minimal-ui)').matches) return true;
+      if (window.navigator.standalone === true) return true;
+      if (localStorage.getItem('tk_pwa_installed') === '1') return true;
+    } catch {}
+    return false;
+  }
+
   // Captation de l'évènement d'installation Chrome / Android (si disponible)
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     _pwaDeferredPrompt = e;
-    const btn = document.getElementById('installBtn');
-    if (btn) btn.classList.add('visible');
+    if (!isPWAInstalled()) {
+      document.getElementById('installBtn')?.classList.add('visible');
+    }
     log('PWA installable (prompt natif disponible)');
   });
 
   window.addEventListener('appinstalled', () => {
     _pwaDeferredPrompt = null;
+    try { localStorage.setItem('tk_pwa_installed', '1'); } catch {}
     document.getElementById('installBtn')?.classList.remove('visible');
     audit('pwa_installed');
     toast('Application installée 🎉', 'success');
   });
 
-  // Le bouton "Installer" est toujours affiché : si le prompt natif n'est
-  // pas dispo (iOS, Firefox…), on guide l'utilisateur manuellement.
+  // Affichage initial du bouton : SEULEMENT si non installée
   setTimeout(() => {
-    document.getElementById('installBtn')?.classList.add('visible');
+    if (isPWAInstalled()) {
+      document.getElementById('installBtn')?.classList.remove('visible');
+      try { localStorage.setItem('tk_pwa_installed', '1'); } catch {}
+    } else {
+      document.getElementById('installBtn')?.classList.add('visible');
+    }
   }, 100);
 }
 
@@ -6514,6 +6779,9 @@ async function installPWA() {
     const choice = await _pwaDeferredPrompt.userChoice;
     log('PWA install choice', choice);
     _pwaDeferredPrompt = null;
+    if (choice && choice.outcome === 'accepted') {
+      try { localStorage.setItem('tk_pwa_installed', '1'); } catch {}
+    }
     document.getElementById('installBtn')?.classList.remove('visible');
     return;
   }
