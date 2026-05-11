@@ -1507,6 +1507,45 @@
   .stripe-status .row .label { color: var(--text-2); font-size: 13px; }
   .stripe-status .row .val { font-weight: 600; font-size: 13px; }
 
+  /* ====== BATEAUX GELÉS (downgrade plan) ====== */
+  .boat-card-frozen {
+    position: relative;
+    opacity: 0.95;
+  }
+  .boat-card-frozen .boat-img,
+  .boat-card-frozen .boat-body {
+    filter: grayscale(0.7) opacity(0.55);
+    pointer-events: none;
+  }
+  .frozen-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.95));
+    backdrop-filter: blur(2px);
+    z-index: 5;
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    text-align: center;
+    gap: 4px;
+  }
+  .frozen-overlay .frozen-icon { font-size: 36px; }
+  .frozen-overlay .frozen-title {
+    font-weight: 800;
+    font-size: 16px;
+    color: #1e40af;
+  }
+  .frozen-overlay .frozen-desc {
+    font-size: 12px;
+    color: var(--text-2);
+    line-height: 1.4;
+    margin-bottom: 6px;
+    max-width: 260px;
+  }
+
   /* ====== PAYMENT LINKS GRID (form bateau) ====== */
   .payment-grid {
     display: flex;
@@ -1805,7 +1844,7 @@
       <a class="footer-link" onclick="navigate('/client')">Mes réservations</a>
     </div>
     <div>Ti Kanno — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v1.0.3 — 2026</div>
+    <div class="version">v1.0.4 — 2026</div>
   </footer>
 </div>
 
@@ -1815,11 +1854,11 @@
 
 <script>
 /* ============================================================
-   Ti Kanno v1.0.3
+   Ti Kanno v1.0.4
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v1.0.3';
+const VERSION = 'v1.0.4';
 const APP_NAME = 'Ti Kanno';
 const APP_TAGLINE = 'Marketplace nautique 100% Martinique';
 
@@ -2316,6 +2355,70 @@ const ADMIN_EMAILS = [
 function isAdmin(user) {
   if (!user || !user.email) return false;
   return ADMIN_EMAILS.indexOf(String(user.email).toLowerCase()) !== -1;
+}
+
+/* ============================================================
+   GESTION DOWNGRADE — Freeze des bateaux excédentaires
+   ============================================================
+   Quand un pro passe d'un plan supérieur à un plan inférieur, il peut
+   se retrouver avec PLUS de bateaux que ce que le nouveau plan autorise.
+   On ne supprime PAS ses bateaux (réversibilité) : on les "gèle" via
+   un flag `frozenByPlan: true`. Ces bateaux sont :
+     - Visibles dans son espace pro (avec un overlay clair)
+     - Cachés du catalogue public
+     - Non réservables
+   Si le pro re-upgrade, les bateaux sont automatiquement dégelés.
+
+   Stratégie : on garde les bateaux les plus anciens (probablement plus
+   établis : avis, historique de réservations…) et on gèle les plus
+   récents. Le pro peut toujours réorganiser manuellement.
+*/
+function isFrozenByPlan(boat) {
+  return boat && boat.frozenByPlan === true;
+}
+
+function applyPlanLimitsToBoats(proId, planId) {
+  const plan = getPlan(planId || 'free');
+  const max = plan.features.maxBoats;
+
+  // En mode démo : on opère sur le snapshot (source de vérité)
+  const allBoats = state.mode === 'demo'
+    ? (state.demoSnapshot?.boats || []).filter(b => b.proId === proId)
+    : (state.myBoats || []).filter(b => b.proId === proId);
+
+  // Tri par createdAt ASC : les plus anciens d'abord (= ceux qu'on garde)
+  const sorted = [...allBoats].sort((a, b) => {
+    return String(a.createdAt || '').localeCompare(String(b.createdAt || ''));
+  });
+
+  let frozenCount = 0;
+  sorted.forEach((boat, idx) => {
+    const shouldFreeze = idx >= max;
+    if (boat.frozenByPlan !== shouldFreeze) {
+      boat.frozenByPlan = shouldFreeze;
+    }
+    if (shouldFreeze) frozenCount++;
+  });
+
+  // Refresh du catalogue public si on est en mode démo
+  if (state.mode === 'demo') {
+    refreshPublicCatalogFromSnapshot();
+  }
+
+  return frozenCount;
+}
+
+/* Reconstruit state.boats depuis le snapshot démo en excluant les bateaux gelés */
+function refreshPublicCatalogFromSnapshot() {
+  if (state.mode !== 'demo' || !state.demoSnapshot) return;
+  const proMap = {};
+  (state.demoSnapshot.pros || []).forEach(p => { proMap[p.id] = p; });
+  const enriched = state.demoSnapshot.boats.map(b => ({
+    ...b,
+    proPlan: proMap[b.proId]?.plan || 'free',
+    proVerified: proMap[b.proId]?.verificationStatus === 'verified'
+  }));
+  state.boats = enriched.filter(b => b.status === 'active' && !b.frozenByPlan);
 }
 
 /* ---------- STATE ---------- */
@@ -2982,7 +3085,7 @@ function loadDemoData() {
     proPlan: proMap[b.proId]?.plan || 'free',
     proVerified: proMap[b.proId]?.verificationStatus === 'verified'
   }));
-  state.boats = enriched.filter(b => b.status === 'active');
+  state.boats = enriched.filter(b => b.status === 'active' && !b.frozenByPlan);
   state.reservations = demoReservations;
   state.reviews = demoReviews;
   state.myBoats = [];
@@ -3549,7 +3652,17 @@ async function viewBoatDetail(id) {
   await fetchPublicBoats();
   let boat = state.boats.find(b => b.id === id);
   if (!boat) {
-    main.innerHTML = `<div class="container"><div class="empty-state"><div class="empty-state-icon">❓</div><h3>Bateau introuvable</h3><p><a onclick="navigate('/')">← Retour au catalogue</a></p></div></div>`;
+    // Cas spécial : le bateau existe mais est gelé par downgrade du plan du pro
+    let isFrozen = false;
+    if (state.mode === 'demo') {
+      const allBoat = (state.demoSnapshot?.boats || []).find(b => b.id === id);
+      if (allBoat && isFrozenByPlan(allBoat)) isFrozen = true;
+    }
+    if (isFrozen) {
+      main.innerHTML = `<div class="container"><div class="empty-state"><div class="empty-state-icon">❄️</div><h3>Bateau temporairement indisponible</h3><p>Ce bateau n'est pas disponible à la réservation pour le moment. Merci de votre compréhension.</p><p class="mt-2"><a onclick="navigate('/')">← Retour au catalogue</a></p></div></div>`;
+    } else {
+      main.innerHTML = `<div class="container"><div class="empty-state"><div class="empty-state-icon">❓</div><h3>Bateau introuvable</h3><p><a onclick="navigate('/')">← Retour au catalogue</a></p></div></div>`;
+    }
     return;
   }
   boat = normalizeBoatPricing(boat);
@@ -4891,7 +5004,8 @@ async function viewProDashboard() {
       ${(() => {
         const plan = getCurrentUserPlan();
         const max = plan.features.maxBoats;
-        const reached = state.myBoats.length >= max;
+        const activeCount = state.myBoats.filter(b => !isFrozenByPlan(b)).length;
+        const reached = activeCount >= max;
         return reached
           ? `<button class="btn btn-primary locked-btn" onclick="showUpgradeModal('Votre plan ${plan.label} est limité à ${max} bateau${max>1?'x':''}.', '${plan.id === 'free' ? 'pro' : 'premium'}')">🔒 Limite atteinte</button>`
           : `<button class="btn btn-primary" onclick="navigate('/pro/boats/new')">+ Ajouter un bateau</button>`;
@@ -5215,18 +5329,82 @@ async function viewProBoats() {
   await fetchMyBoats();
   const plan = getCurrentUserPlan();
   const maxBoats = plan.features.maxBoats;
-  const limitReached = state.myBoats.length >= maxBoats;
+
+  // Sépare bateaux actifs / gelés (downgrade)
+  const activeBoats = state.myBoats.filter(b => !isFrozenByPlan(b));
+  const frozenBoats = state.myBoats.filter(b => isFrozenByPlan(b));
+  const totalCount = state.myBoats.length;
+
+  const limitReached = activeBoats.length >= maxBoats;
   const addBtnLabel = limitReached ? `🔒 Ajouter (limite ${maxBoats} atteinte)` : '+ Ajouter un bateau';
   const onClick = limitReached
     ? `showUpgradeModal('Votre plan ${plan.label} est limité à ${maxBoats} bateau${maxBoats > 1 ? 'x' : ''}. Passez Pro pour publier jusqu\\'à 5 bateaux, ou Premium pour un nombre illimité.', '${plan.id === 'free' ? 'pro' : 'premium'}')`
     : `navigate('/pro/boats/new')`;
 
+  // Helper de rendu d'une card bateau (avec ou sans overlay "gelé")
+  const renderBoatCard = (b) => {
+    const start = getBoatStartingPrice(b);
+    const nbSlots = (b.availableSlots || ['halfday','day','sunset']).length;
+    const hasPay = boatHasAnyPaymentLink(b);
+    const reviews = getBoatReviewsSummary(b.id);
+    const frozen = isFrozenByPlan(b);
+    return `
+      <div class="boat-card ${frozen ? 'boat-card-frozen' : ''}">
+        ${frozen ? `
+          <div class="frozen-overlay">
+            <div class="frozen-icon">❄️</div>
+            <div class="frozen-title">Bateau en pause</div>
+            <div class="frozen-desc">Au-delà de la limite de votre plan ${plan.label} (${maxBoats} max).<br>Non visible dans le catalogue public.</div>
+            <button class="btn btn-primary btn-sm mt-1" onclick="navigate('/pro/billing')">Réactiver — Passer à un plan supérieur →</button>
+          </div>
+        ` : ''}
+        <div class="boat-img" ${b.images?.[0] ? `style="background-image: url('${escapeHtml(b.images[0])}')"` : ''}>
+          ${!b.images?.[0] ? `<div class="boat-img-placeholder">⛵</div>` : ''}
+          <span class="boat-badge">${b.status === 'active' ? '🟢 Actif' : '⏸️ Inactif'}</span>
+        </div>
+        <div class="boat-body">
+          <div class="boat-title">${escapeHtml(b.name)}</div>
+          <div class="boat-location">📍 ${escapeHtml(b.location)} · ${escapeHtml(b.type)}</div>
+          <div class="boat-meta">
+            <span>👥 ${b.capacity}</span>
+            <span>🏷️ ${nbSlots} créneau${nbSlots > 1 ? 'x' : ''}</span>
+            <span>${hasPay ? '💳 Paiement en ligne' : '📞 Contact manuel'}</span>
+            ${reviews.count > 0 ? `<span>${renderStars(reviews.avg, 11)} (${reviews.count})</span>` : ''}
+          </div>
+          <div class="boat-price">
+            <div class="boat-price-stack">
+              ${start < getBoatSlotPrice(b, 'day') ? '<span class="boat-price-label-top">à partir de</span>' : ''}
+              <span class="boat-price-amount">${fmtEUR(start)}</span>
+              <span class="boat-price-unit">par sortie</span>
+            </div>
+            <div class="flex gap-1">
+              <button class="btn btn-ghost btn-sm" onclick="navigate('/pro/boats/edit/${b.id}')">✏️</button>
+              <button class="btn btn-ghost btn-sm" onclick="toggleBoatStatus('${b.id}')">${b.status === 'active' ? '⏸️' : '▶️'}</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  };
+
   renderProLayout(`
     <div class="section-head">
-      <div><h2>Mes bateaux</h2><p>${state.myBoats.length} / ${maxBoats === 999 ? '∞' : maxBoats} bateau${state.myBoats.length > 1 ? 'x' : ''} (plan ${plan.badge} ${plan.label})</p></div>
+      <div>
+        <h2>Mes bateaux</h2>
+        <p>${activeBoats.length} / ${maxBoats === 999 ? '∞' : maxBoats} bateau${activeBoats.length > 1 ? 'x' : ''} actif${activeBoats.length > 1 ? 's' : ''} (plan ${plan.badge} ${plan.label})${frozenBoats.length ? ` · ❄️ ${frozenBoats.length} en pause` : ''}</p>
+      </div>
       <button class="btn btn-primary ${limitReached ? 'locked-btn' : ''}" onclick="${onClick}">${addBtnLabel}</button>
     </div>
-    ${state.myBoats.length === 0 ? `
+
+    ${frozenBoats.length > 0 ? `
+      <div style="background: #dbeafe; border-left: 4px solid #2563eb; padding: 14px 16px; border-radius: var(--radius-lg); margin-bottom: 20px;">
+        <div style="font-weight: 700; margin-bottom: 4px;">❄️ ${frozenBoats.length} bateau${frozenBoats.length > 1 ? 'x' : ''} en pause à cause de votre plan ${plan.label}</div>
+        <div class="small">Ces bateaux ne sont <strong>plus visibles dans le catalogue public</strong> et <strong>non réservables par les clients</strong>, mais ils sont conservés. Pour les réactiver, repassez à un plan supérieur — c'est immédiat et réversible.</div>
+        <div class="mt-1"><button class="btn btn-primary btn-sm" onclick="navigate('/pro/billing')">💳 Voir les plans</button></div>
+      </div>
+    ` : ''}
+
+    ${totalCount === 0 ? `
       <div class="empty-state" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);">
         <div class="empty-state-icon">⛵</div>
         <h3>Aucun bateau pour le moment</h3>
@@ -5234,41 +5412,10 @@ async function viewProBoats() {
         <button class="btn btn-primary mt-2" onclick="navigate('/pro/boats/new')">Ajouter mon premier bateau</button>
       </div>
     ` : `
-      <div class="grid">${state.myBoats.map(b => {
-        const start = getBoatStartingPrice(b);
-        const nbSlots = (b.availableSlots || ['halfday','day','sunset']).length;
-        const hasPay = boatHasAnyPaymentLink(b);
-        const reviews = getBoatReviewsSummary(b.id);
-        return `
-        <div class="boat-card">
-          <div class="boat-img" ${b.images?.[0] ? `style="background-image: url('${escapeHtml(b.images[0])}')"` : ''}>
-            ${!b.images?.[0] ? `<div class="boat-img-placeholder">⛵</div>` : ''}
-            <span class="boat-badge">${b.status === 'active' ? '🟢 Actif' : '⏸️ Inactif'}</span>
-          </div>
-          <div class="boat-body">
-            <div class="boat-title">${escapeHtml(b.name)}</div>
-            <div class="boat-location">📍 ${escapeHtml(b.location)} · ${escapeHtml(b.type)}</div>
-            <div class="boat-meta">
-              <span>👥 ${b.capacity}</span>
-              <span>🏷️ ${nbSlots} créneau${nbSlots > 1 ? 'x' : ''}</span>
-              <span>${hasPay ? '💳 Paiement en ligne' : '📞 Contact manuel'}</span>
-              ${reviews.count > 0 ? `<span>${renderStars(reviews.avg, 11)} (${reviews.count})</span>` : ''}
-            </div>
-            <div class="boat-price">
-              <div class="boat-price-stack">
-                ${start < getBoatSlotPrice(b, 'day') ? '<span class="boat-price-label-top">à partir de</span>' : ''}
-                <span class="boat-price-amount">${fmtEUR(start)}</span>
-                <span class="boat-price-unit">par sortie</span>
-              </div>
-              <div class="flex gap-1">
-                <button class="btn btn-ghost btn-sm" onclick="navigate('/pro/boats/edit/${b.id}')">✏️</button>
-                <button class="btn btn-ghost btn-sm" onclick="toggleBoatStatus('${b.id}')">${b.status === 'active' ? '⏸️' : '▶️'}</button>
-              </div>
-            </div>
-          </div>
-        </div>
-        `;
-      }).join('')}</div>
+      <div class="grid">
+        ${activeBoats.map(renderBoatCard).join('')}
+        ${frozenBoats.map(renderBoatCard).join('')}
+      </div>
     `}
   `, 'boats');
 }
@@ -6300,12 +6447,35 @@ async function switchPlan(planId) {
 
   // En mode démo : changement instantané (pas de Stripe)
   if (state.mode === 'demo') {
+    const oldPlan = state.currentUser.plan || 'free';
     state.currentUser.plan = planId;
     const snapPro = state.demoSnapshot?.pros?.find(p => p.id === state.currentUser.id);
     if (snapPro) snapPro.plan = planId;
+
+    // Applique les limites du nouveau plan aux bateaux du pro
+    const frozenCount = applyPlanLimitsToBoats(state.currentUser.id, planId);
+
+    // Recharge state.myBoats depuis le snapshot pour refléter le freeze
+    if (state.demoSnapshot) {
+      state.myBoats = state.demoSnapshot.boats.filter(b => b.proId === state.currentUser.id);
+    }
+
     const p = getPlan(planId);
-    toast(`Plan basculé sur ${p.badge} ${p.label}`, 'success');
-    audit('plan_switched_demo', { plan: planId });
+    const oldP = getPlan(oldPlan);
+
+    // Message adapté selon le type de changement
+    if (frozenCount > 0 && p.features.maxBoats < oldP.features.maxBoats) {
+      // Downgrade avec impact
+      toast(`Plan basculé sur ${p.badge} ${p.label}. ${frozenCount} bateau${frozenCount > 1 ? 'x' : ''} mis en pause (limite ${p.features.maxBoats}).`, 'warning');
+    } else if (frozenCount === 0 && oldPlan !== planId) {
+      // Upgrade ou changement sans impact (bateaux dégelés)
+      const previouslyFrozen = (state.demoSnapshot?.boats || []).filter(b => b.proId === state.currentUser.id && !b.frozenByPlan).length;
+      toast(`Plan basculé sur ${p.badge} ${p.label}.`, 'success');
+    } else {
+      toast(`Plan basculé sur ${p.badge} ${p.label}`, 'success');
+    }
+    audit('plan_switched_demo', { plan: planId, frozen: frozenCount });
+
     if (state.view === '/pro/billing') viewProBilling();
     else render();
     return;
