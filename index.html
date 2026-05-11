@@ -1869,7 +1869,7 @@
       <a class="footer-link" onclick="navigate('/client')">Mes réservations</a>
     </div>
     <div>Ti Kanno — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v1.0.6 — 2026</div>
+    <div class="version">v1.0.7 — 2026</div>
   </footer>
 </div>
 
@@ -1879,11 +1879,11 @@
 
 <script>
 /* ============================================================
-   Ti Kanno v1.0.6
+   Ti Kanno v1.0.7
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v1.0.6';
+const VERSION = 'v1.0.7';
 const APP_NAME = 'Ti Kanno';
 const APP_TAGLINE = 'Marketplace nautique 100% Martinique';
 
@@ -3280,8 +3280,8 @@ function render() {
     { label: t('nav_reservations'), path: '/client', icon: '🎫', active: state.view.startsWith('/client') },
   ];
 
-  // Sélecteur de langue (compact)
-  const langSwitcher = `
+  // Sélecteur de langue (compact) — masqué dans l'espace pro/admin (interface en FR uniquement)
+  const langSwitcher = inProArea ? '' : `
     <span class="lang-switcher">
       <button class="lang-btn ${lang === 'fr' ? 'active' : ''}" onclick="setLang('fr')" title="Français">FR</button>
       <button class="lang-btn ${lang === 'en' ? 'active' : ''}" onclick="setLang('en')" title="English">EN</button>
