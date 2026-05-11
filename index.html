@@ -729,6 +729,194 @@
   .chart-wrap { height: 220px; position: relative; }
   @media (max-width: 640px) { .chart-wrap { height: 200px; } }
 
+  /* ====== ADVANCED FILTERS (catalogue) ====== */
+  .filters-advanced {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .filters-toggle {
+    width: 100%;
+    background: var(--surface);
+    border: none;
+    padding: 14px 18px;
+    text-align: left;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background .12s;
+  }
+  .filters-toggle:hover { background: var(--surface-2); }
+  .filters-toggle .arrow { transition: transform .2s; font-size: 12px; color: var(--text-2); }
+  .filters-toggle.open .arrow { transform: rotate(180deg); }
+  .filters-body {
+    padding: 0 18px 18px;
+    border-top: 1px solid var(--border);
+    display: none;
+  }
+  .filters-body.open { display: block; }
+  .filters-body .filter-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    margin: 12px 0 6px;
+  }
+  .price-range-inputs { display: flex; align-items: center; gap: 8px; }
+  .price-range-inputs input { padding: 8px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 13px; outline: none; width: 100%; }
+  .price-range-inputs input:focus { border-color: var(--primary); }
+  .price-range-inputs .dash { color: var(--text-2); }
+  .star-filter { display: inline-flex; gap: 4px; }
+  .star-filter .star {
+    cursor: pointer;
+    font-size: 24px;
+    color: #d1d5db;
+    transition: color .12s;
+  }
+  .star-filter .star.filled { color: #fbbf24; }
+  .star-filter:hover .star { color: #d1d5db; }
+  .star-filter .star:hover, .star-filter .star:hover ~ .star { color: #fbbf24; }
+  .chip-filter {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    font-size: 13px;
+    cursor: pointer;
+    user-select: none;
+    transition: all .12s;
+  }
+  .chip-filter:hover { border-color: var(--primary-light); background: var(--primary-soft); }
+  .chip-filter.active { background: var(--primary); color: white; border-color: var(--primary); }
+  .chips-row { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .active-filters-count {
+    background: var(--primary);
+    color: white;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    margin-left: 8px;
+  }
+
+  /* ====== CALENDRIER AGRÉGÉ PRO ====== */
+  .cal-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .cal-toolbar .cal-title { font-size: 20px; font-weight: 700; text-transform: capitalize; }
+  .cal-toolbar .cal-nav { display: flex; gap: 8px; align-items: center; }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 8px;
+  }
+  .cal-day-header {
+    text-align: center;
+    padding: 8px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-2);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+  .cal-day {
+    background: var(--surface-2);
+    border-radius: var(--radius-sm);
+    padding: 6px;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    position: relative;
+  }
+  .cal-day.muted { opacity: .35; }
+  .cal-day.today { background: var(--primary-soft); border: 1px solid var(--primary); }
+  .cal-day-number { font-size: 12px; font-weight: 600; color: var(--text-2); margin-bottom: 2px; }
+  .cal-day.today .cal-day-number { color: var(--primary); }
+  .cal-event {
+    background: var(--primary);
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 4px;
+    line-height: 1.3;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: opacity .12s;
+  }
+  .cal-event:hover { opacity: .85; }
+  .cal-event.cancelled { background: var(--text-2); text-decoration: line-through; opacity: .6; }
+  .cal-event.pending { background: var(--warning); }
+  .cal-event.completed { background: var(--info); }
+  .cal-more { font-size: 10px; color: var(--text-2); padding: 2px 4px; }
+
+  @media (max-width: 720px) {
+    .cal-day { min-height: 60px; padding: 4px; }
+    .cal-event { font-size: 9px; padding: 1px 4px; }
+    .cal-day-header { font-size: 10px; padding: 4px 2px; }
+  }
+
+  .cal-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-2);
+  }
+  .cal-legend-item { display: inline-flex; align-items: center; gap: 5px; }
+  .cal-legend-dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+
+  /* ====== ESPACE CLIENT ====== */
+  .client-banner {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 28px 24px;
+    border-radius: var(--radius-lg);
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  .client-banner h2 { color: white; font-size: 22px; margin-bottom: 6px; }
+  .client-banner p { color: rgba(255,255,255,.85); }
+
+  .res-list-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    margin-bottom: 12px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+  }
+  @media (max-width: 580px) { .res-list-item { grid-template-columns: 1fr; } }
+  .res-list-actions { display: flex; flex-wrap: wrap; gap: 6px; justify-content: flex-end; }
+  @media (max-width: 580px) { .res-list-actions { justify-content: flex-start; } }
+
   /* ====== PAYMENT LINKS GRID (form bateau) ====== */
   .payment-grid {
     display: flex;
@@ -1022,7 +1210,7 @@
 
   <footer class="footer">
     <div>BatoKreyòl — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v0.6 — 2026</div>
+    <div class="version">v0.7 — 2026</div>
   </footer>
 </div>
 
@@ -1032,11 +1220,11 @@
 
 <script>
 /* ============================================================
-   BatoKreyòl v0.6
+   BatoKreyòl v0.7
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v0.6';
+const VERSION = 'v0.7';
 const APP_NAME = 'BatoKreyol';
 
 // CONFIG : remplacer par votre URL Apps Script déployée en Web App
@@ -1056,7 +1244,11 @@ const state = {
   reservations: [],     // pro reservations
   myBoats: [],          // pro's boats
   reviews: [],          // avis clients
-  filters: { location: '', type: '', capacity: '' },
+  filters: {
+    location: '', type: '', capacity: '',
+    priceMin: '', priceMax: '', minRating: 0,
+    equipment: [], slots: [], showAdvanced: false
+  },
   demoSnapshot: null,
 };
 
@@ -1072,6 +1264,25 @@ const DURATIONS = [
   { id: 'day',     label: 'Journée (8h)',     shortLabel: 'Journée', factor: 1,   slot: 'full' },
   { id: 'sunset',  label: 'Coucher de soleil (3h)', shortLabel: 'Coucher de soleil', factor: 0.45, slot: 'evening' },
 ];
+
+const EQUIPMENT_OPTIONS = [
+  'Skipper inclus', 'GPS', 'Snorkeling', 'Glacière', 'Bluetooth',
+  'Cuisine', 'Toilettes', 'Sondeur', 'Bain de soleil',
+  'Punch maison 🍹', 'Douche de pont', 'Échelle de bain', 'Bouées'
+];
+
+/* Palette de couleurs distinctes pour le calendrier agrégé (par bateau) */
+const CAL_PALETTE = [
+  '#0e6e6e', '#0d9488', '#c2410c', '#7c3aed', '#db2777',
+  '#0284c7', '#16a34a', '#ca8a04', '#dc2626', '#4338ca',
+  '#0891b2', '#65a30d'
+];
+function getBoatColor(boatId) {
+  if (!boatId) return CAL_PALETTE[0];
+  let h = 0;
+  for (let i = 0; i < boatId.length; i++) h = (h * 31 + boatId.charCodeAt(i)) | 0;
+  return CAL_PALETTE[Math.abs(h) % CAL_PALETTE.length];
+}
 
 /* Règle métier : sur une même date, on peut cumuler une demi-journée
    (matin) ET un coucher de soleil (soir) car ces créneaux ne se
@@ -1440,6 +1651,20 @@ const localBackend = {
     return { success: true, data: list };
   },
 
+  /* Espace client */
+  listReservationsByEmail(data) {
+    const email = String(data.email || '').toLowerCase();
+    const list = this._read('reservations')
+      .filter(r => String(r.clientEmail || '').toLowerCase() === email)
+      .sort((a, b) => String(b.startDate).localeCompare(String(a.startDate)));
+    return { success: true, data: list };
+  },
+
+  getReservationByToken(data) {
+    const r = this._read('reservations').find(x => x.clientToken === data.token);
+    return r ? { success: true, data: r } : { success: false, error: 'Réservation introuvable' };
+  },
+
   listAllReviewsForPro(data) {
     const boats = this._read('boats').filter(b => b.proId === data.proId).map(b => b.id);
     const list = this._read('reviews')
@@ -1706,6 +1931,7 @@ function render() {
     nav.innerHTML = `
       <button class="btn btn-ghost btn-sm" id="installBtn" onclick="installPWA()">📱 Installer</button>
       <a class="header-link ${state.view === '/' ? 'active' : ''}" onclick="navigate('/')">Catalogue</a>
+      <a class="header-link ${state.view.startsWith('/client') ? 'active' : ''}" onclick="navigate('/client')">Mes réservations</a>
       <button class="btn btn-secondary btn-sm" onclick="openAuthModal()">Espace pro</button>
     `;
   }
@@ -1715,11 +1941,14 @@ function render() {
   const path = state.view;
   if (path === '/' || path === '') return viewHome();
   if (path.startsWith('/boat/')) return viewBoatDetail(path.split('/')[2]);
+  if (path === '/client') return viewClientReservations();
+  if (path.startsWith('/client/r/')) return viewClientReservationByToken(path.split('/')[3]);
   if (path === '/pro/dashboard') return viewProDashboard();
   if (path === '/pro/boats') return viewProBoats();
   if (path === '/pro/boats/new') return viewBoatForm();
   if (path.startsWith('/pro/boats/edit/')) return viewBoatForm(path.split('/')[4]);
   if (path === '/pro/reservations') return viewProReservations();
+  if (path === '/pro/calendar') return viewProCalendar();
   if (path === '/pro/reviews') return viewProReviews();
   if (path === '/pro/profile') return viewProProfile();
   viewHome();
@@ -1772,6 +2001,50 @@ async function viewHome() {
         <button class="btn btn-ghost btn-sm" onclick="resetFilters()" style="align-self: flex-end;">Réinitialiser</button>
       </div>
 
+      <div class="filters-advanced">
+        <button class="filters-toggle ${state.filters.showAdvanced ? 'open' : ''}" onclick="toggleAdvancedFilters()">
+          <span>🎯 Filtres avancés ${countActiveAdvancedFilters() > 0 ? `<span class="active-filters-count">${countActiveAdvancedFilters()}</span>` : ''}</span>
+          <span class="arrow">▼</span>
+        </button>
+        <div class="filters-body ${state.filters.showAdvanced ? 'open' : ''}" id="advancedFiltersBody">
+          <div class="filter-label">Fourchette de prix (€ par sortie)</div>
+          <div class="price-range-inputs">
+            <input type="number" id="filterPriceMin" min="0" placeholder="Min" value="${state.filters.priceMin}" oninput="onAdvancedFilterChange()">
+            <span class="dash">—</span>
+            <input type="number" id="filterPriceMax" min="0" placeholder="Max" value="${state.filters.priceMax}" oninput="onAdvancedFilterChange()">
+          </div>
+
+          <div class="filter-label">Note minimale</div>
+          <div class="star-filter" id="filterStars">
+            ${[1,2,3,4,5].map(n => `<span class="star ${n <= state.filters.minRating ? 'filled' : ''}" onclick="setMinRating(${n})">★</span>`).join('')}
+            ${state.filters.minRating > 0 ? `<button class="btn btn-ghost btn-sm" onclick="setMinRating(0)" style="margin-left:8px;">Effacer</button>` : ''}
+          </div>
+
+          <div class="filter-label">Créneaux disponibles</div>
+          <div class="chips-row">
+            ${DURATIONS.map(d => `
+              <span class="chip-filter ${state.filters.slots.includes(d.id) ? 'active' : ''}" onclick="toggleSlotFilter('${d.id}')">
+                ${d.id === 'halfday' ? '🌅' : d.id === 'sunset' ? '🌇' : '☀️'} ${escapeHtml(d.shortLabel)}
+              </span>
+            `).join('')}
+          </div>
+
+          <div class="filter-label">Équipement</div>
+          <div class="chips-row">
+            ${EQUIPMENT_OPTIONS.map(e => `
+              <span class="chip-filter ${state.filters.equipment.includes(e) ? 'active' : ''}" onclick="toggleEquipFilter('${escapeHtml(e).replace(/'/g, '&#39;')}')">
+                ${escapeHtml(e)}
+              </span>
+            `).join('')}
+          </div>
+
+          <div class="mt-2" style="display: flex; justify-content: space-between; align-items: center;">
+            <span class="small text-muted" id="filterResultCount"></span>
+            <button class="btn btn-ghost btn-sm" onclick="resetFilters()">Tout réinitialiser</button>
+          </div>
+        </div>
+      </div>
+
       <div id="boatGrid"></div>
     </div>
   `;
@@ -1780,16 +2053,113 @@ async function viewHome() {
   renderBoatGrid();
 }
 
+function toggleAdvancedFilters() {
+  state.filters.showAdvanced = !state.filters.showAdvanced;
+  const btn = document.querySelector('.filters-toggle');
+  const body = document.getElementById('advancedFiltersBody');
+  if (btn) btn.classList.toggle('open', state.filters.showAdvanced);
+  if (body) body.classList.toggle('open', state.filters.showAdvanced);
+}
+
+function countActiveAdvancedFilters() {
+  const f = state.filters;
+  let n = 0;
+  if (f.priceMin) n++;
+  if (f.priceMax) n++;
+  if (f.minRating > 0) n++;
+  if (f.equipment.length) n += f.equipment.length;
+  if (f.slots.length) n += f.slots.length;
+  return n;
+}
+
+function onAdvancedFilterChange() {
+  state.filters.priceMin = document.getElementById('filterPriceMin')?.value || '';
+  state.filters.priceMax = document.getElementById('filterPriceMax')?.value || '';
+  renderBoatGrid();
+  // Met à jour le compteur dans le toggle
+  const toggle = document.querySelector('.filters-toggle');
+  if (toggle) {
+    const count = countActiveAdvancedFilters();
+    toggle.querySelector('span').innerHTML = `🎯 Filtres avancés ${count > 0 ? `<span class="active-filters-count">${count}</span>` : ''}`;
+  }
+}
+
+function setMinRating(n) {
+  state.filters.minRating = state.filters.minRating === n ? 0 : n;
+  // Re-render seulement la zone des étoiles + résultats
+  const wrap = document.getElementById('filterStars');
+  if (wrap) {
+    wrap.innerHTML = `
+      ${[1,2,3,4,5].map(i => `<span class="star ${i <= state.filters.minRating ? 'filled' : ''}" onclick="setMinRating(${i})">★</span>`).join('')}
+      ${state.filters.minRating > 0 ? `<button class="btn btn-ghost btn-sm" onclick="setMinRating(0)" style="margin-left:8px;">Effacer</button>` : ''}
+    `;
+  }
+  renderBoatGrid();
+  onAdvancedFilterChange();
+}
+
+function toggleSlotFilter(slotId) {
+  const idx = state.filters.slots.indexOf(slotId);
+  if (idx === -1) state.filters.slots.push(slotId);
+  else state.filters.slots.splice(idx, 1);
+  // Met à jour le chip
+  document.querySelectorAll('.chips-row .chip-filter').forEach(c => {
+    if (c.textContent.trim().endsWith(DURATIONS.find(d => d.id === slotId)?.shortLabel || '')) {
+      c.classList.toggle('active', state.filters.slots.includes(slotId));
+    }
+  });
+  renderBoatGrid();
+  onAdvancedFilterChange();
+}
+
+function toggleEquipFilter(equip) {
+  const e = equip.replace(/&#39;/g, "'");
+  const idx = state.filters.equipment.indexOf(e);
+  if (idx === -1) state.filters.equipment.push(e);
+  else state.filters.equipment.splice(idx, 1);
+  renderBoatGrid();
+  // Refresh chips et compteur
+  const body = document.getElementById('advancedFiltersBody');
+  if (body) {
+    // Trouver et basculer la classe sur le chip
+    body.querySelectorAll('.chip-filter').forEach(c => {
+      const txt = c.textContent.trim();
+      if (txt === e) c.classList.toggle('active', state.filters.equipment.includes(e));
+    });
+  }
+  onAdvancedFilterChange();
+}
+
 function renderBoatGrid() {
   const grid = document.getElementById('boatGrid');
   if (!grid) return;
+  const f = state.filters;
   let list = state.boats.filter(b => b.status === 'active');
-  if (state.filters.location) list = list.filter(b => b.location === state.filters.location);
-  if (state.filters.type) list = list.filter(b => b.type === state.filters.type);
-  if (state.filters.capacity) list = list.filter(b => Number(b.capacity) >= Number(state.filters.capacity));
+  if (f.location) list = list.filter(b => b.location === f.location);
+  if (f.type) list = list.filter(b => b.type === f.type);
+  if (f.capacity) list = list.filter(b => Number(b.capacity) >= Number(f.capacity));
+  // Filtres avancés
+  if (f.priceMin) list = list.filter(b => getBoatStartingPrice(b) >= Number(f.priceMin));
+  if (f.priceMax) list = list.filter(b => getBoatStartingPrice(b) <= Number(f.priceMax));
+  if (f.minRating > 0) list = list.filter(b => getBoatReviewsSummary(b.id).avg >= f.minRating);
+  if (f.slots.length) list = list.filter(b => {
+    const nb = normalizeBoatPricing(b);
+    return f.slots.some(s => nb.availableSlots.includes(s));
+  });
+  if (f.equipment.length) list = list.filter(b => {
+    // "Skipper inclus" est traité comme b.withSkipper === true
+    return f.equipment.every(e => {
+      if (e === 'Skipper inclus') return !!b.withSkipper;
+      return (b.equipment || []).indexOf(e) !== -1;
+    });
+  });
+
+  // Affiche le compteur de résultats
+  const counter = document.getElementById('filterResultCount');
+  if (counter) counter.textContent = `${list.length} bateau${list.length > 1 ? 'x' : ''} correspondent`;
 
   if (list.length === 0) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⛵</div><h3>Aucun bateau ne correspond</h3><p>Essayez d'élargir vos critères de recherche.</p></div>`;
+    grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">⛵</div><h3>Aucun bateau ne correspond</h3><p>Essayez d'élargir vos critères de recherche ou de réinitialiser les filtres.</p></div>`;
     return;
   }
 
@@ -1843,7 +2213,11 @@ function onFilterChange() {
 }
 
 function resetFilters() {
-  state.filters = { location: '', type: '', capacity: '' };
+  state.filters = {
+    location: '', type: '', capacity: '',
+    priceMin: '', priceMax: '', minRating: 0,
+    equipment: [], slots: [], showAdvanced: state.filters.showAdvanced
+  };
   render();
 }
 
@@ -2098,8 +2472,10 @@ function showAllReviews(boatId) {
   `, { lg: true });
 }
 
-function openReviewForm(boatId) {
-  let _rating = 0;
+function openReviewForm(boatId, ctx) {
+  _reviewRating = 0;
+  const reservationId = ctx?.reservationId || '';
+  const prefName = ctx?.clientName || '';
   modal(`
     <div class="modal-header"><h3>✍️ Laisser un avis</h3><button class="modal-close" onclick="closeModal()">×</button></div>
     <div class="modal-body">
@@ -2113,12 +2489,13 @@ function openReviewForm(boatId) {
       </div>
       <div class="form-group">
         <label>Votre nom <span class="req">*</span></label>
-        <input type="text" id="revName" class="form-control" placeholder="Prénom Nom">
+        <input type="text" id="revName" class="form-control" placeholder="Prénom Nom" value="${escapeHtml(prefName)}">
       </div>
       <div class="form-group">
         <label>Votre commentaire <span class="req">*</span></label>
         <textarea id="revComment" class="form-control" placeholder="Comment s'est passée votre sortie ?" rows="4"></textarea>
       </div>
+      <input type="hidden" id="revResId" value="${escapeHtml(reservationId)}">
       <button class="btn btn-primary btn-block" onclick="submitReview('${boatId}')">Publier mon avis</button>
     </div>
   `);
@@ -2138,11 +2515,12 @@ async function submitReview(boatId) {
   const rating = _reviewRating;
   const clientName = document.getElementById('revName').value.trim();
   const comment = document.getElementById('revComment').value.trim();
+  const reservationId = document.getElementById('revResId')?.value.trim() || '';
   if (rating === 0) { toast('Choisissez une note', 'warning'); return; }
   if (!clientName) { toast('Indiquez votre nom', 'warning'); return; }
   if (!comment || comment.length < 10) { toast('Le commentaire doit faire au moins 10 caractères', 'warning'); return; }
 
-  const review = { id: uid(), boatId, clientName, rating, comment, response: '', createdAt: new Date().toISOString() };
+  const review = { id: uid(), boatId, reservationId, clientName, rating, comment, response: '', createdAt: new Date().toISOString() };
   showLoader();
   try {
     if (state.mode === 'demo') {
@@ -2158,6 +2536,7 @@ async function submitReview(boatId) {
     _reviewRating = 0;
     toast('Merci pour votre avis ! ⭐', 'success');
     if (state.view.startsWith('/boat/')) viewBoatDetail(boatId);
+    else if (state.view === '/client') viewClientReservations();
   } catch (e) {
     hideLoader();
     toast('Erreur lors de la publication', 'error');
@@ -2302,8 +2681,12 @@ async function submitReservation(boatId) {
     totalPrice,
     paymentStatus: 'pending',
     status: 'pending',
+    clientToken: uid() + uid(),  // token long pour accès direct par lien
     createdAt: new Date().toISOString()
   };
+
+  // Mémorise l'email pour permettre à "Mes réservations" de la retrouver
+  setClientEmail(email);
 
   showLoader();
   try {
@@ -2344,14 +2727,18 @@ function showReservationConfirmation(boat, reservation) {
         <div><strong>Créneau :</strong> ${DURATIONS.find(d => d.id === reservation.durationType).label}</div>
         <div><strong>Total :</strong> ${fmtEUR(reservation.totalPrice)}</div>
       </div>
+      <p class="small text-muted mb-2">📧 Une confirmation a été envoyée à <strong>${escapeHtml(reservation.clientEmail)}</strong>. Vous pouvez retrouver toutes vos réservations à tout moment dans la rubrique « Mes réservations ».</p>
       ${hasPayment ? `
         <p class="mb-2">Vous pouvez régler dès maintenant pour confirmer votre réservation :</p>
         <a class="btn btn-primary btn-block btn-lg" href="${escapeHtml(paymentLink)}" target="_blank" rel="noopener" onclick="setTimeout(closeModal, 500)">💳 Procéder au paiement</a>
         <p class="small text-muted text-center mt-2">Vous serez redirigé vers une plateforme sécurisée.</p>
       ` : `
         <p>Le propriétaire <strong>${escapeHtml(boat.proName)}</strong> va vous contacter rapidement pour confirmer et finaliser le paiement.</p>
-        <button class="btn btn-primary btn-block mt-2" onclick="closeModal(); navigate('/')">Retour au catalogue</button>
       `}
+      <div class="flex gap-1 mt-2">
+        <button class="btn btn-secondary flex-1" onclick="closeModal(); navigate('/')">Retour au catalogue</button>
+        <button class="btn btn-ghost flex-1" onclick="closeModal(); navigate('/client')">Mes réservations</button>
+      </div>
       ${state.mode === 'demo' ? `<p class="small text-muted text-center mt-2" style="color: var(--demo);">⚠️ Mode démo : aucun email réel n'a été envoyé</p>` : ''}
     </div>
   `);
@@ -2497,6 +2884,238 @@ async function doRegister() {
     hideLoader();
     toast('Erreur de connexion au serveur', 'error');
   }
+}
+
+/* ============================================================
+   ESPACE CLIENT (sans compte, accès par email ou par token)
+   ============================================================ */
+
+/* Stockage local de l'email du client pour ne pas le redemander à chaque fois */
+function getClientEmail() {
+  try { return localStorage.getItem('bk_client_email') || ''; } catch { return ''; }
+}
+function setClientEmail(e) {
+  try { localStorage.setItem('bk_client_email', e || ''); } catch {}
+}
+
+async function viewClientReservations() {
+  const main = document.getElementById('main');
+  const email = getClientEmail();
+
+  main.innerHTML = `
+    <div class="container">
+      <div class="client-banner">
+        <h2>🎫 Mes réservations</h2>
+        <p>Retrouvez ici toutes vos sorties en bateau, annulez si besoin et laissez un avis après votre journée.</p>
+      </div>
+
+      ${!email ? `
+        <div style="max-width: 500px; margin: 0 auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px;">
+          <h3 style="font-size: 18px; margin-bottom: 12px;">Saisissez votre email</h3>
+          <p class="small text-muted mb-2">Nous afficherons toutes les réservations associées à cette adresse.</p>
+          <div class="form-group">
+            <input type="email" id="clientEmailInput" class="form-control" placeholder="vous@email.fr" autofocus>
+          </div>
+          <button class="btn btn-primary btn-block" onclick="lookupClientReservations()">Afficher mes réservations</button>
+        </div>
+      ` : `
+        <div class="flex between center mb-2" style="flex-wrap: wrap; gap: 8px;">
+          <div>
+            <strong>${escapeHtml(email)}</strong>
+            <span class="small text-muted">· connecté en tant que client</span>
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="changeClientEmail()">Changer d'email</button>
+        </div>
+        <div id="clientResList"><div class="text-center text-muted">Chargement...</div></div>
+      `}
+    </div>
+  `;
+
+  if (email) await loadClientReservations(email);
+}
+
+function lookupClientReservations() {
+  const v = document.getElementById('clientEmailInput')?.value.trim().toLowerCase();
+  if (!v || !v.includes('@')) { toast('Email invalide', 'warning'); return; }
+  setClientEmail(v);
+  viewClientReservations();
+}
+
+function changeClientEmail() {
+  setClientEmail('');
+  viewClientReservations();
+}
+
+async function loadClientReservations(email) {
+  const wrap = document.getElementById('clientResList');
+  if (!wrap) return;
+  let list = [];
+  try {
+    if (state.mode === 'demo') {
+      list = state.reservations.filter(r => String(r.clientEmail || '').toLowerCase() === String(email).toLowerCase());
+    } else {
+      const res = await syncToBackend('listReservationsByEmail', { email });
+      if (res?.success) list = res.data || [];
+    }
+  } catch (e) { log('client res fail', e); }
+
+  if (list.length === 0) {
+    wrap.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">📭</div>
+        <h3>Aucune réservation trouvée</h3>
+        <p>Aucune sortie n'est associée à <strong>${escapeHtml(email)}</strong>. Vérifiez l'orthographe ou explorez notre <a onclick="navigate('/')">catalogue</a>.</p>
+      </div>
+    `;
+    return;
+  }
+
+  list.sort((a, b) => String(b.startDate).localeCompare(String(a.startDate)));
+  const today = new Date().toISOString().slice(0, 10);
+  const upcoming = list.filter(r => r.startDate >= today && r.status !== 'cancelled');
+  const past = list.filter(r => r.startDate < today || r.status === 'cancelled');
+
+  wrap.innerHTML = `
+    ${upcoming.length ? `
+      <h3 style="font-size: 16px; margin-bottom: 12px;">À venir (${upcoming.length})</h3>
+      ${upcoming.map(r => renderClientResItem(r)).join('')}
+    ` : ''}
+    ${past.length ? `
+      <h3 style="font-size: 16px; margin: 20px 0 12px;">Historique (${past.length})</h3>
+      ${past.map(r => renderClientResItem(r)).join('')}
+    ` : ''}
+  `;
+}
+
+function renderClientResItem(r) {
+  const boat = state.boats.find(b => b.id === r.boatId);
+  const policy = boat ? getBoatCancellationPolicy(boat) : null;
+  const duration = DURATIONS.find(d => d.id === r.durationType);
+  const statusPill = {
+    pending: { label: 'En attente', cls: 'pill-warning' },
+    confirmed: { label: 'Confirmée', cls: 'pill-success' },
+    completed: { label: 'Terminée', cls: 'pill-info' },
+    cancelled: { label: 'Annulée', cls: 'pill-danger' }
+  }[r.status] || { label: r.status, cls: 'pill-neutral' };
+
+  const canCancel = ['pending', 'confirmed'].includes(r.status);
+  const canReview = r.status === 'completed';
+  // A déjà laissé un avis ?
+  const hasReview = state.reviews.some(rev => rev.reservationId === r.id);
+
+  return `
+    <div class="res-list-item">
+      <div>
+        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 4px; flex-wrap: wrap;">
+          <strong>${escapeHtml(r.boatName)}</strong>
+          <span class="pill ${statusPill.cls}">${statusPill.label}</span>
+        </div>
+        <div class="small text-muted">
+          📅 ${fmtDate(r.startDate)} · ${duration ? escapeHtml(duration.shortLabel) : r.durationType} · ${fmtEUR(r.totalPrice)}
+          ${r.refundAmount > 0 ? ` · 💸 Remboursé ${fmtEUR(r.refundAmount)}` : ''}
+        </div>
+        ${policy && canCancel ? `<div class="small text-muted mt-1">📋 Annulation : ${escapeHtml(policy.short)}</div>` : ''}
+      </div>
+      <div class="res-list-actions">
+        ${canCancel ? `<button class="btn btn-ghost btn-sm" onclick="clientCancelReservation('${r.id}')">✕ Annuler</button>` : ''}
+        ${canReview && !hasReview ? `<button class="btn btn-secondary btn-sm" onclick="clientReviewReservation('${r.id}')">⭐ Laisser un avis</button>` : ''}
+        ${canReview && hasReview ? `<span class="small text-muted">✅ Avis publié</span>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function clientCancelReservation(rid) {
+  const r = state.reservations.find(x => x.id === rid) ||
+            (state._clientResCache || []).find(x => x.id === rid);
+  if (!r) {
+    // Cas backend : la résa n'est peut-être pas dans state.reservations
+    // On essaie via les données chargées dans loadClientReservations
+    toast('Réservation introuvable', 'error');
+    return;
+  }
+  const boat = state.boats.find(b => b.id === r.boatId);
+  const policy = boat ? getBoatCancellationPolicy(boat) : CANCELLATION_POLICIES[1];
+  const refundCalc = calculateRefund(r, boat?.cancellationPolicy, new Date());
+
+  modal(`
+    <div class="modal-header"><h3>✕ Annuler ma réservation</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <div style="background: var(--surface-2); padding: 14px; border-radius: var(--radius); margin-bottom: 16px;">
+        <strong>${escapeHtml(r.boatName)}</strong><br>
+        <span class="small">${fmtDate(r.startDate)} · ${DURATIONS.find(d => d.id === r.durationType)?.shortLabel}</span>
+      </div>
+      <div class="policy-info">
+        <strong>Politique ${policy.label.toLowerCase()}</strong> — ${escapeHtml(policy.description)}
+      </div>
+      <div class="info-grid" style="margin: 0 0 16px; padding: 14px;">
+        <div class="info-item"><div class="info-label">Total payé</div><div class="info-value">${fmtEUR(r.totalPrice)}</div></div>
+        <div class="info-item"><div class="info-label">À ${refundCalc.daysBefore} jour(s)</div><div class="info-value">${refundCalc.pct}% remboursés</div></div>
+        <div class="info-item" style="grid-column: 1 / -1;"><div class="info-label">Montant remboursé</div><div class="info-value" style="color: var(--primary); font-size: 20px;">${fmtEUR(refundCalc.amount)}</div></div>
+      </div>
+      <p class="small text-muted mb-2">Le propriétaire sera notifié et procédera au remboursement sous quelques jours.</p>
+      <div class="flex gap-1" style="justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="closeModal()">Garder ma réservation</button>
+        <button class="btn btn-danger" onclick="confirmClientCancel('${rid}', ${refundCalc.amount})">Confirmer l'annulation</button>
+      </div>
+    </div>
+  `);
+}
+
+async function confirmClientCancel(rid, refundAmount) {
+  showLoader();
+  try {
+    if (state.mode === 'demo') {
+      const r = state.reservations.find(x => x.id === rid);
+      if (r) {
+        r.status = 'cancelled';
+        r.paymentStatus = r.paymentStatus === 'paid' ? (refundAmount > 0 ? 'refunded' : 'paid') : 'cancelled';
+        r.refundAmount = refundAmount;
+        r.cancelledAt = new Date().toISOString();
+      }
+    } else {
+      await syncToBackend('updateReservation', {
+        id: rid, status: 'cancelled',
+        paymentStatus: refundAmount > 0 ? 'refunded' : 'cancelled',
+        refundAmount, cancelledAt: new Date().toISOString(),
+        cancelledByClient: true
+      });
+    }
+    audit('client_cancel', { id: rid, refund: refundAmount });
+    hideLoader();
+    closeModal();
+    toast(refundAmount > 0 ? `Annulée. Vous serez remboursé de ${fmtEUR(refundAmount)}.` : 'Annulée.', 'success');
+    viewClientReservations();
+  } catch (e) {
+    hideLoader();
+    toast('Erreur lors de l\'annulation', 'error');
+  }
+}
+
+function clientReviewReservation(rid) {
+  const r = state.reservations.find(x => x.id === rid);
+  if (!r) return;
+  openReviewForm(r.boatId, { reservationId: r.id, clientName: r.clientName });
+}
+
+/* Vue accès direct par token (futur usage : lien envoyé par email) */
+async function viewClientReservationByToken(token) {
+  const main = document.getElementById('main');
+  let r = null;
+  if (state.mode === 'demo') {
+    r = state.reservations.find(x => x.clientToken === token);
+  } else {
+    try {
+      const res = await syncToBackend('getReservationByToken', { token });
+      if (res?.success) r = res.data;
+    } catch {}
+  }
+  if (!r) {
+    main.innerHTML = `<div class="container"><div class="empty-state"><div class="empty-state-icon">🔒</div><h3>Lien invalide ou expiré</h3><p>Vérifiez le lien reçu par email ou <a onclick="navigate('/client')">accédez à vos réservations par email</a>.</p></div></div>`;
+    return;
+  }
+  setClientEmail(r.clientEmail);
+  viewClientReservations();
 }
 
 /* ---------- VIEW: PRO DASHBOARD ---------- */
@@ -2675,6 +3294,7 @@ function renderProLayout(content, active) {
     { id: 'dashboard', label: 'Tableau de bord', icon: '📊', path: '/pro/dashboard' },
     { id: 'boats', label: 'Mes bateaux', icon: '⛵', path: '/pro/boats' },
     { id: 'reservations', label: 'Réservations', icon: '📅', path: '/pro/reservations' },
+    { id: 'calendar', label: 'Calendrier', icon: '🗓️', path: '/pro/calendar' },
     { id: 'reviews', label: 'Avis', icon: '⭐', path: '/pro/reviews' },
     { id: 'profile', label: 'Profil', icon: '👤', path: '/pro/profile' },
   ];
@@ -3178,6 +3798,143 @@ async function saveBoat(editing) {
     }
   }
 }
+
+/* ---------- VIEW: PRO CALENDRIER AGRÉGÉ ---------- */
+let _calCurrent = null; // { year, month, filterBoatId }
+
+async function viewProCalendar() {
+  if (!state.currentUser) { openAuthModal(); return; }
+  await Promise.all([fetchMyBoats(), fetchMyReservations()]);
+  if (!_calCurrent) {
+    const now = new Date();
+    _calCurrent = { year: now.getFullYear(), month: now.getMonth(), filterBoatId: 'all', filterStatus: 'all' };
+  }
+  renderProLayout(renderCalendarHTML(), 'calendar');
+}
+
+function renderCalendarHTML() {
+  const { year, month, filterBoatId, filterStatus } = _calCurrent;
+  const monthLabel = new Date(year, month, 1).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+
+  // Filtre les réservations du pro
+  const myRes = state.reservations.filter(r => r.proId === state.currentUser.id);
+  const filtered = myRes.filter(r => {
+    if (filterBoatId !== 'all' && r.boatId !== filterBoatId) return false;
+    if (filterStatus !== 'all' && r.status !== filterStatus) return false;
+    return true;
+  });
+
+  // Mappe par date
+  const eventsByDate = {};
+  filtered.forEach(r => {
+    if (!r.startDate) return;
+    if (!eventsByDate[r.startDate]) eventsByDate[r.startDate] = [];
+    eventsByDate[r.startDate].push(r);
+  });
+
+  // Construit la grille (commence lundi)
+  const firstDay = new Date(year, month, 1);
+  let startOffset = firstDay.getDay() - 1; // 0=Dim → -1, on veut Lun=0
+  if (startOffset < 0) startOffset = 6;
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const todayISO = new Date().toISOString().slice(0, 10);
+
+  const cells = [];
+  // Jours du mois précédent (grisés)
+  const prevMonthDays = new Date(year, month, 0).getDate();
+  for (let i = startOffset - 1; i >= 0; i--) {
+    cells.push({ day: prevMonthDays - i, iso: null, muted: true });
+  }
+  // Jours du mois courant
+  for (let d = 1; d <= daysInMonth; d++) {
+    const iso = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+    cells.push({ day: d, iso, muted: false });
+  }
+  // Compléter pour 6 lignes
+  while (cells.length % 7 !== 0) {
+    cells.push({ day: cells.length - daysInMonth - startOffset + 1, iso: null, muted: true });
+  }
+
+  const usedBoatIds = [...new Set(filtered.map(r => r.boatId))];
+
+  return `
+    <div class="section-head">
+      <div><h2>Calendrier agrégé</h2><p>Toutes les réservations de tous vos bateaux en une vue</p></div>
+    </div>
+
+    <div class="cal-toolbar">
+      <div class="cal-nav">
+        <button class="btn btn-ghost btn-sm" onclick="calNav(-1)">‹ Précédent</button>
+        <span class="cal-title">${monthLabel}</span>
+        <button class="btn btn-ghost btn-sm" onclick="calNav(1)">Suivant ›</button>
+        <button class="btn btn-secondary btn-sm" onclick="calToday()">Aujourd'hui</button>
+      </div>
+      <div class="cal-nav" style="gap: 6px;">
+        <select onchange="calFilterBoat(this.value)" style="padding: 6px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 13px;">
+          <option value="all" ${filterBoatId === 'all' ? 'selected' : ''}>Tous les bateaux</option>
+          ${state.myBoats.map(b => `<option value="${b.id}" ${filterBoatId === b.id ? 'selected' : ''}>${escapeHtml(b.name)}</option>`).join('')}
+        </select>
+        <select onchange="calFilterStatus(this.value)" style="padding: 6px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 13px;">
+          <option value="all" ${filterStatus === 'all' ? 'selected' : ''}>Tous statuts</option>
+          <option value="pending" ${filterStatus === 'pending' ? 'selected' : ''}>En attente</option>
+          <option value="confirmed" ${filterStatus === 'confirmed' ? 'selected' : ''}>Confirmées</option>
+          <option value="completed" ${filterStatus === 'completed' ? 'selected' : ''}>Terminées</option>
+          <option value="cancelled" ${filterStatus === 'cancelled' ? 'selected' : ''}>Annulées</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="cal-grid">
+      ${['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(d => `<div class="cal-day-header">${d}</div>`).join('')}
+      ${cells.map(c => {
+        if (!c.iso) return `<div class="cal-day muted"><div class="cal-day-number">${c.day}</div></div>`;
+        const events = eventsByDate[c.iso] || [];
+        const isToday = c.iso === todayISO;
+        return `
+          <div class="cal-day ${isToday ? 'today' : ''}">
+            <div class="cal-day-number">${c.day}</div>
+            ${events.slice(0, 3).map(r => {
+              const slotIcon = r.durationType === 'halfday' ? '🌅' : r.durationType === 'sunset' ? '🌇' : '☀️';
+              const color = getBoatColor(r.boatId);
+              const statusClass = r.status === 'cancelled' ? 'cancelled' : r.status === 'pending' ? 'pending' : r.status === 'completed' ? 'completed' : '';
+              const style = statusClass ? '' : `style="background:${color};"`;
+              return `<div class="cal-event ${statusClass}" ${style} onclick="event.stopPropagation(); openReservationDetail('${r.id}')" title="${escapeHtml(r.boatName)} — ${escapeHtml(r.clientName)}">${slotIcon} ${escapeHtml((r.boatName || '').slice(0, 14))}</div>`;
+            }).join('')}
+            ${events.length > 3 ? `<div class="cal-more">+${events.length - 3} autres</div>` : ''}
+          </div>
+        `;
+      }).join('')}
+    </div>
+
+    <div class="cal-legend">
+      <strong>Statuts :</strong>
+      <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--warning);"></span>En attente</span>
+      <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--info);"></span>Terminée</span>
+      <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--text-2);"></span>Annulée</span>
+      <span class="cal-legend-item"><strong>· Bateaux :</strong></span>
+      ${usedBoatIds.slice(0, 6).map(id => {
+        const boat = state.myBoats.find(b => b.id === id);
+        if (!boat) return '';
+        return `<span class="cal-legend-item"><span class="cal-legend-dot" style="background:${getBoatColor(id)};"></span>${escapeHtml(boat.name)}</span>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+function calNav(delta) {
+  _calCurrent.month += delta;
+  if (_calCurrent.month < 0) { _calCurrent.month = 11; _calCurrent.year--; }
+  if (_calCurrent.month > 11) { _calCurrent.month = 0; _calCurrent.year++; }
+  viewProCalendar();
+}
+function calToday() {
+  const now = new Date();
+  _calCurrent.year = now.getFullYear();
+  _calCurrent.month = now.getMonth();
+  viewProCalendar();
+}
+function calFilterBoat(boatId) { _calCurrent.filterBoatId = boatId; viewProCalendar(); }
+function calFilterStatus(s) { _calCurrent.filterStatus = s; viewProCalendar(); }
 
 /* ---------- VIEW: PRO REVIEWS ---------- */
 async function viewProReviews() {
