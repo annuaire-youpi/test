@@ -16,6 +16,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/l10n/fr.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
 <style>
   :root {
     --primary: #0e6e6e;
@@ -618,26 +619,139 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* ====== DEMO BADGE ====== */
-  .demo-banner {
-    position: fixed;
-    top: 12px;
-    right: 12px;
-    z-index: 60;
-    background: var(--demo);
-    color: white;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: .04em;
-    box-shadow: var(--shadow);
-    display: flex;
+  /* ====== DEMO BADGE (intégré dans le header, ne chevauche plus rien) ====== */
+  .demo-pill {
+    display: inline-flex;
     align-items: center;
     gap: 6px;
+    background: var(--demo);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    white-space: nowrap;
   }
-  @media (max-width: 640px) { .demo-banner { top: auto; bottom: 12px; right: 12px; } }
-  @media (max-width: 900px) and (min-width: 641px) { body.in-pro .demo-banner { right: auto; left: 12px; } }
+  @media (max-width: 480px) {
+    .demo-pill { font-size: 10px; padding: 3px 8px; }
+    .demo-pill .demo-label { display: none; }
+  }
+
+  /* ====== BOAT PRICE (nouvelle organisation : label-prix-unit empilés) ====== */
+  .boat-price {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .boat-price-stack { display: flex; flex-direction: column; line-height: 1.2; }
+  .boat-price-label-top { font-size: 11px; color: var(--text-2); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+  .boat-price-amount { font-size: 22px; font-weight: 800; color: var(--primary); letter-spacing: -.02em; margin: 2px 0; }
+  .boat-price-unit { font-size: 11px; color: var(--text-2); font-weight: 500; }
+
+  /* ====== RATING STARS ====== */
+  .stars { display: inline-flex; gap: 2px; font-size: 14px; line-height: 1; }
+  .stars .star { color: #d1d5db; }
+  .stars .star.filled { color: #fbbf24; }
+  .stars-input { display: inline-flex; gap: 4px; cursor: pointer; font-size: 28px; }
+  .stars-input .star { color: #d1d5db; transition: color .12s; }
+  .stars-input .star.filled, .stars-input:hover .star { color: #fbbf24; }
+  .stars-input .star:hover ~ .star { color: #d1d5db; }
+  .rating-summary { display: flex; align-items: center; gap: 8px; }
+  .rating-summary .big-score { font-size: 22px; font-weight: 800; color: var(--text); }
+  .rating-summary .count { font-size: 13px; color: var(--text-2); }
+  .review-item {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .review-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+  .review-author { font-weight: 700; font-size: 14px; }
+  .review-date { font-size: 12px; color: var(--text-2); }
+  .review-comment { font-size: 14px; color: var(--text); line-height: 1.5; }
+  .review-response {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: white;
+    border-left: 3px solid var(--primary);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--text);
+  }
+  .review-response strong { color: var(--primary); font-size: 12px; }
+
+  /* ====== CANCELLATION POLICIES ====== */
+  .policy-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+  .policy-card {
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px;
+    cursor: pointer;
+    transition: all .15s;
+    background: var(--surface);
+  }
+  .policy-card:hover { border-color: var(--primary-light); }
+  .policy-card.selected { border-color: var(--primary); background: var(--primary-soft); }
+  .policy-card .policy-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+  .policy-card .policy-desc { font-size: 12px; color: var(--text-2); line-height: 1.4; }
+
+  .policy-info {
+    background: var(--info-soft);
+    border-left: 3px solid var(--info);
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 16px;
+  }
+  .policy-info strong { color: var(--info); }
+
+  /* ====== CHARTS ====== */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+  }
+  .chart-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--text-2); text-transform: uppercase; letter-spacing: .04em; }
+  .chart-wrap { height: 220px; position: relative; }
+  @media (max-width: 640px) { .chart-wrap { height: 200px; } }
+
+  /* ====== PAYMENT LINKS GRID (form bateau) ====== */
+  .payment-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .payment-row {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .payment-row.disabled { opacity: .4; }
+  .payment-row .slot-name { font-weight: 600; font-size: 14px; }
+  .payment-row input { background: white; padding: 8px 10px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); font-size: 13px; outline: none; }
+  .payment-row input:focus { border-color: var(--primary); }
+  @media (max-width: 480px) {
+    .payment-row { grid-template-columns: 1fr; gap: 4px; }
+  }
 
   /* ====== AUTH / SPLASH MODAL ====== */
   .auth-tabs { display: flex; gap: 4px; background: var(--surface-2); padding: 4px; border-radius: var(--radius); margin-bottom: 20px; }
@@ -908,22 +1022,21 @@
 
   <footer class="footer">
     <div>BatoKreyòl — Louez votre bateau en Martinique 🌴</div>
-    <div class="version">v0.5 — 2026</div>
+    <div class="version">v0.6 — 2026</div>
   </footer>
 </div>
 
 <div class="toast-container" id="toasts"></div>
 <div id="modal-root"></div>
 <div id="loader-root"></div>
-<div id="demo-banner-root"></div>
 
 <script>
 /* ============================================================
-   BatoKreyòl v0.5
+   BatoKreyòl v0.6
    Marketplace de location de bateaux en Martinique
    ============================================================ */
 
-const VERSION = 'v0.5';
+const VERSION = 'v0.6';
 const APP_NAME = 'BatoKreyol';
 
 // CONFIG : remplacer par votre URL Apps Script déployée en Web App
@@ -942,6 +1055,7 @@ const state = {
   boats: [],            // public catalog
   reservations: [],     // pro reservations
   myBoats: [],          // pro's boats
+  reviews: [],          // avis clients
   filters: { location: '', type: '', capacity: '' },
   demoSnapshot: null,
 };
@@ -1022,6 +1136,81 @@ function getBoatStartingPrice(boat) {
 function isSlotOfferedByBoat(boat, slotId) {
   const b = normalizeBoatPricing(boat);
   return b.availableSlots.includes(slotId);
+}
+
+/* ---------- POLITIQUES D'ANNULATION ---------- */
+const CANCELLATION_POLICIES = [
+  {
+    id: 'flexible',
+    label: 'Flexible',
+    short: 'Annulation gratuite jusqu\'à 24h avant',
+    description: 'Remboursement intégral si vous annulez au moins 24h avant le départ. Au-delà, aucun remboursement.',
+    rules: [{ daysBefore: 1, refundPct: 100 }]
+  },
+  {
+    id: 'moderate',
+    label: 'Modérée',
+    short: 'Gratuit 7 jours avant, 50% à 24h',
+    description: 'Remboursement intégral à 7+ jours du départ. 50% entre 7 jours et 24h. Aucun remboursement à moins de 24h.',
+    rules: [{ daysBefore: 7, refundPct: 100 }, { daysBefore: 1, refundPct: 50 }]
+  },
+  {
+    id: 'strict',
+    label: 'Stricte',
+    short: '50% jusqu\'à 14 jours, sinon rien',
+    description: 'Remboursement 50% à 14+ jours du départ. Aucun remboursement à moins de 14 jours.',
+    rules: [{ daysBefore: 14, refundPct: 50 }]
+  }
+];
+
+function calculateRefund(reservation, policyId, cancellationDate) {
+  const startDate = new Date(reservation.startDate + 'T00:00:00');
+  const cancelDate = cancellationDate ? new Date(cancellationDate) : new Date();
+  const daysBefore = Math.floor((startDate - cancelDate) / 86400000);
+  const policy = CANCELLATION_POLICIES.find(p => p.id === policyId) || CANCELLATION_POLICIES[1];
+  const applicable = policy.rules.filter(r => daysBefore >= r.daysBefore).sort((a, b) => b.refundPct - a.refundPct);
+  const pct = applicable[0]?.refundPct || 0;
+  return { amount: Math.round((reservation.totalPrice || 0) * pct / 100), pct, daysBefore };
+}
+
+function getBoatCancellationPolicy(boat) {
+  return CANCELLATION_POLICIES.find(p => p.id === (boat?.cancellationPolicy || 'moderate')) || CANCELLATION_POLICIES[1];
+}
+
+/* ---------- AVIS / REVIEWS ---------- */
+function renderStars(avg, sizePx = 14) {
+  const full = Math.round((avg || 0) * 2) / 2;
+  let html = '<span class="stars" style="font-size:' + sizePx + 'px">';
+  for (let i = 1; i <= 5; i++) {
+    if (i <= Math.floor(full)) html += '<span class="star filled">★</span>';
+    else if (i - 0.5 === full) html += '<span class="star filled">★</span>';
+    else html += '<span class="star">★</span>';
+  }
+  html += '</span>';
+  return html;
+}
+
+function getBoatReviewsSummary(boatId) {
+  const reviews = state.reviews.filter(r => r.boatId === boatId);
+  if (!reviews.length) return { count: 0, avg: 0 };
+  const sum = reviews.reduce((s, r) => s + (r.rating || 0), 0);
+  return { count: reviews.length, avg: sum / reviews.length };
+}
+
+/* ---------- LIENS DE PAIEMENT PAR CRÉNEAU ---------- */
+function getBoatPaymentLink(boat, slotId) {
+  if (!boat) return '';
+  if (boat.paymentLinks && typeof boat.paymentLinks === 'object') {
+    return boat.paymentLinks[slotId] || '';
+  }
+  // Rétrocompatibilité : l'ancien champ paymentLink unique s'applique à tous les créneaux
+  return boat.paymentLink || '';
+}
+
+function boatHasAnyPaymentLink(boat) {
+  if (!boat) return false;
+  if (boat.paymentLinks) return Object.values(boat.paymentLinks).some(v => v && v.length > 0);
+  return !!boat.paymentLink;
 }
 const EQUIPMENT_PRESETS = ['GPS', 'Sondeur', 'Glacière', 'Douche de pont', 'Snorkeling', 'Bain de soleil', 'Toilettes', 'Cuisine', 'Bluetooth', 'Échelle de bain', 'Bouées', 'Punch maison 🍹'];
 
@@ -1243,6 +1432,39 @@ const localBackend = {
     return { success: true, data: list };
   },
 
+  /* Avis clients */
+  listReviewsForBoat(data) {
+    const list = this._read('reviews')
+      .filter(r => r.boatId === data.boatId)
+      .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+    return { success: true, data: list };
+  },
+
+  listAllReviewsForPro(data) {
+    const boats = this._read('boats').filter(b => b.proId === data.proId).map(b => b.id);
+    const list = this._read('reviews')
+      .filter(r => boats.includes(r.boatId))
+      .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+    return { success: true, data: list };
+  },
+
+  createReview(data) {
+    const reviews = this._read('reviews');
+    const review = { ...data, id: data.id || this._uid(), createdAt: new Date().toISOString(), response: data.response || '' };
+    reviews.push(review);
+    this._write('reviews', reviews);
+    return { success: true, data: review };
+  },
+
+  respondToReview(data) {
+    const reviews = this._read('reviews');
+    const i = reviews.findIndex(r => r.id === data.id);
+    if (i === -1) return { success: false, error: 'Avis introuvable' };
+    reviews[i].response = data.response || '';
+    this._write('reviews', reviews);
+    return { success: true };
+  },
+
   sendClientEmail(data) { return { success: true, simulated: true }; },
 
   audit(data) {
@@ -1317,38 +1539,58 @@ function loadDemoData() {
     { id: 'p3', name: 'Patrick Bélony', company: 'Antilles Boat Tours', email: 'patrick@antilles.demo', phone: '0696 34 56 78', password: 'demo' },
     { id: 'p4', name: 'Mariana Tessier', company: 'Diamant Bleu Loisirs', email: 'mariana@diamant.demo', phone: '0696 45 67 89', password: 'demo' },
   ];
+  const baseBoat = (extra) => ({
+    paymentLinks: extra.paymentLinks || {},
+    cancellationPolicy: extra.cancellationPolicy || 'moderate',
+    withSkipper: true,
+    status: 'active',
+    ...extra
+  });
   const demoBoats = [
-    { id: 'b1', proId: 'p1', proName: 'Karayib Charter', name: 'Lagon Bleu', type: 'Catamaran', capacity: 12, location: 'Le Marin', description: 'Catamaran spacieux idéal pour découvrir les fonds blancs et la baie du Robert. Skipper local expérimenté inclus.', pricePerDay: 850, images: ['https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=900'], paymentLink: 'https://buy.stripe.com/demo-lagon-bleu', withSkipper: true, equipment: ['GPS', 'Snorkeling', 'Glacière', 'Douche de pont', 'Bluetooth'], status: 'active' },
-    { id: 'b2', proId: 'p1', proName: 'Karayib Charter', name: 'Soleil Caraïbe', type: 'Voilier', capacity: 8, location: 'Le Marin', description: 'Voilier élégant pour une journée entre amis. Apéro punch offert à bord !', pricePerDay: 620, images: ['https://images.unsplash.com/photo-1540946485063-a40da27545f8?w=900'], paymentLink: '', withSkipper: true, equipment: ['GPS', 'Snorkeling', 'Punch maison 🍹', 'Bluetooth'], status: 'active' },
-    { id: 'b3', proId: 'p2', proName: 'Madras Marina', name: 'Yacht Manikou', type: 'Yacht', capacity: 10, location: 'Fort-de-France', description: 'Yacht haut de gamme avec cabines climatisées. Idéal coucher de soleil ou week-end.', pricePerDay: 1450, images: ['https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=900', 'https://images.unsplash.com/photo-1540946485063-a40da27545f8?w=900'], paymentLink: 'https://buy.stripe.com/demo-manikou', withSkipper: true, equipment: ['GPS', 'Sondeur', 'Cuisine', 'Toilettes', 'Bain de soleil', 'Bluetooth'], status: 'active' },
-    { id: 'b4', proId: 'p2', proName: 'Madras Marina', name: 'Belle des Îles', type: 'Catamaran', capacity: 14, location: 'Les Trois-Îlets', description: 'Notre plus grand catamaran pour groupes et événements privés. Équipé pour le snorkeling.', pricePerDay: 980, images: ['https://images.unsplash.com/photo-1540946485063-a40da27545f8?w=900'], paymentLink: '', withSkipper: true, equipment: ['GPS', 'Snorkeling', 'Échelle de bain', 'Cuisine', 'Toilettes', 'Bouées'], status: 'active' },
-    { id: 'b5', proId: 'p3', proName: 'Antilles Boat Tours', name: 'Ti Sucrier', type: 'Semi-rigide', capacity: 6, location: 'Sainte-Anne', description: 'Semi-rigide rapide pour balades vers le rocher du Diamant et îlet Chevalier.', pricePerDay: 380, images: ['https://images.unsplash.com/photo-1502209524164-acea936639a2?w=900'], paymentLink: 'https://www.paypal.me/antillesboat', withSkipper: true, equipment: ['GPS', 'Snorkeling', 'Bouées', 'Glacière'], status: 'active' },
-    { id: 'b6', proId: 'p3', proName: 'Antilles Boat Tours', name: 'Karaïbes Pêche', type: 'Pêche-promenade', capacity: 8, location: 'Sainte-Anne', description: 'Bateau de pêche aménagé. Initiation pêche au gros possible avec matériel fourni.', pricePerDay: 540, images: ['https://images.unsplash.com/photo-1543507767-69486cab6ad5?w=900'], paymentLink: '', withSkipper: true, equipment: ['GPS', 'Sondeur', 'Glacière', 'Bouées'], status: 'active' },
-    { id: 'b7', proId: 'p4', proName: 'Diamant Bleu Loisirs', name: 'Vent d\'Alizé', type: 'Voilier', capacity: 10, location: 'Le Diamant', description: 'Voilier classique pour la baie du Diamant. Vues spectaculaires garanties.', pricePerDay: 720, images: ['https://images.unsplash.com/photo-1505764923316-fce6f37a37c5?w=900'], paymentLink: 'https://buy.stripe.com/demo-alize', withSkipper: true, equipment: ['GPS', 'Bluetooth', 'Snorkeling', 'Douche de pont'], status: 'active' },
-    { id: 'b8', proId: 'p4', proName: 'Diamant Bleu Loisirs', name: 'Coco Caraïbe', type: 'Bateau à moteur', capacity: 8, location: 'Le Diamant', description: 'Bateau moteur confortable pour balades côtières et baignades dans les criques.', pricePerDay: 460, images: [], paymentLink: '', withSkipper: true, equipment: ['GPS', 'Glacière', 'Échelle de bain', 'Bluetooth'], status: 'active' },
-    { id: 'b9', proId: 'p1', proName: 'Karayib Charter', name: 'Anolis', type: 'Semi-rigide', capacity: 5, location: 'Le François', description: 'Petit semi-rigide pour découverte des fonds blancs du François en mode privatif.', pricePerDay: 320, images: [], paymentLink: '', withSkipper: true, equipment: ['Snorkeling', 'Bouées', 'Glacière'], status: 'active' },
-    { id: 'b10', proId: 'p2', proName: 'Madras Marina', name: 'Sirène d\'Or', type: 'Yacht', capacity: 8, location: 'Schoelcher', description: 'Yacht intimiste pour soirées privées et apéros couchers de soleil.', pricePerDay: 1180, images: ['https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=900'], paymentLink: 'https://buy.stripe.com/demo-sirene', withSkipper: true, equipment: ['Cuisine', 'Bluetooth', 'Bain de soleil', 'Toilettes', 'Punch maison 🍹'], status: 'active' },
-    { id: 'b11', proId: 'p3', proName: 'Antilles Boat Tours', name: 'Maracudja', type: 'Catamaran', capacity: 16, location: 'Tartane', description: 'Grand catamaran pour groupes. Découverte de la presqu\'île de la Caravelle.', pricePerDay: 1050, images: [], paymentLink: '', withSkipper: true, equipment: ['GPS', 'Snorkeling', 'Cuisine', 'Toilettes', 'Échelle de bain'], status: 'active' },
-    { id: 'b12', proId: 'p4', proName: 'Diamant Bleu Loisirs', name: 'Zandoli', type: 'Bateau à moteur', capacity: 6, location: 'Les Anses-d\'Arlet', description: 'Bateau familial pour découverte des plages des Anses-d\'Arlet et bain avec les tortues.', pricePerDay: 410, images: ['https://images.unsplash.com/photo-1502209524164-acea936639a2?w=900'], paymentLink: '', withSkipper: true, equipment: ['Snorkeling', 'Bouées', 'Glacière'], status: 'active' },
+    baseBoat({ id: 'b1', proId: 'p1', proName: 'Karayib Charter', name: 'Lagon Bleu', type: 'Catamaran', capacity: 12, location: 'Le Marin', description: 'Catamaran spacieux idéal pour découvrir les fonds blancs et la baie du Robert. Skipper local expérimenté inclus.', pricePerDay: 850, images: ['https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=900'], paymentLinks: { halfday: 'https://buy.stripe.com/demo-lagon-half', day: 'https://buy.stripe.com/demo-lagon-day', sunset: 'https://buy.stripe.com/demo-lagon-sunset' }, cancellationPolicy: 'flexible', equipment: ['GPS', 'Snorkeling', 'Glacière', 'Douche de pont', 'Bluetooth'] }),
+    baseBoat({ id: 'b2', proId: 'p1', proName: 'Karayib Charter', name: 'Soleil Caraïbe', type: 'Voilier', capacity: 8, location: 'Le Marin', description: 'Voilier élégant pour une journée entre amis. Apéro punch offert à bord !', pricePerDay: 620, images: ['https://images.unsplash.com/photo-1540946485063-a40da27545f8?w=900'], cancellationPolicy: 'moderate', equipment: ['GPS', 'Snorkeling', 'Punch maison 🍹', 'Bluetooth'] }),
+    baseBoat({ id: 'b3', proId: 'p2', proName: 'Madras Marina', name: 'Yacht Manikou', type: 'Yacht', capacity: 10, location: 'Fort-de-France', description: 'Yacht haut de gamme avec cabines climatisées. Idéal coucher de soleil ou week-end.', pricePerDay: 1450, images: ['https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=900', 'https://images.unsplash.com/photo-1540946485063-a40da27545f8?w=900'], paymentLinks: { day: 'https://buy.stripe.com/demo-manikou-day', sunset: 'https://buy.stripe.com/demo-manikou-sunset' }, cancellationPolicy: 'strict', equipment: ['GPS', 'Sondeur', 'Cuisine', 'Toilettes', 'Bain de soleil', 'Bluetooth'] }),
+    baseBoat({ id: 'b4', proId: 'p2', proName: 'Madras Marina', name: 'Belle des Îles', type: 'Catamaran', capacity: 14, location: 'Les Trois-Îlets', description: 'Notre plus grand catamaran pour groupes et événements privés. Équipé pour le snorkeling.', pricePerDay: 980, images: ['https://images.unsplash.com/photo-1540946485063-a40da27545f8?w=900'], cancellationPolicy: 'moderate', equipment: ['GPS', 'Snorkeling', 'Échelle de bain', 'Cuisine', 'Toilettes', 'Bouées'] }),
+    baseBoat({ id: 'b5', proId: 'p3', proName: 'Antilles Boat Tours', name: 'Ti Sucrier', type: 'Semi-rigide', capacity: 6, location: 'Sainte-Anne', description: 'Semi-rigide rapide pour balades vers le rocher du Diamant et îlet Chevalier.', pricePerDay: 380, images: ['https://images.unsplash.com/photo-1502209524164-acea936639a2?w=900'], paymentLinks: { halfday: 'https://www.paypal.me/antillesboat/halfday', day: 'https://www.paypal.me/antillesboat/day' }, cancellationPolicy: 'flexible', equipment: ['GPS', 'Snorkeling', 'Bouées', 'Glacière'] }),
+    baseBoat({ id: 'b6', proId: 'p3', proName: 'Antilles Boat Tours', name: 'Karaïbes Pêche', type: 'Pêche-promenade', capacity: 8, location: 'Sainte-Anne', description: 'Bateau de pêche aménagé. Initiation pêche au gros possible avec matériel fourni.', pricePerDay: 540, images: ['https://images.unsplash.com/photo-1543507767-69486cab6ad5?w=900'], cancellationPolicy: 'moderate', equipment: ['GPS', 'Sondeur', 'Glacière', 'Bouées'] }),
+    baseBoat({ id: 'b7', proId: 'p4', proName: 'Diamant Bleu Loisirs', name: 'Vent d\'Alizé', type: 'Voilier', capacity: 10, location: 'Le Diamant', description: 'Voilier classique pour la baie du Diamant. Vues spectaculaires garanties.', pricePerDay: 720, images: ['https://images.unsplash.com/photo-1505764923316-fce6f37a37c5?w=900'], paymentLinks: { day: 'https://buy.stripe.com/demo-alize', sunset: 'https://buy.stripe.com/demo-alize-sunset' }, cancellationPolicy: 'moderate', equipment: ['GPS', 'Bluetooth', 'Snorkeling', 'Douche de pont'] }),
+    baseBoat({ id: 'b8', proId: 'p4', proName: 'Diamant Bleu Loisirs', name: 'Coco Caraïbe', type: 'Bateau à moteur', capacity: 8, location: 'Le Diamant', description: 'Bateau moteur confortable pour balades côtières et baignades dans les criques.', pricePerDay: 460, images: [], cancellationPolicy: 'flexible', equipment: ['GPS', 'Glacière', 'Échelle de bain', 'Bluetooth'] }),
+    baseBoat({ id: 'b9', proId: 'p1', proName: 'Karayib Charter', name: 'Anolis', type: 'Semi-rigide', capacity: 5, location: 'Le François', description: 'Petit semi-rigide pour découverte des fonds blancs du François en mode privatif.', pricePerDay: 320, images: [], cancellationPolicy: 'flexible', equipment: ['Snorkeling', 'Bouées', 'Glacière'] }),
+    baseBoat({ id: 'b10', proId: 'p2', proName: 'Madras Marina', name: 'Sirène d\'Or', type: 'Yacht', capacity: 8, location: 'Schoelcher', description: 'Yacht intimiste pour soirées privées et apéros couchers de soleil.', pricePerDay: 1180, images: ['https://images.unsplash.com/photo-1567899378494-47b22a2ae96a?w=900'], paymentLinks: { sunset: 'https://buy.stripe.com/demo-sirene-sunset' }, cancellationPolicy: 'strict', equipment: ['Cuisine', 'Bluetooth', 'Bain de soleil', 'Toilettes', 'Punch maison 🍹'] }),
+    baseBoat({ id: 'b11', proId: 'p3', proName: 'Antilles Boat Tours', name: 'Maracudja', type: 'Catamaran', capacity: 16, location: 'Tartane', description: 'Grand catamaran pour groupes. Découverte de la presqu\'île de la Caravelle.', pricePerDay: 1050, images: [], cancellationPolicy: 'moderate', equipment: ['GPS', 'Snorkeling', 'Cuisine', 'Toilettes', 'Échelle de bain'] }),
+    baseBoat({ id: 'b12', proId: 'p4', proName: 'Diamant Bleu Loisirs', name: 'Zandoli', type: 'Bateau à moteur', capacity: 6, location: 'Les Anses-d\'Arlet', description: 'Bateau familial pour découverte des plages des Anses-d\'Arlet et bain avec les tortues.', pricePerDay: 410, images: ['https://images.unsplash.com/photo-1502209524164-acea936639a2?w=900'], cancellationPolicy: 'flexible', equipment: ['Snorkeling', 'Bouées', 'Glacière'] }),
   ];
   const demoReservations = [
     { id: 'r1', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Famille Mercier', clientEmail: 'famille.mercier@demo.fr', clientPhone: '0696 11 22 33', startDate: '2026-06-15', durationType: 'day', totalPrice: 850, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-08T10:00:00Z' },
     { id: 'r2', boatId: 'b3', boatName: 'Yacht Manikou', proId: 'p2', clientName: 'Entreprise BNP Demo', clientEmail: 'contact@bnp.demo', clientPhone: '0596 55 66 77', startDate: '2026-06-22', durationType: 'sunset', totalPrice: 653, paymentStatus: 'pending', status: 'pending', createdAt: '2026-05-09T14:30:00Z' },
-    { id: 'r3', boatId: 'b5', boatName: 'Ti Sucrier', proId: 'p3', clientName: 'Lucie Dubois', clientEmail: 'lucie.d@demo.fr', clientPhone: '0696 33 44 55', startDate: '2026-05-25', durationType: 'halfday', totalPrice: 228, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-01T09:00:00Z' },
-    { id: 'r4', boatId: 'b7', boatName: 'Vent d\'Alizé', proId: 'p4', clientName: 'Marc Antillais', clientEmail: 'marc@demo.fr', clientPhone: '0696 77 88 99', startDate: '2026-05-12', durationType: 'day', totalPrice: 720, paymentStatus: 'paid', status: 'completed', createdAt: '2026-04-20T12:00:00Z' },
+    { id: 'r3', boatId: 'b5', boatName: 'Ti Sucrier', proId: 'p3', clientName: 'Lucie Dubois', clientEmail: 'lucie.d@demo.fr', clientPhone: '0696 33 44 55', startDate: '2026-03-25', durationType: 'halfday', totalPrice: 228, paymentStatus: 'paid', status: 'completed', createdAt: '2026-03-01T09:00:00Z' },
+    { id: 'r4', boatId: 'b7', boatName: 'Vent d\'Alizé', proId: 'p4', clientName: 'Marc Antillais', clientEmail: 'marc@demo.fr', clientPhone: '0696 77 88 99', startDate: '2026-04-12', durationType: 'day', totalPrice: 720, paymentStatus: 'paid', status: 'completed', createdAt: '2026-03-20T12:00:00Z' },
     { id: 'r5', boatId: 'b2', boatName: 'Soleil Caraïbe', proId: 'p1', clientName: 'Yann Léonce', clientEmail: 'yann@demo.fr', clientPhone: '0696 99 88 77', startDate: '2026-07-04', durationType: 'day', totalPrice: 620, paymentStatus: 'pending', status: 'pending', createdAt: '2026-05-10T08:15:00Z' },
     { id: 'r6', boatId: 'b4', boatName: 'Belle des Îles', proId: 'p2', clientName: 'Mariage Petit-Béville', clientEmail: 'mariage@demo.fr', clientPhone: '0696 22 33 44', startDate: '2026-08-15', durationType: 'day', totalPrice: 980, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-03T16:00:00Z' },
     { id: 'r7', boatId: 'b10', boatName: 'Sirène d\'Or', proId: 'p2', clientName: 'Cabinet Pinson', clientEmail: 'pinson@demo.fr', clientPhone: '0596 44 55 66', startDate: '2026-05-30', durationType: 'sunset', totalPrice: 531, paymentStatus: 'cancelled', status: 'cancelled', createdAt: '2026-04-25T11:30:00Z' },
     { id: 'r8', boatId: 'b6', boatName: 'Karaïbes Pêche', proId: 'p3', clientName: 'Patrick Coloss', clientEmail: 'coloss@demo.fr', clientPhone: '0696 12 21 21', startDate: '2026-06-08', durationType: 'day', totalPrice: 540, paymentStatus: 'pending', status: 'pending', createdAt: '2026-05-10T07:00:00Z' },
-    { id: 'r9', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Sortie Comité', clientEmail: 'comite@demo.fr', clientPhone: '0596 78 89 90', startDate: '2026-07-20', durationType: 'day', totalPrice: 850, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-06T13:00:00Z' },
-    { id: 'r10', boatId: 'b12', boatName: 'Zandoli', proId: 'p4', clientName: 'Touristes Allemands', clientEmail: 'klaus@demo.de', clientPhone: '+49 30 1234567', startDate: '2026-06-01', durationType: 'halfday', totalPrice: 246, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-07T15:45:00Z' },
+    { id: 'r9', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Sortie Comité', clientEmail: 'comite@demo.fr', clientPhone: '0596 78 89 90', startDate: '2026-02-20', durationType: 'day', totalPrice: 850, paymentStatus: 'paid', status: 'completed', createdAt: '2026-02-01T13:00:00Z' },
+    { id: 'r10', boatId: 'b12', boatName: 'Zandoli', proId: 'p4', clientName: 'Touristes Allemands', clientEmail: 'klaus@demo.de', clientPhone: '+49 30 1234567', startDate: '2026-04-01', durationType: 'halfday', totalPrice: 246, paymentStatus: 'paid', status: 'completed', createdAt: '2026-03-15T15:45:00Z' },
     { id: 'r11', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Apéro Coucher', clientEmail: 'apero@demo.fr', clientPhone: '0696 11 11 11', startDate: '2026-06-18', durationType: 'sunset', totalPrice: 383, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-09T10:00:00Z' },
     { id: 'r12', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Famille Vincent', clientEmail: 'vincent@demo.fr', clientPhone: '0696 22 22 22', startDate: '2026-06-25', durationType: 'halfday', totalPrice: 510, paymentStatus: 'paid', status: 'confirmed', createdAt: '2026-05-09T11:00:00Z' },
+    { id: 'r13', boatId: 'b3', boatName: 'Yacht Manikou', proId: 'p2', clientName: 'Soirée Entreprise', clientEmail: 'cse@demo.fr', clientPhone: '0596 33 33 33', startDate: '2026-01-15', durationType: 'sunset', totalPrice: 653, paymentStatus: 'paid', status: 'completed', createdAt: '2025-12-20T10:00:00Z' },
+    { id: 'r14', boatId: 'b5', boatName: 'Ti Sucrier', proId: 'p3', clientName: 'Famille Petit', clientEmail: 'petit@demo.fr', clientPhone: '0696 55 55 55', startDate: '2026-01-28', durationType: 'day', totalPrice: 380, paymentStatus: 'paid', status: 'completed', createdAt: '2026-01-10T09:00:00Z' },
+    { id: 'r15', boatId: 'b1', boatName: 'Lagon Bleu', proId: 'p1', clientName: 'Anniversaire Jules', clientEmail: 'jules@demo.fr', clientPhone: '0696 66 66 66', startDate: '2026-02-14', durationType: 'day', totalPrice: 850, paymentStatus: 'paid', status: 'completed', createdAt: '2026-01-25T10:00:00Z' },
+  ];
+  const demoReviews = [
+    { id: 'rev1', boatId: 'b1', reservationId: 'r3', clientName: 'Famille Mercier', rating: 5, comment: 'Journée magnifique ! Le skipper Jean-Marc connaît tous les meilleurs coins. Eaux turquoise, snorkeling top, on a vu des tortues 🐢. À refaire absolument !', response: 'Merci beaucoup ! C\'était un plaisir de vous accueillir. À très bientôt 🌴', createdAt: '2026-02-22T18:00:00Z' },
+    { id: 'rev2', boatId: 'b1', reservationId: 'r15', clientName: 'Anniversaire Jules', rating: 5, comment: 'Surprise d\'anniversaire parfaitement organisée. Le bateau est nickel, le punch maison est une tuerie 🍹. Merci !', response: '', createdAt: '2026-02-15T20:30:00Z' },
+    { id: 'rev3', boatId: 'b5', reservationId: 'r14', clientName: 'Famille Petit', rating: 4, comment: 'Super sortie en famille, les enfants ont adoré. Petit bémol : un peu de houle au retour, sinon impeccable !', response: 'Merci pour votre retour, en effet la météo peut être capricieuse l\'après-midi. Au plaisir !', createdAt: '2026-01-30T16:00:00Z' },
+    { id: 'rev4', boatId: 'b7', reservationId: 'r4', clientName: 'Marc Antillais', rating: 5, comment: 'Voilier sublime, balade dans la baie du Diamant grandiose. Mariana est une hôtesse exceptionnelle.', response: '', createdAt: '2026-04-13T19:00:00Z' },
+    { id: 'rev5', boatId: 'b3', reservationId: 'r13', clientName: 'Soirée Entreprise', rating: 5, comment: 'Soirée d\'entreprise inoubliable. Le yacht est splendide et le coucher de soleil... no comment. Toute l\'équipe a été conquise.', response: 'Ravie que la soirée vous ait plu ! On vous attend pour la prochaine 😊', createdAt: '2026-01-16T22:00:00Z' },
+    { id: 'rev6', boatId: 'b12', reservationId: 'r10', clientName: 'Touristes Allemands', rating: 4, comment: 'Très bon moment, jolie sortie aux Anses d\'Arlet. Communication en anglais parfaite.', response: '', createdAt: '2026-04-02T17:00:00Z' },
+    { id: 'rev7', boatId: 'b1', reservationId: 'r9', clientName: 'Sortie Comité', rating: 5, comment: 'Notre comité d\'entreprise est revenu enchanté. Tout était parfait, du matériel à l\'accueil.', response: 'Merci ! On vous garde la date pour l\'année prochaine 😉', createdAt: '2026-02-22T11:00:00Z' },
   ];
 
-  state.demoSnapshot = { pros: demoPros, boats: demoBoats, reservations: demoReservations };
+  state.demoSnapshot = { pros: demoPros, boats: demoBoats, reservations: demoReservations, reviews: demoReviews };
   state.boats = demoBoats.filter(b => b.status === 'active');
   state.reservations = demoReservations;
+  state.reviews = demoReviews;
   state.myBoats = [];
 }
 
@@ -1382,6 +1624,7 @@ function logout() {
     state.boats = [];
     state.reservations = [];
     state.myBoats = [];
+    state.reviews = [];
   }
   state.currentUser = null;
   audit('logout');
@@ -1436,11 +1679,20 @@ function render() {
   const nav = document.getElementById('headerNav');
   document.body.classList.toggle('in-pro', state.view.startsWith('/pro/') && state.currentUser);
 
-  // Demo banner
-  const banner = document.getElementById('demo-banner-root');
+  // Pill démo intégré au header (à côté du logo)
+  const existingPill = document.getElementById('demoPillHeader');
   if (state.mode === 'demo') {
-    banner.innerHTML = `<div class="demo-banner"><span>🎭</span>MODE DÉMO</div>`;
-  } else { banner.innerHTML = ''; }
+    if (!existingPill) {
+      const pill = document.createElement('span');
+      pill.id = 'demoPillHeader';
+      pill.className = 'demo-pill';
+      pill.innerHTML = '<span>🎭</span><span class="demo-label">MODE DÉMO</span>';
+      const logo = document.querySelector('.header-inner .logo');
+      if (logo && logo.parentNode) logo.parentNode.insertBefore(pill, logo.nextSibling);
+    }
+  } else if (existingPill) {
+    existingPill.remove();
+  }
 
   // Nav
   if (state.currentUser?.type === 'pro') {
@@ -1468,6 +1720,7 @@ function render() {
   if (path === '/pro/boats/new') return viewBoatForm();
   if (path.startsWith('/pro/boats/edit/')) return viewBoatForm(path.split('/')[4]);
   if (path === '/pro/reservations') return viewProReservations();
+  if (path === '/pro/reviews') return viewProReviews();
   if (path === '/pro/profile') return viewProProfile();
   viewHome();
 }
@@ -1544,6 +1797,7 @@ function renderBoatGrid() {
     const startPrice = getBoatStartingPrice(b);
     const dayPrice = getBoatSlotPrice(b, 'day');
     const showFrom = startPrice < dayPrice;
+    const reviews = getBoatReviewsSummary(b.id);
     return `
     <div class="boat-card" onclick="navigate('/boat/${b.id}')">
       <div class="boat-img" ${b.images?.[0] ? `style="background-image: url('${escapeHtml(b.images[0])}')"` : ''}>
@@ -1556,11 +1810,13 @@ function renderBoatGrid() {
         <div class="boat-meta">
           <span>👥 ${b.capacity} pers.</span>
           ${b.withSkipper ? `<span>👨‍✈️ Skipper inclus</span>` : ''}
+          ${reviews.count > 0 ? `<span>${renderStars(reviews.avg, 12)} <span style="color: var(--text-2);">(${reviews.count})</span></span>` : ''}
         </div>
         <div class="boat-price">
-          <div>
-            <div class="boat-price-amount">${fmtEUR(startPrice)}</div>
-            <div class="boat-price-unit">${showFrom ? 'à partir de · ' : ''}par sortie</div>
+          <div class="boat-price-stack">
+            ${showFrom ? '<span class="boat-price-label-top">à partir de</span>' : ''}
+            <span class="boat-price-amount">${fmtEUR(startPrice)}</span>
+            <span class="boat-price-unit">par sortie</span>
           </div>
           <span class="pill pill-info">Voir →</span>
         </div>
@@ -1620,6 +1876,19 @@ async function viewBoatDetail(id) {
   _currentBookings = bookings;
   _currentBoatId = id;
 
+  // Charge les avis pour ce bateau
+  if (state.mode !== 'demo') {
+    try {
+      const res = await syncToBackend('listReviewsForBoat', { boatId: id });
+      if (res?.success) {
+        // Mise à jour locale des reviews de ce bateau dans state.reviews
+        state.reviews = state.reviews.filter(r => r.boatId !== id).concat(res.data || []);
+      }
+    } catch (e) { log('reviews fail', e); }
+  }
+  const reviewsForBoat = state.reviews.filter(r => r.boatId === id).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  const reviewsSummary = getBoatReviewsSummary(id);
+
   // Calcule les dates totalement bloquées et partiellement réservées
   const datesGrouped = {};
   bookings.forEach(b => {
@@ -1633,6 +1902,7 @@ async function viewBoatDetail(id) {
   const mainImg = imgs[0];
   const thumbs = imgs.slice(1, 3);
   const startPrice = getBoatStartingPrice(boat);
+  const policy = getBoatCancellationPolicy(boat);
 
   main.innerHTML = `
     <div class="container">
@@ -1650,6 +1920,14 @@ async function viewBoatDetail(id) {
         <div class="detail-info">
           <h1>${escapeHtml(boat.name)}</h1>
           <div class="boat-location">📍 ${escapeHtml(boat.location)} · ${escapeHtml(boat.type)}</div>
+
+          ${reviewsSummary.count > 0 ? `
+            <div class="rating-summary mb-2 mt-1">
+              <span class="big-score">${reviewsSummary.avg.toFixed(1)}</span>
+              ${renderStars(reviewsSummary.avg, 18)}
+              <span class="count">${reviewsSummary.count} avis</span>
+            </div>
+          ` : ''}
 
           <div class="info-grid">
             <div class="info-item"><div class="info-label">Capacité</div><div class="info-value">${boat.capacity} pers.</div></div>
@@ -1682,12 +1960,28 @@ async function viewBoatDetail(id) {
             </div>
           </div>
 
+          <div class="description">
+            <h3>Conditions d'annulation</h3>
+            <div class="policy-info"><strong>Politique ${policy.label.toLowerCase()}</strong> — ${escapeHtml(policy.description)}</div>
+          </div>
+
           ${boat.equipment?.length ? `
             <div class="description">
               <h3>Équipement à bord</h3>
               <div class="chips">${boat.equipment.map(e => `<span class="chip">✓ ${escapeHtml(e)}</span>`).join('')}</div>
             </div>
           ` : ''}
+
+          <div class="description">
+            <div class="flex between center mb-2">
+              <h3 style="margin: 0;">Avis clients ${reviewsSummary.count > 0 ? `(${reviewsSummary.count})` : ''}</h3>
+              <button class="btn btn-secondary btn-sm" onclick="openReviewForm('${boat.id}')">✍️ Laisser un avis</button>
+            </div>
+            ${reviewsForBoat.length === 0 ? `
+              <p class="text-muted small">Aucun avis pour le moment. Soyez le premier à partager votre expérience !</p>
+            ` : reviewsForBoat.slice(0, 5).map(r => renderReviewItem(r)).join('')}
+            ${reviewsForBoat.length > 5 ? `<button class="btn btn-ghost btn-sm mt-1" onclick="showAllReviews('${boat.id}')">Voir les ${reviewsForBoat.length} avis →</button>` : ''}
+          </div>
         </div>
 
         <aside>
@@ -1733,12 +2027,12 @@ async function viewBoatDetail(id) {
               <strong id="bookingTotalAmount" style="color: var(--primary); font-size: 20px;">—</strong>
             </div>
 
-            <button class="btn btn-primary btn-block btn-lg" onclick="submitReservation('${boat.id}')">
-              ${boat.paymentLink ? '💳 Réserver & Payer' : '📩 Demander cette sortie'}
+            <button class="btn btn-primary btn-block btn-lg" id="submitResBtn" onclick="submitReservation('${boat.id}')">
+              📩 Demander cette sortie
             </button>
 
-            <p class="small text-muted text-center mt-2">
-              ${boat.paymentLink ? 'Paiement sécurisé en ligne' : 'Le propriétaire vous contactera pour confirmer'}
+            <p class="small text-muted text-center mt-2" id="submitResHint">
+              Sélectionnez un créneau pour voir le mode de paiement
             </p>
           </div>
         </aside>
@@ -1746,10 +2040,8 @@ async function viewBoatDetail(id) {
     </div>
   `;
 
-  // Initialise le select de durée avec tous les créneaux offerts par le bateau
   refreshDurationOptions(boat.id, null);
 
-  // Initialise le calendrier flatpickr avec dates bloquées + badges partielles
   setTimeout(() => {
     const input = document.getElementById('resDate');
     if (!input || typeof flatpickr === 'undefined') return;
@@ -1763,7 +2055,6 @@ async function viewBoatDetail(id) {
       disable: fullyBookedDates,
       disableMobile: false,
       onDayCreate: (dObj, dStr, fp, dayElem) => {
-        // Ajoute un badge ambre sur les dates partiellement réservées
         try {
           const d = dayElem.dateObj;
           const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
@@ -1778,14 +2069,120 @@ async function viewBoatDetail(id) {
   }, 50);
 }
 
+function renderReviewItem(r) {
+  return `
+    <div class="review-item">
+      <div class="review-head">
+        <div>
+          <div class="review-author">${escapeHtml(r.clientName)}</div>
+          <div class="review-date">${fmtDate(r.createdAt)}</div>
+        </div>
+        ${renderStars(r.rating, 14)}
+      </div>
+      <div class="review-comment">${escapeHtml(r.comment)}</div>
+      ${r.response ? `
+        <div class="review-response">
+          <strong>Réponse du propriétaire</strong><br>
+          ${escapeHtml(r.response)}
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function showAllReviews(boatId) {
+  const all = state.reviews.filter(r => r.boatId === boatId).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  modal(`
+    <div class="modal-header"><h3>Tous les avis (${all.length})</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-body">${all.map(r => renderReviewItem(r)).join('')}</div>
+  `, { lg: true });
+}
+
+function openReviewForm(boatId) {
+  let _rating = 0;
+  modal(`
+    <div class="modal-header"><h3>✍️ Laisser un avis</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <p class="small text-muted mb-2">Partagez votre expérience pour aider d'autres voyageurs.</p>
+      <div class="form-group">
+        <label>Votre note <span class="req">*</span></label>
+        <div class="stars-input" id="ratingInput">
+          ${[1,2,3,4,5].map(n => `<span class="star" data-n="${n}" onclick="setReviewRating(${n})">★</span>`).join('')}
+        </div>
+        <div class="help" id="ratingHint">Cliquez sur une étoile</div>
+      </div>
+      <div class="form-group">
+        <label>Votre nom <span class="req">*</span></label>
+        <input type="text" id="revName" class="form-control" placeholder="Prénom Nom">
+      </div>
+      <div class="form-group">
+        <label>Votre commentaire <span class="req">*</span></label>
+        <textarea id="revComment" class="form-control" placeholder="Comment s'est passée votre sortie ?" rows="4"></textarea>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="submitReview('${boatId}')">Publier mon avis</button>
+    </div>
+  `);
+}
+
+let _reviewRating = 0;
+function setReviewRating(n) {
+  _reviewRating = n;
+  document.querySelectorAll('#ratingInput .star').forEach((s, i) => {
+    s.classList.toggle('filled', (i + 1) <= n);
+  });
+  const labels = ['', 'Décevant', 'Moyen', 'Bien', 'Très bien', 'Excellent'];
+  document.getElementById('ratingHint').textContent = labels[n] + ' ★';
+}
+
+async function submitReview(boatId) {
+  const rating = _reviewRating;
+  const clientName = document.getElementById('revName').value.trim();
+  const comment = document.getElementById('revComment').value.trim();
+  if (rating === 0) { toast('Choisissez une note', 'warning'); return; }
+  if (!clientName) { toast('Indiquez votre nom', 'warning'); return; }
+  if (!comment || comment.length < 10) { toast('Le commentaire doit faire au moins 10 caractères', 'warning'); return; }
+
+  const review = { id: uid(), boatId, clientName, rating, comment, response: '', createdAt: new Date().toISOString() };
+  showLoader();
+  try {
+    if (state.mode === 'demo') {
+      state.reviews.unshift(review);
+    } else {
+      const res = await syncToBackend('createReview', review);
+      if (res?.success) state.reviews.unshift(res.data || review);
+      else throw new Error(res?.error || 'Erreur');
+    }
+    audit('review_created', { boatId, rating });
+    hideLoader();
+    closeModal();
+    _reviewRating = 0;
+    toast('Merci pour votre avis ! ⭐', 'success');
+    if (state.view.startsWith('/boat/')) viewBoatDetail(boatId);
+  } catch (e) {
+    hideLoader();
+    toast('Erreur lors de la publication', 'error');
+  }
+}
+
 function updateBookingPriceV2() {
   const boat = state.boats.find(b => b.id === _currentBoatId);
   if (!boat) return;
   const sel = document.getElementById('resDuration');
   const slotId = sel.value;
-  if (!slotId) { document.getElementById('bookingTotalAmount').textContent = '—'; return; }
+  const btn = document.getElementById('submitResBtn');
+  const hint = document.getElementById('submitResHint');
+  if (!slotId) {
+    document.getElementById('bookingTotalAmount').textContent = '—';
+    if (btn) btn.innerHTML = '📩 Demander cette sortie';
+    if (hint) hint.textContent = 'Sélectionnez un créneau pour voir le mode de paiement';
+    return;
+  }
   const price = getBoatSlotPrice(boat, slotId);
   document.getElementById('bookingTotalAmount').textContent = fmtEUR(price);
+  // Met à jour le label/hint selon présence d'un lien de paiement POUR CE CRÉNEAU
+  const hasPay = !!getBoatPaymentLink(boat, slotId);
+  if (btn) btn.innerHTML = hasPay ? '💳 Réserver & Payer' : '📩 Demander cette sortie';
+  if (hint) hint.textContent = hasPay ? 'Paiement sécurisé en ligne après confirmation' : 'Le propriétaire vous contactera pour le paiement';
 }
 
 function renderAvailabilityHint(fullyBooked, partiallyBooked) {
@@ -1932,7 +2329,8 @@ async function submitReservation(boatId) {
 }
 
 function showReservationConfirmation(boat, reservation) {
-  const hasPayment = !!boat.paymentLink;
+  const paymentLink = getBoatPaymentLink(boat, reservation.durationType);
+  const hasPayment = !!paymentLink;
   modal(`
     <div class="modal-header">
       <h3>✅ Demande envoyée</h3>
@@ -1943,15 +2341,15 @@ function showReservationConfirmation(boat, reservation) {
       <div style="background: var(--surface-2); padding: 16px; border-radius: var(--radius); margin-bottom: 16px;">
         <div class="small text-muted mb-1">Détails</div>
         <div><strong>Date :</strong> ${fmtDate(reservation.startDate)}</div>
-        <div><strong>Durée :</strong> ${DURATIONS.find(d => d.id === reservation.durationType).label}</div>
+        <div><strong>Créneau :</strong> ${DURATIONS.find(d => d.id === reservation.durationType).label}</div>
         <div><strong>Total :</strong> ${fmtEUR(reservation.totalPrice)}</div>
       </div>
       ${hasPayment ? `
         <p class="mb-2">Vous pouvez régler dès maintenant pour confirmer votre réservation :</p>
-        <a class="btn btn-primary btn-block btn-lg" href="${escapeHtml(boat.paymentLink)}" target="_blank" rel="noopener" onclick="setTimeout(closeModal, 500)">💳 Procéder au paiement</a>
+        <a class="btn btn-primary btn-block btn-lg" href="${escapeHtml(paymentLink)}" target="_blank" rel="noopener" onclick="setTimeout(closeModal, 500)">💳 Procéder au paiement</a>
         <p class="small text-muted text-center mt-2">Vous serez redirigé vers une plateforme sécurisée.</p>
       ` : `
-        <p>Le propriétaire <strong>${escapeHtml(boat.proName)}</strong> va vous contacter rapidement pour confirmer.</p>
+        <p>Le propriétaire <strong>${escapeHtml(boat.proName)}</strong> va vous contacter rapidement pour confirmer et finaliser le paiement.</p>
         <button class="btn btn-primary btn-block mt-2" onclick="closeModal(); navigate('/')">Retour au catalogue</button>
       `}
       ${state.mode === 'demo' ? `<p class="small text-muted text-center mt-2" style="color: var(--demo);">⚠️ Mode démo : aucun email réel n'a été envoyé</p>` : ''}
@@ -2104,12 +2502,16 @@ async function doRegister() {
 /* ---------- VIEW: PRO DASHBOARD ---------- */
 async function viewProDashboard() {
   if (!state.currentUser) { openAuthModal(); return; }
-  await Promise.all([fetchMyBoats(), fetchMyReservations()]);
+  await Promise.all([fetchMyBoats(), fetchMyReservations(), fetchMyReviews()]);
   const myReservations = state.reservations.filter(r => r.proId === state.currentUser.id);
   const pending = myReservations.filter(r => r.status === 'pending').length;
   const confirmed = myReservations.filter(r => r.status === 'confirmed').length;
+  const completed = myReservations.filter(r => r.status === 'completed').length;
   const revenue = myReservations.filter(r => r.paymentStatus === 'paid').reduce((s, r) => s + (r.totalPrice || 0), 0);
   const myActiveBoats = state.myBoats.filter(b => b.status === 'active').length;
+  const myBoatIds = state.myBoats.map(b => b.id);
+  const myReviews = state.reviews.filter(r => myBoatIds.includes(r.boatId));
+  const avgRating = myReviews.length ? myReviews.reduce((s, r) => s + (r.rating || 0), 0) / myReviews.length : 0;
 
   renderProLayout(`
     <div class="section-head">
@@ -2127,12 +2529,12 @@ async function viewProDashboard() {
         <div class="stat-trend">Sur ${state.myBoats.length} au total</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Réservations en attente</div>
+        <div class="stat-label">En attente</div>
         <div class="stat-value" style="color: ${pending > 0 ? 'var(--warning)' : ''}">${pending}</div>
         <div class="stat-trend">À traiter rapidement</div>
       </div>
       <div class="stat-card">
-        <div class="stat-label">Réservations confirmées</div>
+        <div class="stat-label">Confirmées</div>
         <div class="stat-value" style="color: var(--success)">${confirmed}</div>
         <div class="stat-trend">À venir et en cours</div>
       </div>
@@ -2140,6 +2542,29 @@ async function viewProDashboard() {
         <div class="stat-label">Chiffre d'affaires</div>
         <div class="stat-value">${fmtEUR(revenue)}</div>
         <div class="stat-trend">Encaissé</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Note moyenne</div>
+        <div class="stat-value" style="display:flex;align-items:center;gap:6px;">
+          ${myReviews.length ? avgRating.toFixed(1) : '—'}
+          ${myReviews.length ? renderStars(avgRating, 16) : ''}
+        </div>
+        <div class="stat-trend">${myReviews.length} avis</div>
+      </div>
+    </div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>📈 Revenus des 6 derniers mois</h3>
+        <div class="chart-wrap"><canvas id="chartRevenue"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>🥧 Statuts des réservations</h3>
+        <div class="chart-wrap"><canvas id="chartStatus"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>⛵ Réservations par bateau</h3>
+        <div class="chart-wrap"><canvas id="chartBoats"></canvas></div>
       </div>
     </div>
 
@@ -2149,6 +2574,99 @@ async function viewProDashboard() {
     </div>
     ${renderReservationsTable(myReservations.slice(0, 5))}
   `, 'dashboard');
+
+  // Initialise les graphiques après que le DOM soit en place
+  setTimeout(() => renderDashboardCharts(myReservations, state.myBoats), 100);
+}
+
+async function fetchMyReviews() {
+  if (state.mode === 'demo') {
+    const myBoatIds = state.demoSnapshot.boats.filter(b => b.proId === state.currentUser.id).map(b => b.id);
+    state.reviews = state.demoSnapshot.reviews.filter(r => myBoatIds.includes(r.boatId));
+    return;
+  }
+  try {
+    const res = await syncToBackend('listAllReviewsForPro', { proId: state.currentUser.id });
+    if (res?.success) state.reviews = res.data || [];
+  } catch (e) { log('reviews fail', e); }
+}
+
+function renderDashboardCharts(reservations, boats) {
+  if (typeof Chart === 'undefined') { log('Chart.js not loaded'); return; }
+  Chart.defaults.font.family = "Plus Jakarta Sans, system-ui, sans-serif";
+  Chart.defaults.color = '#5a6577';
+
+  // 1) Revenus 6 derniers mois (bar chart)
+  const now = new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    months.push({ key: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'), label: d.toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' }) });
+  }
+  const revenueByMonth = months.map(m => {
+    return reservations.filter(r => r.paymentStatus === 'paid' && String(r.startDate).startsWith(m.key))
+      .reduce((s, r) => s + (r.totalPrice || 0), 0);
+  });
+  const ctx1 = document.getElementById('chartRevenue');
+  if (ctx1) {
+    if (ctx1._chart) ctx1._chart.destroy();
+    ctx1._chart = new Chart(ctx1.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: months.map(m => m.label),
+        datasets: [{ label: 'Revenus', data: revenueByMonth, backgroundColor: '#0e6e6e', borderRadius: 6 }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => fmtEUR(c.parsed.y) } } },
+        scales: { y: { beginAtZero: true, ticks: { callback: v => v >= 1000 ? (v / 1000) + 'k€' : v + '€' } } }
+      }
+    });
+  }
+
+  // 2) Statuts (doughnut)
+  const statusCounts = { confirmed: 0, pending: 0, completed: 0, cancelled: 0 };
+  reservations.forEach(r => { statusCounts[r.status] = (statusCounts[r.status] || 0) + 1; });
+  const ctx2 = document.getElementById('chartStatus');
+  if (ctx2) {
+    if (ctx2._chart) ctx2._chart.destroy();
+    ctx2._chart = new Chart(ctx2.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Confirmées', 'En attente', 'Terminées', 'Annulées'],
+        datasets: [{
+          data: [statusCounts.confirmed, statusCounts.pending, statusCounts.completed, statusCounts.cancelled],
+          backgroundColor: ['#16a34a', '#d97706', '#2563eb', '#dc2626'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '65%',
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12, padding: 12 } } }
+      }
+    });
+  }
+
+  // 3) Réservations par bateau (horizontal bar)
+  const byBoat = {};
+  reservations.forEach(r => { byBoat[r.boatName || r.boatId] = (byBoat[r.boatName || r.boatId] || 0) + 1; });
+  const sorted = Object.entries(byBoat).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const ctx3 = document.getElementById('chartBoats');
+  if (ctx3) {
+    if (ctx3._chart) ctx3._chart.destroy();
+    ctx3._chart = new Chart(ctx3.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: sorted.map(s => s[0]),
+        datasets: [{ data: sorted.map(s => s[1]), backgroundColor: '#14a3a3', borderRadius: 6 }]
+      },
+      options: {
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { x: { beginAtZero: true, ticks: { stepSize: 1 } } }
+      }
+    });
+  }
 }
 
 function renderProLayout(content, active) {
@@ -2157,6 +2675,7 @@ function renderProLayout(content, active) {
     { id: 'dashboard', label: 'Tableau de bord', icon: '📊', path: '/pro/dashboard' },
     { id: 'boats', label: 'Mes bateaux', icon: '⛵', path: '/pro/boats' },
     { id: 'reservations', label: 'Réservations', icon: '📅', path: '/pro/reservations' },
+    { id: 'reviews', label: 'Avis', icon: '⭐', path: '/pro/reviews' },
     { id: 'profile', label: 'Profil', icon: '👤', path: '/pro/profile' },
   ];
   main.innerHTML = `
@@ -2226,6 +2745,8 @@ async function viewProBoats() {
       <div class="grid">${state.myBoats.map(b => {
         const start = getBoatStartingPrice(b);
         const nbSlots = (b.availableSlots || ['halfday','day','sunset']).length;
+        const hasPay = boatHasAnyPaymentLink(b);
+        const reviews = getBoatReviewsSummary(b.id);
         return `
         <div class="boat-card">
           <div class="boat-img" ${b.images?.[0] ? `style="background-image: url('${escapeHtml(b.images[0])}')"` : ''}>
@@ -2238,15 +2759,17 @@ async function viewProBoats() {
             <div class="boat-meta">
               <span>👥 ${b.capacity}</span>
               <span>🏷️ ${nbSlots} créneau${nbSlots > 1 ? 'x' : ''}</span>
-              <span>${b.paymentLink ? '💳 Paiement en ligne' : '📞 Contact manuel'}</span>
+              <span>${hasPay ? '💳 Paiement en ligne' : '📞 Contact manuel'}</span>
+              ${reviews.count > 0 ? `<span>${renderStars(reviews.avg, 11)} (${reviews.count})</span>` : ''}
             </div>
             <div class="boat-price">
-              <div>
-                <div class="boat-price-amount">${fmtEUR(start)}</div>
-                <div class="boat-price-unit">${start < getBoatSlotPrice(b, 'day') ? 'à partir de' : 'par sortie'}</div>
+              <div class="boat-price-stack">
+                ${start < getBoatSlotPrice(b, 'day') ? '<span class="boat-price-label-top">à partir de</span>' : ''}
+                <span class="boat-price-amount">${fmtEUR(start)}</span>
+                <span class="boat-price-unit">par sortie</span>
               </div>
               <div class="flex gap-1">
-                <button class="btn btn-ghost btn-sm" onclick="navigate('/pro/boats/edit/${b.id}')">✏️ Modifier</button>
+                <button class="btn btn-ghost btn-sm" onclick="navigate('/pro/boats/edit/${b.id}')">✏️</button>
                 <button class="btn btn-ghost btn-sm" onclick="toggleBoatStatus('${b.id}')">${b.status === 'active' ? '⏸️' : '▶️'}</button>
               </div>
             </div>
@@ -2282,12 +2805,22 @@ function viewBoatForm(editId) {
   const editing = editId ? state.myBoats.find(b => b.id === editId) : null;
   if (editing) {
     const normalized = normalizeBoatPricing(editing);
+    // Convertit l'ancien paymentLink unique en map si nécessaire
+    let paymentLinks = normalized.paymentLinks;
+    if (!paymentLinks || typeof paymentLinks !== 'object') {
+      const old = normalized.paymentLink || '';
+      paymentLinks = { halfday: old, day: old, sunset: old };
+    } else {
+      paymentLinks = { halfday: '', day: '', sunset: '', ...paymentLinks };
+    }
     boatFormState = {
       ...normalized,
       images: [...(normalized.images || [])],
       equipment: [...(normalized.equipment || [])],
       prices: { ...normalized.prices },
-      availableSlots: [...normalized.availableSlots]
+      availableSlots: [...normalized.availableSlots],
+      paymentLinks,
+      cancellationPolicy: normalized.cancellationPolicy || 'moderate'
     };
   } else {
     const basePrice = 500;
@@ -2307,8 +2840,9 @@ function viewBoatForm(editId) {
         sunset: Math.round(basePrice * 0.45)
       },
       availableSlots: ['halfday', 'day', 'sunset'],
+      paymentLinks: { halfday: '', day: '', sunset: '' },
+      cancellationPolicy: 'moderate',
       images: [],
-      paymentLink: '',
       withSkipper: true,
       equipment: [],
       status: 'active'
@@ -2427,12 +2961,35 @@ function renderBoatForm(editing) {
 
       <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
 
-      <h3 style="font-size: 16px; margin-bottom: 8px;">💳 Paiement en ligne (optionnel)</h3>
-      <p class="small text-muted mb-2">Si vous avez un lien de paiement (Stripe, PayPal, HelloAsso…), collez-le ci-dessous. Les clients pourront payer directement après leur réservation. Sinon, vous les contacterez manuellement.</p>
-      <div class="form-group">
-        <label>Lien de paiement</label>
-        <input type="url" id="bfPayLink" class="form-control" value="${escapeHtml(b.paymentLink || '')}" placeholder="https://buy.stripe.com/... ou https://paypal.me/...">
-        <div class="help">Laissez vide pour gérer le paiement par téléphone ou virement.</div>
+      <h3 style="font-size: 16px; margin-bottom: 8px;">💳 Liens de paiement par créneau (optionnel)</h3>
+      <p class="small text-muted mb-2">Vous pouvez fournir un lien de paiement (Stripe, PayPal, HelloAsso…) <strong>différent pour chaque créneau</strong>, car les montants sont différents. Si vous laissez un champ vide pour un créneau, vous contacterez manuellement le client pour ce créneau (par téléphone, virement…).</p>
+
+      <div class="payment-grid">
+        ${DURATIONS.map(d => {
+          const enabled = b.availableSlots.includes(d.id);
+          const icon = d.id === 'halfday' ? '🌅' : d.id === 'sunset' ? '🌇' : '☀️';
+          const val = b.paymentLinks?.[d.id] || '';
+          return `
+          <div class="payment-row ${enabled ? '' : 'disabled'}">
+            <span class="slot-name">${icon} ${escapeHtml(d.shortLabel)}<br><span class="small text-muted">${fmtEUR(b.prices[d.id] || 0)}</span></span>
+            <input type="url" id="pay-${d.id}" value="${escapeHtml(val)}" placeholder="https://buy.stripe.com/... (laissez vide pour contact manuel)" ${enabled ? '' : 'disabled'}>
+          </div>
+          `;
+        }).join('')}
+      </div>
+      <p class="small text-muted mt-1">💡 Les créneaux non cochés plus haut sont automatiquement désactivés.</p>
+
+      <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
+
+      <h3 style="font-size: 16px; margin-bottom: 8px;">📋 Politique d'annulation</h3>
+      <p class="small text-muted mb-2">Choisissez la politique appliquée à vos clients en cas d'annulation. Elle sera affichée sur la fiche publique du bateau.</p>
+      <div class="policy-cards">
+        ${CANCELLATION_POLICIES.map(p => `
+          <div class="policy-card ${b.cancellationPolicy === p.id ? 'selected' : ''}" onclick="selectCancellationPolicy('${p.id}', ${!!editing})">
+            <div class="policy-name">${escapeHtml(p.label)}</div>
+            <div class="policy-desc">${escapeHtml(p.short)}</div>
+          </div>
+        `).join('')}
       </div>
 
       <hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">
@@ -2461,7 +3018,6 @@ function syncBoatFormFromDOM() {
   b.capacity = Number(document.getElementById('bfCap')?.value) || b.capacity;
   b.description = document.getElementById('bfDesc')?.value.trim() || b.description;
   b.withSkipper = document.getElementById('bfSkipper')?.checked ?? b.withSkipper;
-  b.paymentLink = document.getElementById('bfPayLink')?.value.trim() || '';
 
   // Récupère les prix et créneaux cochés
   const slots = [];
@@ -2472,8 +3028,20 @@ function syncBoatFormFromDOM() {
     if (pi) b.prices[d.id] = Number(pi.value) || 0;
   });
   b.availableSlots = slots.length ? slots : ['day'];
-  // pricePerDay reste synchronisé avec prices.day pour le catalogue
   b.pricePerDay = b.prices.day || b.prices[b.availableSlots[0]] || 0;
+
+  // Récupère les 3 liens de paiement par créneau
+  if (!b.paymentLinks) b.paymentLinks = {};
+  DURATIONS.forEach(d => {
+    const pi = document.getElementById('pay-' + d.id);
+    if (pi) b.paymentLinks[d.id] = pi.value.trim();
+  });
+}
+
+function selectCancellationPolicy(policyId, editing) {
+  syncBoatFormFromDOM();
+  boatFormState.cancellationPolicy = policyId;
+  renderBoatForm(editing);
 }
 
 function toggleSlot(slotId, editing) {
@@ -2611,6 +3179,119 @@ async function saveBoat(editing) {
   }
 }
 
+/* ---------- VIEW: PRO REVIEWS ---------- */
+async function viewProReviews() {
+  if (!state.currentUser) { openAuthModal(); return; }
+  await Promise.all([fetchMyBoats(), fetchMyReviews()]);
+  const myBoatIds = state.myBoats.map(b => b.id);
+  const myReviews = state.reviews.filter(r => myBoatIds.includes(r.boatId)).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt)));
+  const avg = myReviews.length ? myReviews.reduce((s, r) => s + r.rating, 0) / myReviews.length : 0;
+  const pendingResponse = myReviews.filter(r => !r.response).length;
+
+  renderProLayout(`
+    <div class="section-head">
+      <div><h2>Avis clients</h2><p>${myReviews.length} avis au total ${pendingResponse > 0 ? `· ${pendingResponse} sans réponse` : ''}</p></div>
+    </div>
+
+    ${myReviews.length === 0 ? `
+      <div class="empty-state" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);">
+        <div class="empty-state-icon">⭐</div>
+        <h3>Aucun avis pour le moment</h3>
+        <p>Les avis de vos clients apparaîtront ici une fois leurs sorties terminées.</p>
+      </div>
+    ` : `
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Note moyenne</div>
+          <div class="stat-value" style="display:flex;align-items:center;gap:8px;">${avg.toFixed(1)} ${renderStars(avg, 18)}</div>
+          <div class="stat-trend">${myReviews.length} avis</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Sans réponse</div>
+          <div class="stat-value" style="color: ${pendingResponse > 0 ? 'var(--warning)' : 'var(--success)'};">${pendingResponse}</div>
+          <div class="stat-trend">Répondez pour soigner votre image</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Avis 5 étoiles</div>
+          <div class="stat-value" style="color: var(--success);">${myReviews.filter(r => r.rating === 5).length}</div>
+          <div class="stat-trend">Sur ${myReviews.length} avis</div>
+        </div>
+      </div>
+
+      ${myReviews.map(r => {
+        const boat = state.myBoats.find(b => b.id === r.boatId);
+        return `
+          <div class="review-item">
+            <div class="review-head">
+              <div>
+                <div class="review-author">${escapeHtml(r.clientName)} <span class="small text-muted">· ${escapeHtml(boat?.name || '—')}</span></div>
+                <div class="review-date">${fmtDate(r.createdAt)}</div>
+              </div>
+              ${renderStars(r.rating, 16)}
+            </div>
+            <div class="review-comment">${escapeHtml(r.comment)}</div>
+            ${r.response ? `
+              <div class="review-response">
+                <strong>Votre réponse</strong><br>
+                ${escapeHtml(r.response)}
+                <div class="mt-1"><button class="btn btn-ghost btn-sm" onclick="openRespondReview('${r.id}')">✏️ Modifier</button></div>
+              </div>
+            ` : `
+              <button class="btn btn-secondary btn-sm mt-1" onclick="openRespondReview('${r.id}')">↪️ Répondre</button>
+            `}
+          </div>
+        `;
+      }).join('')}
+    `}
+  `, 'reviews');
+}
+
+function openRespondReview(reviewId) {
+  const r = state.reviews.find(x => x.id === reviewId);
+  if (!r) return;
+  modal(`
+    <div class="modal-header"><h3>Répondre à l'avis de ${escapeHtml(r.clientName)}</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <div class="review-item" style="margin-bottom: 16px;">
+        ${renderStars(r.rating, 14)}
+        <p class="mt-1 small">${escapeHtml(r.comment)}</p>
+      </div>
+      <div class="form-group">
+        <label>Votre réponse publique</label>
+        <textarea id="respText" class="form-control" rows="4" placeholder="Merci pour votre retour...">${escapeHtml(r.response || '')}</textarea>
+        <div class="help">Visible publiquement sous l'avis du client.</div>
+      </div>
+      <button class="btn btn-primary btn-block" onclick="submitRespond('${reviewId}')">Publier ma réponse</button>
+    </div>
+  `);
+}
+
+async function submitRespond(reviewId) {
+  const response = document.getElementById('respText').value.trim();
+  if (!response) { toast('Saisissez une réponse', 'warning'); return; }
+  showLoader();
+  try {
+    if (state.mode === 'demo') {
+      const r = state.reviews.find(x => x.id === reviewId);
+      if (r) r.response = response;
+    } else {
+      const res = await syncToBackend('respondToReview', { id: reviewId, response });
+      if (res?.success) {
+        const r = state.reviews.find(x => x.id === reviewId);
+        if (r) r.response = response;
+      } else throw new Error(res?.error || 'Erreur');
+    }
+    audit('review_response', { id: reviewId });
+    hideLoader();
+    closeModal();
+    toast('Réponse publiée', 'success');
+    if (state.view === '/pro/reviews') viewProReviews();
+  } catch (e) {
+    hideLoader();
+    toast('Erreur lors de l\'envoi', 'error');
+  }
+}
+
 /* ---------- VIEW: RESERVATIONS ---------- */
 async function viewProReservations() {
   if (!state.currentUser) { openAuthModal(); return; }
@@ -2628,6 +3309,8 @@ function openReservationDetail(rid) {
   const r = state.reservations.find(x => x.id === rid);
   if (!r) return;
   const boat = state.myBoats.find(b => b.id === r.boatId) || state.boats.find(b => b.id === r.boatId);
+  const policy = getBoatCancellationPolicy(boat);
+  const refundCalc = ['pending', 'confirmed'].includes(r.status) ? calculateRefund(r, boat?.cancellationPolicy, new Date()) : null;
   modal(`
     <div class="modal-header">
       <h3>Réservation #${r.id.slice(0, 6)}</h3>
@@ -2640,7 +3323,7 @@ function openReservationDetail(rid) {
       </div>
       <div class="info-grid" style="margin: 0 0 16px; padding: 14px;">
         <div class="info-item"><div class="info-label">Date</div><div class="info-value">${fmtDate(r.startDate)}</div></div>
-        <div class="info-item"><div class="info-label">Durée</div><div class="info-value">${DURATIONS.find(d => d.id === r.durationType)?.label || r.durationType}</div></div>
+        <div class="info-item"><div class="info-label">Créneau</div><div class="info-value">${DURATIONS.find(d => d.id === r.durationType)?.label || r.durationType}</div></div>
         <div class="info-item"><div class="info-label">Total</div><div class="info-value">${fmtEUR(r.totalPrice)}</div></div>
         <div class="info-item"><div class="info-label">Demandée le</div><div class="info-value">${fmtDate(r.createdAt)}</div></div>
       </div>
@@ -2650,7 +3333,7 @@ function openReservationDetail(rid) {
         <div class="small">📧 <a href="mailto:${escapeHtml(r.clientEmail)}">${escapeHtml(r.clientEmail)}</a></div>
         <div class="small">📱 <a href="tel:${escapeHtml(r.clientPhone)}">${escapeHtml(r.clientPhone)}</a></div>
       </div>
-      <div class="flex gap-1 mb-2">
+      <div class="flex gap-1 mb-2" style="flex-wrap: wrap;">
         <span class="small text-muted">Statut :</span>
         <span class="pill pill-${({pending:'warning',confirmed:'success',completed:'info',cancelled:'danger'}[r.status]) || 'neutral'}">${r.status}</span>
         <span class="small text-muted">· Paiement :</span>
@@ -2660,19 +3343,75 @@ function openReservationDetail(rid) {
       ${r.status === 'pending' ? `
         <div class="flex gap-1 mt-2">
           <button class="btn btn-success flex-1" onclick="updateReservation('${r.id}', 'confirmed')">✓ Confirmer</button>
-          <button class="btn btn-danger flex-1" onclick="updateReservation('${r.id}', 'cancelled')">✕ Refuser</button>
+          <button class="btn btn-danger flex-1" onclick="openCancelReservation('${r.id}')">✕ Annuler</button>
         </div>
       ` : ''}
       ${r.status === 'confirmed' && r.paymentStatus !== 'paid' ? `
         <button class="btn btn-primary btn-block mt-2" onclick="markPaid('${r.id}')">💳 Marquer comme payé</button>
+        <button class="btn btn-danger btn-block mt-1" onclick="openCancelReservation('${r.id}')">✕ Annuler avec remboursement</button>
       ` : ''}
       ${r.status === 'confirmed' && r.paymentStatus === 'paid' ? `
         <button class="btn btn-secondary btn-block mt-2" onclick="updateReservation('${r.id}', 'completed')">Marquer comme terminée</button>
+        <button class="btn btn-danger btn-block mt-1" onclick="openCancelReservation('${r.id}')">✕ Annuler avec remboursement</button>
+      ` : ''}
+
+      ${refundCalc ? `
+        <div class="policy-info mt-2">
+          <strong>Politique ${policy.label.toLowerCase()}</strong> — En annulant aujourd'hui (${refundCalc.daysBefore >= 0 ? 'à ' + refundCalc.daysBefore + ' jour(s) du départ' : 'après le départ'}), le client serait remboursé à <strong>${refundCalc.pct}%</strong> soit <strong>${fmtEUR(refundCalc.amount)}</strong>.
+        </div>
       ` : ''}
 
       <button class="btn btn-ghost btn-block mt-2" onclick="sendMockEmail('${r.id}')">📧 Envoyer un email au client</button>
     </div>
   `);
+}
+
+function openCancelReservation(rid) {
+  const r = state.reservations.find(x => x.id === rid);
+  if (!r) return;
+  const boat = state.myBoats.find(b => b.id === r.boatId) || state.boats.find(b => b.id === r.boatId);
+  const policy = getBoatCancellationPolicy(boat);
+  const refundCalc = calculateRefund(r, boat?.cancellationPolicy, new Date());
+
+  modal(`
+    <div class="modal-header"><h3>✕ Annuler la réservation</h3><button class="modal-close" onclick="closeModal()">×</button></div>
+    <div class="modal-body">
+      <div style="background: var(--surface-2); padding: 14px; border-radius: var(--radius); margin-bottom: 16px;">
+        <div><strong>${escapeHtml(r.boatName)}</strong></div>
+        <div class="small">${escapeHtml(r.clientName)} · ${fmtDate(r.startDate)} · ${DURATIONS.find(d => d.id === r.durationType)?.shortLabel}</div>
+      </div>
+      <div class="policy-info">
+        <strong>Politique ${policy.label.toLowerCase()}</strong> — ${escapeHtml(policy.description)}
+      </div>
+      <div class="info-grid" style="margin: 0 0 16px; padding: 14px;">
+        <div class="info-item"><div class="info-label">Total payé</div><div class="info-value">${fmtEUR(r.totalPrice)}</div></div>
+        <div class="info-item"><div class="info-label">Jours avant départ</div><div class="info-value">${refundCalc.daysBefore}</div></div>
+        <div class="info-item"><div class="info-label">% remboursé</div><div class="info-value" style="color: var(--primary)">${refundCalc.pct}%</div></div>
+        <div class="info-item"><div class="info-label">Montant à rembourser</div><div class="info-value" style="color: var(--primary); font-size: 18px;">${fmtEUR(refundCalc.amount)}</div></div>
+      </div>
+      <p class="small text-muted mb-2">Le remboursement doit être effectué manuellement via votre plateforme de paiement (Stripe, PayPal…). Cette action notifie le client.</p>
+      <div class="flex gap-1" style="justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="closeModal()">Annuler</button>
+        <button class="btn btn-danger" onclick="confirmCancelReservation('${rid}', ${refundCalc.amount})">Confirmer l'annulation</button>
+      </div>
+    </div>
+  `);
+}
+
+async function confirmCancelReservation(rid, refundAmount) {
+  const r = state.reservations.find(x => x.id === rid);
+  if (!r) return;
+  r.status = 'cancelled';
+  r.paymentStatus = r.paymentStatus === 'paid' ? (refundAmount > 0 ? 'refunded' : 'paid') : 'cancelled';
+  r.refundAmount = refundAmount;
+  r.cancelledAt = new Date().toISOString();
+  audit('reservation_cancelled', { id: rid, refund: refundAmount });
+  if (state.mode !== 'demo') {
+    await syncToBackend('updateReservation', { id: rid, status: 'cancelled', paymentStatus: r.paymentStatus, refundAmount, cancelledAt: r.cancelledAt });
+  }
+  closeModal();
+  toast(refundAmount > 0 ? `Annulée. Remboursement de ${fmtEUR(refundAmount)} à effectuer.` : 'Annulée sans remboursement.', 'info');
+  render();
 }
 
 async function updateReservation(rid, newStatus) {
